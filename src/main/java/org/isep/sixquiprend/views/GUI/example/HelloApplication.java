@@ -1,4 +1,4 @@
-package org.isep.sixquiprend;
+package org.isep.sixquiprend.views.GUI.example;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
