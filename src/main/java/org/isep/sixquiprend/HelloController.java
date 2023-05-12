@@ -1,4 +1,4 @@
-package org.isep.sixquiprend.views.GUI.example;
+package org.isep.sixquiprend;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
