@@ -7,7 +7,6 @@ import org.isep.sixquiprend.view.GUI.SceneManager;
 
 public class Main extends Application {
 
-    // This start should launch the Introduction scene
     @Override
     public void start(Stage stage) {
         SceneManager sceneManager = new SceneManager(stage);
