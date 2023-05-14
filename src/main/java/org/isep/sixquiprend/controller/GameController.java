@@ -13,8 +13,6 @@ public class GameController {
         eventListener();
     }
     private void eventListener(){
-        // to add a scene on construct do :
-        // sceneManager.addScene("sceneName", myScene.getScene());
         sceneManager.addScene("welcome", welcomeView.getScene());
 
         welcomeView.getButtonQuit().setOnAction(event -> {
