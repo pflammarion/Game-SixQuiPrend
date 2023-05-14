@@ -4,5 +4,5 @@ module org.isep.sixquiprend {
             
                             
     opens org.isep.sixquiprend to javafx.fxml;
-    opens org.isep.sixquiprend.view.GUI.example to javafx.fxml;
+    exports org.isep.sixquiprend;
 }
