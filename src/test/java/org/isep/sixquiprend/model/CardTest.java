@@ -9,7 +9,7 @@ class CardTest {
     @Test
     void getNumber() {
         Card card = new Card(1, 1, false);
-        Assertions.assertEquals(7, card.getNumber());
+        Assertions.assertEquals(1, card.getNumber());
         Assertions.assertNotEquals(10, card.getNumber());
     }
 
