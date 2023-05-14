@@ -1,4 +1,4 @@
-package org.isep.sixquiprend.views.GUI;
+package org.isep.sixquiprend.view.GUI;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -31,7 +31,6 @@ public class SceneManager {
         currentSceneName = sceneName;
         stage.setScene(scene);
     }
-
 
     public String getCurrentSceneName() {
         return currentSceneName;

@@ -1,4 +1,4 @@
-package org.isep.sixquiprend.views.console;
+package org.isep.sixquiprend.view.console;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -35,12 +35,5 @@ public class InputParser {
 
     public void closeScanner(){
         sc.close();
-    }
-
-    public static void main(String[] args) {
-        InputParser inputParser = new InputParser(System.in);
-        System.out.println("Enter a name");
-        String answer = inputParser.getString("\\w+");
-        System.out.printf("Your answer is: %s%n", answer);
     }
 }

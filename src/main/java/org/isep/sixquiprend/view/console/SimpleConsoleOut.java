@@ -1,4 +1,4 @@
-package org.isep.sixquiprend.views.console;
+package org.isep.sixquiprend.view.console;
 
 import java.io.IOException;
 
