@@ -32,7 +32,7 @@ public class SceneManager {
 
         viewQueue.remove(sceneName);
         currentViewIndex = viewQueue.indexOf(sceneName);
-        //scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/isep/sixquiprend/assets/css/style.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/org/isep/sixquiprend/assets/css/style.css")).toExternalForm());
         stage.setScene(scene);
     }
 
