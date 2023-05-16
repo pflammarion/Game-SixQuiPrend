@@ -1,16 +1,21 @@
 package org.isep.sixquiprend.view.GUI.scenes;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.player.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.text.Text;
@@ -25,7 +30,8 @@ public class GameView {
     private final Label roundLabel;
     private final Label totalBullHeads;
     private final VBox boardPane;
-    private Card selectedCard;
+    private Label selectedPlayer;
+    private ListView<Card> hand;
 
 
     public GameView() {
@@ -35,8 +41,13 @@ public class GameView {
         roundLabel = new Label();
         totalBullHeads = new Label();
         boardPane = new VBox();
+        selectedPlayer = new Label();
+        selectedPlayer.setStyle("-fx-background-color: lightblue; -fx-padding: 5px;");
 
-        VBox vbox = new VBox(roundLabel, playerNames, playButton, skipButton, boardPane);
+        this.hand = new ListView<>();
+        hand.setMaxSize(200, 200);
+
+        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, hand, playButton, skipButton, boardPane);
         vbox.setSpacing(10);
         vbox.setAlignment(Pos.CENTER);
 
@@ -72,7 +83,6 @@ public class GameView {
 
     public void updateBoard(List<List<Card>> board) {
         boardPane.getChildren().clear();
-
         for (List<Card> row : board) {
             HBox rowBox = new HBox();
             rowBox.setSpacing(10);
@@ -100,26 +110,27 @@ public class GameView {
 
     public void setPlayerTurn(Player currentPlayer) {
         String playerName = currentPlayer.getName();
+        List<Card> hand = currentPlayer.getHand();
+
+        ObservableList<Card> observableList = FXCollections.observableArrayList(hand);
+        this.hand.setItems(observableList);
 
         this.playerNames.setStyle("-fx-font-weight: bold;");
+        this.selectedPlayer.setText(playerName);
 
-        for (Node node : playerNames.getParent().getChildrenUnmodifiable()) {
-            if (node instanceof Text) {
-                Text text = (Text) node;
-                if (text.getText().equals(playerName)) {
-                    text.setStyle("-fx-font-weight: bold;");
-                } else {
-                    text.setStyle("-fx-font-weight: normal;");
-                }
-            }
+    }
+
+    public List<Object> getSelectedCard() {
+        List<Object> playedCard = new ArrayList<>();
+        MultipleSelectionModel<Card> selectionModel = this.hand.getSelectionModel();
+        Card selectedCard = selectionModel.getSelectedItem();
+
+        if (selectedCard != null) {
+            playedCard.add(selectedCard);
+            // TODO choisir sa colonne
+            playedCard.add(1);
         }
-    }
 
-    public void clearSelectedCard() {
-        selectedCard = null;
-    }
-
-    public Card getSelectedCard() {
-        return selectedCard;
+        return playedCard;
     }
 }
