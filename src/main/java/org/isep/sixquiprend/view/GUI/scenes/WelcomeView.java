@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import org.isep.sixquiprend.model.Player;
+import org.isep.sixquiprend.model.player.Player;
 
 import java.util.List;
 

@@ -1,14 +1,13 @@
 package org.isep.sixquiprend.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Card {
     private int number;
-    private int value;
-    private boolean used;
+    private int bullHeads;
 }

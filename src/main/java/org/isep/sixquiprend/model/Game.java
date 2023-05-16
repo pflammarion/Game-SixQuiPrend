@@ -1,17 +1,20 @@
 package org.isep.sixquiprend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.isep.sixquiprend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Game {
-    private ArrayList<List<Card>> board;
-    private List<Card> playedCard;
+    private List<Player> players = new ArrayList<>();
+    private Deck deck;
+    private List<Card> cardsPlayed = new ArrayList<>();
+    private ArrayList<List<Card>> board = new ArrayList<>();
+    private int round = 1;
+    private int totalBullHeads = 0;
+    private boolean gameEnded = false;
 }
