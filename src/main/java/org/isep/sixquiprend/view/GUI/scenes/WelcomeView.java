@@ -8,12 +8,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import org.isep.sixquiprend.model.player.Player;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WelcomeView {
     
@@ -25,7 +28,7 @@ public class WelcomeView {
     private final Scene scene;
     public WelcomeView() {
 
-        //ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/isep/harrypotter/assets/img/background/home-background.jpg"))));
+        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         this.buttonQuit = new Button("Quit");
 
         Label playerNameLabel = new Label("Nom du joueur");
@@ -82,9 +85,9 @@ public class WelcomeView {
         vbox.setAlignment(Pos.CENTER);
 
 
-        //AnchorPane anchorPane = new AnchorPane(imageView, vbox);
+        AnchorPane anchorPane = new AnchorPane(imageView, vbox);
 
-        AnchorPane anchorPane = new AnchorPane(vbox);
+        //AnchorPane anchorPane = new AnchorPane(vbox);
         anchorPane.setPrefSize(1200, 600);
         AnchorPane.setTopAnchor(vbox, 100.0);
         AnchorPane.setBottomAnchor(vbox, 100.0);
