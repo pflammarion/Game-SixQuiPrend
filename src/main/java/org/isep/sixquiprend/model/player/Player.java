@@ -8,6 +8,12 @@ import java.util.List;
 
 @Data
 public abstract class Player {
+    private String name;
     private List<Card> hand = new ArrayList<>();
     private int score = 0;
+
+    public Player(String name) {
+        this.name = name;
+    }
+
 }

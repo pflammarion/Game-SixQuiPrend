@@ -71,7 +71,7 @@ public class GameController {
 
         List<AIPlayer> aiPlayers = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
-            AIPlayer aiPlayer = new AIPlayer();
+            AIPlayer aiPlayer = new AIPlayer("AI");
             aiPlayers.add(aiPlayer);
         }
 

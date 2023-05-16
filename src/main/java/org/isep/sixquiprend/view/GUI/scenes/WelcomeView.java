@@ -115,6 +115,6 @@ public class WelcomeView {
     }
 
     public String getPlayerName(){
-        return playerNameTextField.toString();
+        return playerNameTextField.getText();
     }
 }
