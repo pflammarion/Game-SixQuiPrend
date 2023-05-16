@@ -13,6 +13,7 @@ public class Game {
     private List<Player> players = new ArrayList<>();
     private Deck deck;
     private List<Card> cardsPlayed = new ArrayList<>();
+    private ArrayList<List<Card>> board = new ArrayList<>();
     private int round = 1;
     private int totalBullHeads = 0;
     private boolean gameEnded = false;

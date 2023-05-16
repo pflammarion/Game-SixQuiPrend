@@ -14,60 +14,58 @@ class GameTest {
     @Test
     void getBoard() {
         List<Card> row1 = new ArrayList<>();
-        row1.add(new Card(1, 1, false));
-        row1.add(new Card(2, 1, true));
+        row1.add(new Card(1, 1));
+        row1.add(new Card(2, 1));
 
         List<Card> row2 = new ArrayList<>();
-        row2.add(new Card(3, 1, false));
-        row2.add(new Card(4, 1, true));
+        row2.add(new Card(3, 1));
+        row2.add(new Card(4, 1));
 
         List<Card> row3 = new ArrayList<>();
-        row3.add(new Card(5, 5, false));
-        row3.add(new Card(6, 1, true));
+        row3.add(new Card(5, 5));
+        row3.add(new Card(6, 1));
 
         List<Card> row4 = new ArrayList<>();
-        row4.add(new Card(7, 1, false));
-        row4.add(new Card(8, 1, true));
+        row4.add(new Card(7, 1));
+        row4.add(new Card(8, 1));
 
         ArrayList<List<Card>> board = new ArrayList<>();
         board.add(row1);
         board.add(row2);
         board.add(row3);
         board.add(row4);
-        Game game = new Game(board, new ArrayList<>());
+        Game game = new Game();
+        game.setBoard(board);
         Assertions.assertEquals(board, game.getBoard());
     }
 
     @Test
     void getPlayedCard() {
         List<Card> playedCard = new ArrayList<>();
-        playedCard.add(new Card(2, 1, true));
-        playedCard.add(new Card(6, 1, true));
-        Game game = new Game(new ArrayList<>(), playedCard);
-        Assertions.assertEquals(playedCard, game.getPlayedCard());
-        for (int i = 0; i > playedCard.size(); i++)
-        {
-            Assertions.assertTrue(game.getPlayedCard().get(i).isUsed());
-        }
+        playedCard.add(new Card(2, 1));
+        playedCard.add(new Card(6, 1));
+        Game game = new Game();
+        game.setCardsPlayed(playedCard);
+        Assertions.assertEquals(playedCard, game.getCardsPlayed());
     }
 
     @Test
     void setBoard() {
         List<Card> row1 = new ArrayList<>();
-        row1.add(new Card(1, 1, false));
-        row1.add(new Card(2, 1, true));
+        row1.add(new Card(1, 1));
+        row1.add(new Card(2, 1));
 
         List<Card> row2 = new ArrayList<>();
-        row2.add(new Card(3, 1, false));
-        row2.add(new Card(4, 1, true));
+        row2.add(new Card(3, 1));
+        row2.add(new Card(4, 1));
 
         List<Card> row3 = new ArrayList<>();
-        row3.add(new Card(5, 5, false));
-        row3.add(new Card(6, 1, true));
+        row3.add(new Card(5, 5));
+        row3.add(new Card(6, 1));
 
         List<Card> row4 = new ArrayList<>();
-        row4.add(new Card(7, 1, false));
-        row4.add(new Card(8, 1, true));
+        row4.add(new Card(7, 1));
+        row4.add(new Card(8, 1));
 
         ArrayList<List<Card>> board = new ArrayList<>();
         board.add(row1);
@@ -75,7 +73,7 @@ class GameTest {
         board.add(row3);
         board.add(row4);
 
-        Game game = new Game(new ArrayList<>(), new ArrayList<>());
+        Game game = new Game();
         game.setBoard(board);
         Assertions.assertEquals(board, game.getBoard());
     }
@@ -83,14 +81,10 @@ class GameTest {
     @Test
     void setPlayedCard() {
         List<Card> playedCard = new ArrayList<>();
-        playedCard.add(new Card(2, 1, true));
-        playedCard.add(new Card(6, 1, true));
-        Game game = new Game(new ArrayList<>(), new ArrayList<>());
-        game.setPlayedCard(playedCard);
-        Assertions.assertEquals(playedCard, game.getPlayedCard());
-        for (int i = 0; i > playedCard.size(); i++)
-        {
-            Assertions.assertTrue(game.getPlayedCard().get(i).isUsed());
-        }
+        playedCard.add(new Card(2, 1));
+        playedCard.add(new Card(6, 1));
+        Game game = new Game();
+        game.setCardsPlayed(playedCard);
+        Assertions.assertEquals(playedCard, game.getCardsPlayed());
     }
 }

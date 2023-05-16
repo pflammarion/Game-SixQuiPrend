@@ -1,5 +1,7 @@
 package org.isep.sixquiprend.model;
 
+import org.isep.sixquiprend.model.player.HumanPlayer;
+import org.isep.sixquiprend.model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,12 +11,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
-    Player player;
+    HumanPlayer player;
     @BeforeEach
     void init(){
         List<Card> hand = new ArrayList<>();
-        hand.add(new Card(11, 3, false));
-        player = new Player("Paul", hand, 0);
+        hand.add(new Card(11, 3));
+        player = new HumanPlayer("Paul");
     }
 
     @Test
@@ -31,7 +33,7 @@ class PlayerTest {
     @Test
     void getHand() {
         List<Card> list = new ArrayList<>();
-        list.add(new Card(12, 3, false));
+        list.add(new Card(12, 3));
         assertNotEquals(list, player.getHand());
     }
 
@@ -51,7 +53,7 @@ class PlayerTest {
     @Test
     void setHand() {
         List<Card> hand = player.getHand();
-        hand.add(new Card(12, 3, false));
+        hand.add(new Card(12, 3));
         player.setHand(hand);
         assertEquals(player.getHand(), hand);
     }
