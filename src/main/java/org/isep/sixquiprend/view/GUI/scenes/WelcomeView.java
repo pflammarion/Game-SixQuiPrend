@@ -113,4 +113,8 @@ public class WelcomeView {
         this.playerList.setSelectionModel(null);
         this.playerList.getStyleClass().add("player-list");
     }
+
+    public String getPlayerName(){
+        return playerNameTextField.getText();
+    }
 }

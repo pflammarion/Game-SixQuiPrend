@@ -8,9 +8,15 @@ import java.util.List;
 
 @Data
 public abstract class Player {
+    private String name;
     private List<Card> hand = new ArrayList<>();
     private int score = 0;
-    private Card cardPlayed;
+    private Card lastCardPlayed;
+
+    public Player(String name) {
+        this.name = name;
+    }
+
     // cardPlayed utilisé pour référer le joueur et la carte jouée de la main pour le board.
     // Exemple 1: si 6eme carte jouée sur une row, il faut savoir qui a joué la 6eme carte, pour pouvoir
     // donner toutes les cartes du row.
