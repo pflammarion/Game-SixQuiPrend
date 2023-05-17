@@ -32,21 +32,30 @@ public class WelcomeView {
         Label playerListLabel = new Label("Joueurs");
         Label gameName = new Label("SUPER six qui prend");
 
+        gameName.getStyleClass().add("game_name");
+
         this.playerNameTextField = new TextField();
-        this.playerNameTextField.setMaxWidth(200);
+        this.playerNameTextField.setMaxWidth(300);
+        this.playerNameTextField.setMinWidth(150);
+        this.playerNameTextField.setMinHeight(50);
         this.playerNameTextField.setPromptText("Entrer le nom");
 
+
         VBox playerNameVBox = new VBox(playerNameLabel, playerNameTextField);
-        playerNameVBox.setSpacing(20);
+        playerNameVBox.setSpacing(10);
         playerNameVBox.setAlignment(Pos.CENTER_LEFT);
+
 
         this.buttonAjouter = new Button("Ajouter");
         this.buttonAjouter.setAlignment(Pos.CENTER);
         this.buttonAjouter.setPrefSize(200, 50);
+        this.buttonAjouter.setMinWidth(100);
+
 
         HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter);
         playerAddHBox.setSpacing(20);
-        playerAddHBox.setAlignment(Pos.BASELINE_CENTER);
+        playerAddHBox.getStyleClass().add("player_add_hbox");
+        playerAddHBox.setAlignment(Pos.BOTTOM_CENTER);
 
 
         this.buttonPlay = new Button("Jouer !");
@@ -58,7 +67,7 @@ public class WelcomeView {
         playerSetVBox.setAlignment(Pos.CENTER);
 
        this.playerList = new ListView<>();
-       this.playerList.setMaxSize(200, 200);
+       this.playerList.setMaxSize(200, 300);
 
         VBox playerListVBox = new VBox(playerListLabel, playerList);
         playerListVBox.setAlignment(Pos.CENTER);
