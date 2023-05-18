@@ -79,7 +79,7 @@ public class GameController {
         game.getPlayers().addAll(aiPlayers);
         game.boardSetUp();
 
-        Player currentPlayer = game.getCurrentPlayer();
+        Player currentPlayer = getCurrentPlayer();
 
         deck.shuffle();
         dealCards();
@@ -106,7 +106,7 @@ public class GameController {
     }
 
     private void playCard() {
-        Player currentPlayer = game.getCurrentPlayer();
+        Player currentPlayer = getCurrentPlayer();
         List<Object> playedCard = gameView.getSelectedCard();
 
         if (playedCard != null && !playedCard.isEmpty() && playedCard.get(0) != null) {
@@ -114,7 +114,7 @@ public class GameController {
             game.getCardsPlayed().add((Card) playedCard.get(0));
 
             if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
-                game.incrementRound();
+                incrementRound();
                 gameView.updateBoard(game.getBoard());
                 gameView.updateTotalBullHeads(game.getTotalBullHeads());
 
@@ -123,14 +123,14 @@ public class GameController {
                     return;
                 }
             }
-            currentPlayer.setScore(game.updateBoard(playedCard));
+            currentPlayer.setScore(updateBoard(playedCard));
 
-            game.moveToNextPlayer();
+            moveToNextPlayer();
             gameView.updatePlayers(game.getPlayers());
             gameView.updateRound(game.getRound());
-            gameView.setPlayerTurn(game.getCurrentPlayer());
+            gameView.setPlayerTurn(getCurrentPlayer());
 
-            AIPlayer aiPlayer = game.getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) game.getCurrentPlayer() : null;
+            AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
             if (aiPlayer != null) {
                 aiPlayerPlayCard(aiPlayer);
             }
@@ -162,7 +162,7 @@ public class GameController {
             game.getCardsPlayed().add(selectedCard);
 
             if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
-                game.incrementRound();
+                incrementRound();
                 gameView.updateBoard(game.getBoard());
                 gameView.updateTotalBullHeads(game.getTotalBullHeads());
 
@@ -189,14 +189,14 @@ public class GameController {
             playedCard.add(selectedCard);
             playedCard.add(chosenIndex);
 
-            aiPlayer.setScore(game.updateBoard(playedCard));
+            aiPlayer.setScore(updateBoard(playedCard));
 
-            game.moveToNextPlayer();
+            moveToNextPlayer();
             gameView.updatePlayers(game.getPlayers());
             gameView.updateRound(game.getRound());
-            gameView.setPlayerTurn(game.getCurrentPlayer());
+            gameView.setPlayerTurn(getCurrentPlayer());
 
-            AIPlayer aiPlayerNext = game.getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) game.getCurrentPlayer() : null;
+            AIPlayer aiPlayerNext = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
             if (aiPlayerNext != null) {
                 aiPlayerPlayCard(aiPlayer);
             }
@@ -204,15 +204,15 @@ public class GameController {
     }
 
     private void skipTurn() {
-        Player currentPlayer = game.getCurrentPlayer();
+        Player currentPlayer = getCurrentPlayer();
         currentPlayer.getHand().add(deck.draw());
 
-        game.moveToNextPlayer();
+        moveToNextPlayer();
         gameView.updatePlayers(game.getPlayers());
         gameView.updateRound(game.getRound());
-        gameView.setPlayerTurn(game.getCurrentPlayer());
+        gameView.setPlayerTurn(getCurrentPlayer());
 
-        AIPlayer aiPlayer = game.getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) game.getCurrentPlayer() : null;
+        AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
         if (aiPlayer != null) {
             aiPlayerPlayCard(aiPlayer);
         }
@@ -239,7 +239,7 @@ public class GameController {
     }
 
     private void restartGame() {
-        game.reset();
+        reset();
         deck.shuffle();
         dealCards();
 
@@ -247,7 +247,7 @@ public class GameController {
         gameView.updateBoard(game.getBoard());
         gameView.updateRound(game.getRound());
         gameView.updateTotalBullHeads(game.getTotalBullHeads());
-        gameView.setPlayerTurn(game.getCurrentPlayer());
+        gameView.setPlayerTurn(getCurrentPlayer());
 
         sceneManager.switchToScene("game");
     }
@@ -255,5 +255,87 @@ public class GameController {
     private void quitGame() {
         Platform.exit();
         System.exit(0);
+    }
+
+    public void moveToNextPlayer() {
+        game.setCurrentPlayerIndex((game.getCurrentPlayerIndex()+ 1) % game.getPlayers().size());
+    }
+    public Player getCurrentPlayer(){
+        return game.getPlayers().get(game.getCurrentPlayerIndex());
+    }
+    public void incrementRound() {
+        game.setRound(game.getRound() + 1);
+    }
+    public void reset() {
+        game.getPlayers().clear(); // To check because of get method, not sure if it modifies
+        game.getCardsPlayed().clear(); // To check because of get method, not sure if it modifies
+        game.getBoard().clear(); // To check because of get method, not sure if it modifies
+        game.boardSetUp();
+        game.setRound(1);
+        game.setTotalBullHeads(0);
+        game.setGameEnded(false);
+    }
+    public int updateBoard(List<Object> played) {
+        int score = 0;
+
+        ArrayList<List<Card>> board = game.getBoard();
+        Card playedCard = ((Card) played.get(0));
+        List<Integer> diff = null;
+        List<Card> selectedRow = null;
+
+        for (List<Card> row : board) {
+            diff.add(playedCard.getNumber() - row.get(row.size() - 1).getNumber());
+        }
+
+        int indexRow = indexOfSmallest(diff);
+
+        if (indexRow != -1) {
+            selectedRow = game.getBoard().get(indexRow);
+        } else {
+            // Using diff as the sum of the points on the whole row
+            diff.clear();
+            for (List<Card> row : board) {
+                int sumPointsRow = 0;
+                for (int i = 0; i < row.size(); i++){
+                    sumPointsRow += row.get(i).getBullHeads();
+                }
+                diff.add(sumPointsRow);
+            }
+            // This should not return -1, considering the code.
+            indexRow = indexOfSmallest(diff);
+            selectedRow = game.getBoard().get(indexRow);
+            score = diff.get(indexRow);
+            selectedRow.clear();
+        }
+
+        if (selectedRow.size() < 6) {
+            selectedRow.add((Card) played.get(0));
+        } else {
+            for (Card card : selectedRow) {
+                score += card.getBullHeads();
+            }
+            selectedRow.clear();
+        }
+        board.set((Integer) played.get(1), selectedRow); // To check because of get method, not sure if it modifies
+
+        return score;
+    }
+
+    // --------------- Algo de tri ---------------
+
+    // Algo pour trouver l'index de la valeur la plus petite d'une liste, positive. Ajout excep qd pas de jeu possible.
+    protected static int indexOfSmallest(List<Integer> array){
+        if (array.size() == 0)
+            return -1;
+        // Condition initial
+        int index = -1;
+        int min = 104;
+        for (int i = 0; i < array.size(); i++){
+            if (array.get(i) <= min && array.get(i) > 0){
+                min = array.get(i);
+                index = i;
+            }
+        }
+        return index;
     }
 }
