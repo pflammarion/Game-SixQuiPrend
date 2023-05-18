@@ -22,6 +22,8 @@ public class Game {
     public void boardSetUp() {
         for (int i = 0; i < 4; i++) {
             this.board.add(new ArrayList<>());
+            Card card = deck.draw();
+            this.board.get(i).add(card);
         }
     }
 }
