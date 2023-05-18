@@ -1,10 +1,9 @@
 /*@font-face {
     font-family: "IrishGrover";
-    src: url("/org/isep/sixquiprend/assets/font/IrishGrover.ttf");
+    src: url("../font/IrishGrover.ttf") ;
 }*/
 
 .root{
-
     -red: #e10015;
     -orange: #f07f00;
     -green: #60ab35;
@@ -12,7 +11,7 @@
     -purple: #363180;
     -blue-bg: #8aa1fe;
 
-    /*-light-red: ;*/
+
     -light-orange: #f38f00;
     -light-green: #7bda57;
     -light-blue: #255aa3;
@@ -30,7 +29,7 @@ Label {
 
 Button {
     -fx-background-color: white;
-    -fx-border-color: green;
+    -fx-border-color: -blue-bg;
     -fx-border-width: 2px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
