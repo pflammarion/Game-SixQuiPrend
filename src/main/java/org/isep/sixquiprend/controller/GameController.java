@@ -31,7 +31,7 @@ public class GameController {
         this.endGameView = new EndGameView();
         this.game = new Game();
         eventListener();
-        fillDeck();
+        this.deck = new Deck(fillDeck());
     }
 
     private void eventListener() {
@@ -46,7 +46,7 @@ public class GameController {
         endGameView.getQuitButton().setOnAction(event -> quitGame());
     }
 
-    private void fillDeck() {
+    private List<Card> fillDeck() {
         List<Card> cards = new ArrayList<>();
         for (int i = 1; i <= 104; i++) {
             int bullHeads;
@@ -62,7 +62,7 @@ public class GameController {
             Card card = new Card(i, bullHeads);
             cards.add(card);
         }
-        this.deck = new Deck(cards);
+        return cards;
     }
 
     private void startGame() {
@@ -77,11 +77,10 @@ public class GameController {
 
         game.getPlayers().add(humanPlayer);
         game.getPlayers().addAll(aiPlayers);
-        game.boardSetUp();
+        deck.shuffle();
+        game.boardSetUp(deck);
 
         Player currentPlayer = getCurrentPlayer();
-
-        deck.shuffle();
         dealCards();
 
         gameView.updatePlayers(game.getPlayers());
@@ -107,11 +106,12 @@ public class GameController {
 
     private void playCard() {
         Player currentPlayer = getCurrentPlayer();
-        List<Object> playedCard = gameView.getSelectedCard();
+        Card playedCard = gameView.getSelectedCard();
+        currentPlayer.setLastCardPlayed(playedCard);
 
-        if (playedCard != null && !playedCard.isEmpty() && playedCard.get(0) != null) {
-            currentPlayer.getHand().remove((Card) playedCard.get(0));
-            game.getCardsPlayed().add((Card) playedCard.get(0));
+        if (playedCard != null) {
+            currentPlayer.getHand().remove(playedCard);
+            game.getCardsPlayed().add(playedCard);
 
             if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
                 incrementRound();
@@ -144,18 +144,25 @@ public class GameController {
         int minDifference = Integer.MAX_VALUE;
         Card selectedCard = null;
 
+        List<Integer> tempStore = new ArrayList<>();
+        List<Object> realDiffPerRow = new ArrayList<>();
+
         // TODO à faire en fonction du board et non des cartes jouées
-
-        for (Card card : aiPlayerHand) {
-            int cardNumber = card.getNumber();
-            int lastCardNumber = cardsPlayed.get(cardsPlayed.size() - 1).getNumber();
-            int difference = Math.abs(cardNumber - lastCardNumber);
-
-            if (difference < minDifference) {
-                minDifference = difference;
-                selectedCard = card;
+        for (int i = 0; i < 4; i++)
+        {
+            tempStore.clear();
+            List<Card> rowComp = game.getBoard().get(i);
+            for (Card card : aiPlayerHand) {
+                int cardNumber = card.getNumber();
+                int lastCardNumber = rowComp.get(rowComp.size() - 1).getNumber();
+                int diff = Math.abs(cardNumber - lastCardNumber);
+                tempStore.add(diff);
             }
+            realDiffPerRow.add(indexOfSmallest(tempStore));
+            realDiffPerRow.add(smallestPos(tempStore));
         }
+
+        int smallestRow = indexOfSmallest(realDiffPerRow);
 
         if (selectedCard != null) {
             aiPlayerHand.remove(selectedCard);
@@ -172,24 +179,8 @@ public class GameController {
                 }
             }
 
-            int chosenIndex = 0;
-            for (List<Card> lists : game.getBoard()) {
-                if (lists.isEmpty() || (lists.get(lists.size() - 1).getNumber() < selectedCard.getNumber())) {
-                    break;
-                }
-                chosenIndex++;
-                if (chosenIndex > 3) {
-                    // TODO faire le fait de choisir la ligne avec le moins de point
-                    chosenIndex = 0;
-                    break;
-                }
-            }
 
-            List<Object> playedCard = new ArrayList<>();
-            playedCard.add(selectedCard);
-            playedCard.add(chosenIndex);
-
-            aiPlayer.setScore(updateBoard(playedCard));
+            aiPlayer.setScore(updateBoard(selectedCard));
 
             moveToNextPlayer();
             gameView.updatePlayers(game.getPlayers());
@@ -270,21 +261,21 @@ public class GameController {
         game.getPlayers().clear(); // To check because of get method, not sure if it modifies
         game.getCardsPlayed().clear(); // To check because of get method, not sure if it modifies
         game.getBoard().clear(); // To check because of get method, not sure if it modifies
-        game.boardSetUp();
+        game.boardSetUp(deck);
         game.setRound(1);
         game.setTotalBullHeads(0);
         game.setGameEnded(false);
     }
-    public int updateBoard(List<Object> played) {
+    public int updateBoard(Card played) {
         int score = 0;
 
         ArrayList<List<Card>> board = game.getBoard();
-        Card playedCard = ((Card) played.get(0));
-        List<Integer> diff = null;
-        List<Card> selectedRow = null;
+        List<Card> selectedRow;
+        List<Integer> diff = new ArrayList<>();
 
         for (List<Card> row : board) {
-            diff.add(playedCard.getNumber() - row.get(row.size() - 1).getNumber());
+            int val = played.getNumber() - row.get(row.size() - 1).getNumber();
+            diff.add(val);
         }
 
         int indexRow = indexOfSmallest(diff);
@@ -308,15 +299,16 @@ public class GameController {
             selectedRow.clear();
         }
 
-        if (selectedRow.size() < 6) {
-            selectedRow.add((Card) played.get(0));
-        } else {
+        if (selectedRow.size() >= 6) {
             for (Card card : selectedRow) {
                 score += card.getBullHeads();
             }
             selectedRow.clear();
         }
-        board.set((Integer) played.get(1), selectedRow); // To check because of get method, not sure if it modifies
+
+        selectedRow.add(played);
+
+        board.set(indexRow, selectedRow);
 
         return score;
     }
@@ -324,7 +316,7 @@ public class GameController {
     // --------------- Algo de tri ---------------
 
     // Algo pour trouver l'index de la valeur la plus petite d'une liste, positive. Ajout excep qd pas de jeu possible.
-    protected static int indexOfSmallest(List<Integer> array){
+    protected int indexOfSmallest(List<Integer> array){
         if (array.size() == 0)
             return -1;
         // Condition initial
@@ -337,5 +329,19 @@ public class GameController {
             }
         }
         return index;
+    }
+
+    // Algo pour trouver la valeur la plus petite d'une liste, positive. Ajout excep qd pas de jeu possible.
+    protected int smallestPos(List<Integer> array){
+        if (array.size() == 0)
+            return -1;
+        // Condition initial
+        int min = 104;
+        for (int i = 0; i < array.size(); i++){
+            if (array.get(i) <= min && array.get(i) > 0){
+                min = array.get(i);
+            }
+        }
+        return min;
     }
 }

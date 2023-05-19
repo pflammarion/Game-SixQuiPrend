@@ -19,7 +19,7 @@ public class Game {
     private boolean gameEnded = false;
     private int currentPlayerIndex = 0;
 
-    public void boardSetUp() {
+    public void boardSetUp(Deck deck) {
         for (int i = 0; i < 4; i++) {
             this.board.add(new ArrayList<>());
             Card card = deck.draw();

@@ -120,17 +120,10 @@ public class GameView {
 
     }
 
-    public List<Object> getSelectedCard() {
-        List<Object> playedCard = new ArrayList<>();
+    public Card getSelectedCard() {
         MultipleSelectionModel<Card> selectionModel = this.hand.getSelectionModel();
         Card selectedCard = selectionModel.getSelectedItem();
 
-        if (selectedCard != null) {
-            playedCard.add(selectedCard);
-            // TODO choisir sa colonne
-            playedCard.add(1);
-        }
-
-        return playedCard;
+        return selectedCard;
     }
 }
