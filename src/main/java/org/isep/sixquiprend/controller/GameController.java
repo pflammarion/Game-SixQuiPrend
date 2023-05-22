@@ -147,8 +147,8 @@ public class GameController {
         List<Integer> tempStore = new ArrayList<>();
         List<Integer> realDiffPerRowInd = new ArrayList<>();
         List<Integer> realDiffPerRow = new ArrayList<>();
+        int actualInd = 0;
 
-        // TODO à faire en fonction du board et non des cartes jouées
         for (int i = 0; i < 4; i++)
         {
             tempStore.clear();
@@ -164,7 +164,20 @@ public class GameController {
         }
 
         int tempInd = indexOfSmallest(realDiffPerRow);
-        int actualInd = realDiffPerRowInd.get(tempInd);
+        if (tempInd != -1){
+            actualInd = realDiffPerRowInd.get(tempInd);
+        } else {
+            try{
+                for (Card card : aiPlayerHand) {
+                    int cardNumber = card.getNumber();
+                    tempStore.add(cardNumber);
+                }
+                actualInd= indexOfBiggest(tempStore);
+            } catch (IndexOutOfBoundsException e) {
+                //TODO: EMPTY HAND APPARENTLY
+            }
+
+        }
 
         selectedCard = aiPlayerHand.get(actualInd);
 
@@ -329,6 +342,22 @@ public class GameController {
         for (int i = 0; i < array.size(); i++){
             if (array.get(i) <= min && array.get(i) > 0){
                 min = array.get(i);
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    // Algo pour trouver l'index de la valeur la plus grosse d'une liste, pour AI
+    protected int indexOfBiggest(List<Integer> array){
+        if (array.size() == 0)
+            return -1;
+        // Condition initial
+        int index = 0;
+        int max = 0;
+        for (int i = 0; i < array.size(); i++){
+            if (array.get(i) >= max){
+                max = array.get(i);
                 index = i;
             }
         }
