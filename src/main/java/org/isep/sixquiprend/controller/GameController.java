@@ -12,9 +12,7 @@ import org.isep.sixquiprend.view.GUI.scenes.EndGameView;
 import org.isep.sixquiprend.view.GUI.scenes.GameView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class GameController {
     private final SceneManager sceneManager;
@@ -111,6 +109,7 @@ public class GameController {
         currentPlayer.setLastCardPlayed(playedCard);
 
         if (playedCard != null) {
+            currentPlayer.setLastCardPlayed(playedCard);
             currentPlayer.getHand().remove(playedCard);
             game.getCardsPlayed().add(playedCard);
 
@@ -124,7 +123,6 @@ public class GameController {
                     return;
                 }
             }
-            currentPlayer.setScore(updateBoard(playedCard));
 
             moveToNextPlayer();
             gameView.updatePlayers(game.getPlayers());
@@ -182,6 +180,7 @@ public class GameController {
         selectedCard = aiPlayerHand.get(actualInd);
 
         if (selectedCard != null) {
+            aiPlayer.setLastCardPlayed(selectedCard);
             aiPlayerHand.remove(selectedCard);
             game.getCardsPlayed().add(selectedCard);
 
@@ -196,9 +195,6 @@ public class GameController {
                 }
             }
 
-
-            aiPlayer.setScore(updateBoard(selectedCard));
-
             moveToNextPlayer();
             gameView.updatePlayers(game.getPlayers());
             gameView.updateRound(game.getRound());
@@ -209,6 +205,31 @@ public class GameController {
                 aiPlayerPlayCard(aiPlayer);
             }
         }
+    }
+
+    private List<Card> sortedListCard(){
+        List<Card> cardsInPlay = game.getCardsPlayed();
+
+        Collections.sort(cardsInPlay, Comparator.comparingInt(Card::getNumber));
+
+        return cardsInPlay;
+    }
+
+    private void playGameProcess(){
+        List<Card> boardPlayed = sortedListCard();
+        List<Player> players = game.getPlayers();
+
+        for (Card card : boardPlayed){
+            int score = updateBoard(card);
+            for (Player player : players){
+                if (player.getLastCardPlayed().getNumber() == card.getNumber()){
+                    player.setScore(player.getScore() + score);
+                }
+            }
+        }
+
+        game.getCardsPlayed().clear();
+
     }
 
     private void skipTurn() {
