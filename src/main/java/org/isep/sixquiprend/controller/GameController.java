@@ -13,6 +13,7 @@ import org.isep.sixquiprend.view.GUI.scenes.GameView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameController {
@@ -141,11 +142,11 @@ public class GameController {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         List<Card> cardsPlayed = game.getCardsPlayed();
 
-        int minDifference = Integer.MAX_VALUE;
         Card selectedCard = null;
 
         List<Integer> tempStore = new ArrayList<>();
-        List<Object> realDiffPerRow = new ArrayList<>();
+        List<Integer> realDiffPerRowInd = new ArrayList<>();
+        List<Integer> realDiffPerRow = new ArrayList<>();
 
         // TODO à faire en fonction du board et non des cartes jouées
         for (int i = 0; i < 4; i++)
@@ -158,11 +159,14 @@ public class GameController {
                 int diff = Math.abs(cardNumber - lastCardNumber);
                 tempStore.add(diff);
             }
-            realDiffPerRow.add(indexOfSmallest(tempStore));
+            realDiffPerRowInd.add(indexOfSmallest(tempStore));
             realDiffPerRow.add(smallestPos(tempStore));
         }
 
-        int smallestRow = indexOfSmallest(realDiffPerRow);
+        int tempInd = indexOfSmallest(realDiffPerRow);
+        int actualInd = realDiffPerRowInd.get(tempInd);
+
+        selectedCard = aiPlayerHand.get(actualInd);
 
         if (selectedCard != null) {
             aiPlayerHand.remove(selectedCard);
