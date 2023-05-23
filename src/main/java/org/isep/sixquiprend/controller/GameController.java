@@ -80,7 +80,7 @@ public class GameController {
         game.boardSetUp(deck);
 
         Player currentPlayer = getCurrentPlayer();
-        dealCards();
+        this.dealCards();
 
         gameView.updatePlayers(game.getPlayers());
         gameView.updateBoard(game.getBoard());
@@ -104,6 +104,7 @@ public class GameController {
     }
 
     private void playCard() {
+        //TODO select line if no card > to each lines
         Player currentPlayer = getCurrentPlayer();
         Card playedCard = gameView.getSelectedCard();
         currentPlayer.setLastCardPlayed(playedCard);
@@ -113,15 +114,8 @@ public class GameController {
             currentPlayer.getHand().remove(playedCard);
             game.getCardsPlayed().add(playedCard);
 
-            if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
-                incrementRound();
-                gameView.updateBoard(game.getBoard());
-                gameView.updateTotalBullHeads(game.getTotalBullHeads());
-
-                if (game.getRound() == numCardsPerPlayer) {
-                    endGame();
-                    return;
-                }
+            if (checkEndTurn()) {
+                return;
             }
 
             moveToNextPlayer();
@@ -142,58 +136,48 @@ public class GameController {
         Card selectedCard = null;
 
         List<Integer> tempStore = new ArrayList<>();
-        List<Integer> realDiffPerRowInd = new ArrayList<>();
-        List<Integer> realDiffPerRow = new ArrayList<>();
-        int actualInd = 0;
 
-        for (int i = 0; i < 4; i++)
-        {
-            tempStore.clear();
-            List<Card> rowComp = game.getBoard().get(i);
-            for (Card card : aiPlayerHand) {
-                int cardNumber = card.getNumber();
-                int lastCardNumber = rowComp.get(rowComp.size() - 1).getNumber();
-                int diff = Math.abs(cardNumber - lastCardNumber);
-                tempStore.add(diff);
+        List<List<Card>> board = game.getBoard();
+
+        int smallestDiff = Integer.MAX_VALUE;
+        int selectedCardIndex = -1;
+
+        int lowestRowValue = Integer.MAX_VALUE;
+
+        for (List<Card> row : board) {
+            int lastCardNumber = row.get(row.size() - 1).getNumber();
+            if (lastCardNumber < lowestRowValue) {
+                lowestRowValue = lastCardNumber;
             }
-            realDiffPerRowInd.add(indexOfSmallest(tempStore));
-            realDiffPerRow.add(smallestPos(tempStore));
         }
 
-        int tempInd = indexOfSmallest(realDiffPerRow);
-        if (tempInd != -1){
-            actualInd = realDiffPerRowInd.get(tempInd);
+        for (Card card : aiPlayerHand) {
+            int cardNumber = card.getNumber();
+            int diff = cardNumber - lowestRowValue;
+            tempStore.add(diff);
+        }
+
+        for (int i = 0; i < tempStore.size(); i++) {
+            int currentDiff = tempStore.get(i);
+            if (currentDiff < smallestDiff && currentDiff > 0) {
+                smallestDiff = currentDiff;
+                selectedCardIndex = i;
+            }
+        }
+
+        if (selectedCardIndex != -1) {
+            selectedCard = aiPlayerHand.get(selectedCardIndex);
         } else {
-            for (Card card : aiPlayerHand) {
-                int cardNumber = card.getNumber();
-                tempStore.add(cardNumber);
-            }
-            actualInd= indexOfBiggest(tempStore);
-
-            // Temporary process if hand is empty.
-            if (actualInd == -1){
-                System.out.println("Empty hand");
-                System.exit(0);
-            }
-
+            System.out.println("Empty hand");
         }
-
-        selectedCard = aiPlayerHand.get(actualInd);
 
         if (selectedCard != null) {
             aiPlayer.setLastCardPlayed(selectedCard);
             aiPlayerHand.remove(selectedCard);
             game.getCardsPlayed().add(selectedCard);
 
-            if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
-                incrementRound();
-                gameView.updateBoard(game.getBoard());
-                gameView.updateTotalBullHeads(game.getTotalBullHeads());
-
-                if (game.getRound() == numCardsPerPlayer) {
-                    endGame();
-                    return;
-                }
+            if (checkEndTurn()){
+                return;
             }
 
             moveToNextPlayer();
@@ -208,23 +192,20 @@ public class GameController {
         }
     }
 
-    private List<Card> sortedListCard(){
-        List<Card> cardsInPlay = game.getCardsPlayed();
-
-        Collections.sort(cardsInPlay, Comparator.comparingInt(Card::getNumber));
-
-        return cardsInPlay;
+    private List<Card> sortDeck(List<Card> cardList){
+        Collections.sort(cardList, Comparator.comparingInt(Card::getNumber));
+        return cardList;
     }
 
     private void playGameProcess(){
-        List<Card> boardPlayed = sortedListCard();
+        List<Card> boardPlayed = sortDeck(game.getCardsPlayed());
         List<Player> players = game.getPlayers();
 
         for (Card card : boardPlayed){
-            int score = updateBoard(card);
+            //int score = updateBoard(card);
             for (Player player : players){
                 if (player.getLastCardPlayed().getNumber() == card.getNumber()){
-                    player.setScore(player.getScore() + score);
+                    //player.setScore(player.getScore() + score);
                 }
             }
         }
@@ -304,51 +285,43 @@ public class GameController {
         game.setGameEnded(false);
     }
 
-    public int updateBoard(Card played) {
+    public void updateBoard(List<Card> cardList) {
         int score = 0;
+        cardList = sortDeck(cardList);
 
-        ArrayList<List<Card>> board = game.getBoard();
-        List<Card> selectedRow;
-        List<Integer> diff = new ArrayList<>();
-
-        for (List<Card> row : board) {
-            int val = played.getNumber() - row.get(row.size() - 1).getNumber();
-            diff.add(val);
-        }
-
-        int indexRow = indexOfSmallest(diff);
-
-        if (indexRow != -1) {
-            selectedRow = game.getBoard().get(indexRow);
-        } else {
-            // Using diff as the sum of the points on the whole row
-            diff.clear();
-            for (List<Card> row : board) {
-                int sumPointsRow = 0;
-                for (int i = 0; i < row.size(); i++){
-                    sumPointsRow += row.get(i).getBullHeads();
+        for (Card card: cardList) {
+            ArrayList<List<Card>> board = game.getBoard();
+            int lastCardDiff = Integer.MAX_VALUE;
+            int selectedRowIndex = 0;
+            for(int i = 0; i < board.size(); i ++){
+                List<Card> row = board.get(i);
+                int lastCardNumber = row.get(row.size() - 1).getNumber();
+                int cardDiff = card.getNumber() - lastCardNumber;
+                if (cardDiff > 0 && lastCardDiff > cardDiff){
+                    selectedRowIndex = i;
                 }
-                diff.add(sumPointsRow);
             }
-            // This should not return -1, considering the code.
-            indexRow = indexOfSmallest(diff);
-            selectedRow = game.getBoard().get(indexRow);
-            score = diff.get(indexRow);
-            selectedRow.clear();
-        }
+            List<Card> selectedRow = board.get(selectedRowIndex);
 
-        if (selectedRow.size() >= 6) {
-            for (Card card : selectedRow) {
-                score += card.getBullHeads();
+            if (selectedRow.size() >= 6) {
+                for (Card cardInRow : selectedRow) {
+                    score += cardInRow.getBullHeads();
+                }
+                selectedRow.clear();
             }
-            selectedRow.clear();
+
+            selectedRow.add(card);
+
+            board.set(selectedRowIndex, selectedRow);
+            if (score > 0) {
+                for (Player player : game.getPlayers()){
+                    if (player.getLastCardPlayed().getNumber() == card.getNumber()){
+                        player.setScore(player.getScore() + score);
+                    }
+                }
+            }
+
         }
-
-        selectedRow.add(played);
-
-        board.set(indexRow, selectedRow);
-
-        return score;
     }
 
     // --------------- Algo de tri ---------------
@@ -398,4 +371,23 @@ public class GameController {
         }
         return min;
     }
+
+    private boolean checkEndTurn(){
+        if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
+            incrementRound();
+            this.updateBoard(game.getCardsPlayed());
+
+            gameView.updateBoard(game.getBoard());
+            gameView.updateTotalBullHeads(game.getTotalBullHeads());
+
+            if (game.getRound() == numCardsPerPlayer) {
+                endGame();
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 }
