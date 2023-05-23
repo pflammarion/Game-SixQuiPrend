@@ -138,7 +138,6 @@ public class GameController {
 
     private void aiPlayerPlayCard(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
-        List<Card> cardsPlayed = game.getCardsPlayed();
 
         Card selectedCard = null;
 
@@ -165,14 +164,16 @@ public class GameController {
         if (tempInd != -1){
             actualInd = realDiffPerRowInd.get(tempInd);
         } else {
-            try{
-                for (Card card : aiPlayerHand) {
-                    int cardNumber = card.getNumber();
-                    tempStore.add(cardNumber);
-                }
-                actualInd= indexOfBiggest(tempStore);
-            } catch (IndexOutOfBoundsException e) {
-                //TODO: EMPTY HAND APPARENTLY
+            for (Card card : aiPlayerHand) {
+                int cardNumber = card.getNumber();
+                tempStore.add(cardNumber);
+            }
+            actualInd= indexOfBiggest(tempStore);
+
+            // Temporary process if hand is empty.
+            if (actualInd == -1){
+                System.out.println("Empty hand");
+                System.exit(0);
             }
 
         }
@@ -227,9 +228,7 @@ public class GameController {
                 }
             }
         }
-
         game.getCardsPlayed().clear();
-
     }
 
     private void skipTurn() {
@@ -304,6 +303,7 @@ public class GameController {
         game.setTotalBullHeads(0);
         game.setGameEnded(false);
     }
+
     public int updateBoard(Card played) {
         int score = 0;
 
