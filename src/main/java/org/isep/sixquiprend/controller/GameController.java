@@ -134,65 +134,77 @@ public class GameController {
 
     private void aiPlayerPlayCard(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
+        if (aiPlayerHand.size() > 0) {
 
-        Card selectedCard = null;
+            Card selectedCard = null;
 
-        List<Integer> tempStore = new ArrayList<>();
+            List<Integer> tempStore = new ArrayList<>();
 
-        List<List<Card>> board = game.getBoard();
+            List<List<Card>> board = game.getBoard();
 
-        int smallestDiff = Integer.MAX_VALUE;
-        int selectedCardIndex = -1;
+            int smallestDiff = Integer.MAX_VALUE;
+            int selectedCardIndex = -1;
 
-        int lowestRowValue = Integer.MAX_VALUE;
+            int lowestRowValue = Integer.MAX_VALUE;
 
-        for (List<Card> row : board) {
-            int lastCardNumber = row.get(row.size() - 1).getNumber();
-            if (lastCardNumber < lowestRowValue) {
-                lowestRowValue = lastCardNumber;
+            for (List<Card> row : board) {
+                int lastCardNumber = row.get(row.size() - 1).getNumber();
+                if (lastCardNumber < lowestRowValue) {
+                    lowestRowValue = lastCardNumber;
+                }
             }
-        }
 
-        for (Card card : aiPlayerHand) {
-            int cardNumber = card.getNumber();
-            int diff = cardNumber - lowestRowValue;
-            tempStore.add(diff);
-        }
-
-        for (int i = 0; i < tempStore.size(); i++) {
-            int currentDiff = tempStore.get(i);
-            if (currentDiff < smallestDiff && currentDiff > 0) {
-                smallestDiff = currentDiff;
-                selectedCardIndex = i;
+            for (Card card : aiPlayerHand) {
+                int cardNumber = card.getNumber();
+                int diff = cardNumber - lowestRowValue;
+                tempStore.add(diff);
             }
-        }
 
-        if (selectedCardIndex != -1) {
+            for (int i = 0; i < tempStore.size(); i++) {
+                int currentDiff = tempStore.get(i);
+                if (currentDiff < smallestDiff && currentDiff > 0) {
+                    smallestDiff = currentDiff;
+                    selectedCardIndex = i;
+                }
+            }
+
+            // Take the lowest card of the player hand
+            if (selectedCardIndex == -1) {
+                int minValue = Integer.MAX_VALUE;
+                int currentIndex = 0;
+                for (Card card : aiPlayerHand) {
+                    if (card.getNumber() < minValue) {
+                        minValue = card.getNumber();
+                        selectedCardIndex = currentIndex;
+                    }
+                    currentIndex++;
+                }
+            }
+
             selectedCard = aiPlayerHand.get(selectedCardIndex);
-        } else {
-            System.out.println("Empty hand");
+            if (selectedCard != null) {
+                aiPlayer.setLastCardPlayed(selectedCard);
+                aiPlayerHand.remove(selectedCard);
+                game.getCardsPlayed().add(selectedCard);
+
+                if (checkEndTurn()) {
+                    return;
+                }
+
+                moveToNextPlayer();
+                gameView.updatePlayers(game.getPlayers());
+                gameView.updateRound(game.getRound());
+                gameView.setPlayerTurn(getCurrentPlayer());
+
+                AIPlayer aiPlayerNext = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
+                if (aiPlayerNext != null) {
+                    aiPlayerPlayCard(aiPlayerNext);
+                }
+            }
+
         }
 
 
-        if (selectedCard != null) {
-            aiPlayer.setLastCardPlayed(selectedCard);
-            aiPlayerHand.remove(selectedCard);
-            game.getCardsPlayed().add(selectedCard);
-
-            if (checkEndTurn()){
-                return;
-            }
-
-            moveToNextPlayer();
-            gameView.updatePlayers(game.getPlayers());
-            gameView.updateRound(game.getRound());
-            gameView.setPlayerTurn(getCurrentPlayer());
-
-            AIPlayer aiPlayerNext = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
-            if (aiPlayerNext != null) {
-                aiPlayerPlayCard(aiPlayerNext);
-            }
-        }
     }
 
     private List<Card> sortDeck(List<Card> cardList){
@@ -295,7 +307,8 @@ public class GameController {
         for (Card card: cardList) {
             ArrayList<List<Card>> board = game.getBoard();
             int lastCardDiff = Integer.MAX_VALUE;
-            int selectedRowIndex = 0;
+            int selectedRowIndex = -1;
+            List<Card> selectedRow;
             for(int i = 0; i < board.size(); i ++){
                 List<Card> row = board.get(i);
                 int lastCardNumber = row.get(row.size() - 1).getNumber();
@@ -306,14 +319,36 @@ public class GameController {
                     selectedRowIndex = i;
                 }
             }
-            List<Card> selectedRow = board.get(selectedRowIndex);
-
-            if (selectedRow.size() >= 6) {
+            if (selectedRowIndex != -1){
+                selectedRow = board.get(selectedRowIndex);
+                if (selectedRow.size() >= 6) {
+                    for (Card cardInRow : selectedRow) {
+                        score += cardInRow.getBullHeads();
+                    }
+                    selectedRow.clear();
+                }
+            } else {
+                // Algo in case card played is not playable then choose the min point line
+                int numberOfHead = 0;
+                int minNumberOfHead = Integer.MAX_VALUE;
+                int currentIndex = 0;
+                for (List<Card> cards : board) {
+                    for (Card cardInRow : cards) {
+                        numberOfHead += cardInRow.getBullHeads();
+                    }
+                    if (numberOfHead < minNumberOfHead) {
+                        minNumberOfHead = numberOfHead;
+                        selectedRowIndex = currentIndex;
+                    }
+                    currentIndex++;
+                }
+                selectedRow = board.get(selectedRowIndex);
                 for (Card cardInRow : selectedRow) {
                     score += cardInRow.getBullHeads();
                 }
                 selectedRow.clear();
             }
+
 
             selectedRow.add(card);
 
