@@ -38,8 +38,13 @@ public class GameController {
         sceneManager.addScene("endGame", endGameView.getScene());
 
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
+        welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         gameView.getPlayButton().setOnAction(event -> playCard());
-        endGameView.getRestartButton().setOnAction(event -> sceneManager.switchToScene("welcome"));
+        endGameView.getRestartButton().setOnAction(event -> {
+            game.getPlayers().clear();
+            welcomeView.resetPlayerList();
+            sceneManager.switchToScene("welcome");
+        });
         endGameView.getQuitButton().setOnAction(event -> quitGame());
     }
 
@@ -63,32 +68,25 @@ public class GameController {
     }
 
     private void startGame() {
+        if (game.getPlayers().size() >= 2){
 
-        this.reset();
+            this.setup();
 
-        String playerName = welcomeView.getPlayerName();
-        HumanPlayer humanPlayer = new HumanPlayer(playerName);
+            deck.shuffle();
+            game.boardSetUp(deck);
 
-        List<AIPlayer> aiPlayers = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            AIPlayer aiPlayer = new AIPlayer("AI "+ i);
-            aiPlayers.add(aiPlayer);
+            Player currentPlayer = getCurrentPlayer();
+            dealCards();
+
+            gameView.updatePlayers(game.getPlayers());
+            gameView.updateBoard(game.getBoard());
+            gameView.updateRound(game.getRound());
+            gameView.setPlayerTurn(currentPlayer);
+
+            sceneManager.switchToScene("game");
+        } else {
+            System.out.println("Il faut au moins un joueur pour commencer à jouer");
         }
-
-        game.getPlayers().add(humanPlayer);
-        game.getPlayers().addAll(aiPlayers);
-        deck.shuffle();
-        game.boardSetUp(deck);
-
-        Player currentPlayer = getCurrentPlayer();
-        dealCards();
-
-        gameView.updatePlayers(game.getPlayers());
-        gameView.updateBoard(game.getBoard());
-        gameView.updateRound(game.getRound());
-        gameView.setPlayerTurn(currentPlayer);
-
-        sceneManager.switchToScene("game");
     }
 
     private void dealCards() {
@@ -233,9 +231,8 @@ public class GameController {
     public void incrementRound() {
         game.setRound(game.getRound() + 1);
     }
-    public void reset() {
+    public void setup() {
         this.deck = new Deck(fillDeck());
-        game.getPlayers().clear();
         game.getCardsPlayed().clear();
         game.getBoard().clear();
         game.setRound(1);
@@ -321,6 +318,24 @@ public class GameController {
 
             if (game.getRound() == numCardsPerPlayer + 1) {
                 endGame();
+                return true;
+            }
+        }
+        return false;
+    }
+    private void addPlayer(){
+        String playerName = welcomeView.getPlayerName();
+        if (!playerName.equalsIgnoreCase("") && !checkAlreadyUsedName(playerName)){
+            HumanPlayer humanPlayer = new HumanPlayer(playerName);
+            game.getPlayers().add(humanPlayer);
+            welcomeView.addNameToPlayerList(playerName);
+            welcomeView.setPlayerNameTextField("");
+        }
+    }
+
+    private boolean checkAlreadyUsedName(String name){
+        for (Player player : game.getPlayers()){
+            if (Objects.equals(player.getName(), name)){
                 return true;
             }
         }

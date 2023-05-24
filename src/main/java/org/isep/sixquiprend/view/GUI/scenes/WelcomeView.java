@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.player.Player;
 
 import java.util.List;
@@ -128,5 +129,19 @@ public class WelcomeView {
 
     public String getPlayerName(){
         return playerNameTextField.getText();
+    }
+
+    public void setPlayerNameTextField(String string) {
+        playerNameTextField.setText(string);
+    }
+
+    public void addNameToPlayerList(String name) {
+        ObservableList<String> observableList = this.playerList.getItems();
+        observableList.add(name);
+        this.playerList.setItems(observableList);
+    }
+
+    public void resetPlayerList(){
+        this.playerList.setItems(FXCollections.observableArrayList(""));
     }
 }
