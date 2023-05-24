@@ -64,7 +64,6 @@ public class GameController {
 
     private void startGame() {
 
-
         this.reset();
 
         String playerName = welcomeView.getPlayerName();
@@ -100,6 +99,7 @@ public class GameController {
                 Card card = deck.draw();
                 cards.add(card);
             }
+
             cards.sort(Comparator.comparingInt(Card::getNumber));
             player.setHand(cards);
         }
@@ -195,7 +195,6 @@ public class GameController {
                     aiPlayerPlayCard(aiPlayerNext);
                 }
             }
-
         }
     }
 
@@ -270,6 +269,7 @@ public class GameController {
                     }
                     selectedRow.clear();
                 }
+
             } else {
                 // Algo in case card played is not playable then choose the min point line
                 int minNumberOfHead = Integer.MAX_VALUE;
@@ -286,17 +286,19 @@ public class GameController {
                     // TODO faire quand le nombre est equivalent pour choisir un meilleur ligne en fonction de la derniere carte
                     currentIndex++;
                 }
+
                 selectedRow = board.get(selectedRowIndex);
+
                 for (Card cardInRow : selectedRow) {
                     score += cardInRow.getBullHeads();
                 }
+
                 selectedRow.clear();
             }
 
-
             selectedRow.add(card);
-
             board.set(selectedRowIndex, selectedRow);
+
             if (score > 0) {
                 for (Player player : game.getPlayers()){
                     if (player.getLastCardPlayed().getNumber() == card.getNumber()){
@@ -323,7 +325,4 @@ public class GameController {
         }
         return false;
     }
-
-
-
 }

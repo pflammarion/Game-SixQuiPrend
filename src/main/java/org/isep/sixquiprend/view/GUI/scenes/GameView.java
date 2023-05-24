@@ -28,7 +28,6 @@ public class GameView {
     private final Scene scene;
     private final Text playerNames;
     private final Label roundLabel;
-    private final Label totalBullHeads;
     private final VBox boardPane;
     private Label selectedPlayer;
     private ListView<Card> hand;
@@ -38,7 +37,6 @@ public class GameView {
         playButton = new Button("Play");
         playerNames = new Text();
         roundLabel = new Label();
-        totalBullHeads = new Label();
         boardPane = new VBox();
         selectedPlayer = new Label();
         selectedPlayer.setStyle("-fx-background-color: lightblue; -fx-padding: 5px;");
@@ -104,11 +102,6 @@ public class GameView {
         roundLabel.setText("Round: " + round);
     }
 
-    public void updateTotalBullHeads(int totalBullHeadsInt) {
-        String bullHeadsText = "Total Bull Heads: " + totalBullHeadsInt;
-        this.totalBullHeads.setText(bullHeadsText);
-    }
-
     public void setPlayerTurn(Player currentPlayer) {
         String playerName = currentPlayer.getName();
         List<Card> hand = currentPlayer.getHand();
@@ -123,8 +116,7 @@ public class GameView {
 
     public Card getSelectedCard() {
         MultipleSelectionModel<Card> selectionModel = this.hand.getSelectionModel();
-        Card selectedCard = selectionModel.getSelectedItem();
 
-        return selectedCard;
+        return selectionModel.getSelectedItem();
     }
 }
