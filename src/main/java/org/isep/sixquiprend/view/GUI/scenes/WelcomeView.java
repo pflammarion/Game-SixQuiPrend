@@ -22,7 +22,9 @@ public class WelcomeView {
     
     private final Button buttonQuit;
     private final Button buttonAjouter;
-    private final Button buttonAjouterAI;
+    private final Button buttonAjouterAIEasy;
+    private final Button buttonAjouterAIMedium;
+    private final Button buttonAjouterAIHard;
     private final Button buttonPlay;
     private final TextField playerNameTextField;
     private final ListView<String> playerList;
@@ -55,10 +57,12 @@ public class WelcomeView {
         this.buttonAjouter.setPrefSize(200, 50);
         this.buttonAjouter.setMinWidth(100);
 
-        this.buttonAjouterAI = new Button("Ajouter AI");
+        this.buttonAjouterAIEasy = new Button("Ajouter AI facile");
+        this.buttonAjouterAIMedium = new Button("Ajouter AI moyen");
+        this.buttonAjouterAIHard = new Button("Ajouter AI fort");
 
 
-        HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter, buttonAjouterAI);
+        HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter, buttonAjouterAIEasy, buttonAjouterAIMedium, buttonAjouterAIHard);
         playerAddHBox.setSpacing(20);
         playerAddHBox.getStyleClass().add("player_add_hbox");
         playerAddHBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -68,8 +72,6 @@ public class WelcomeView {
         this.buttonPlay.setAlignment(Pos.CENTER);
         this.buttonPlay.setPrefSize(400, 100);
         buttonPlay.getStyleClass().add("play_button");
-
-
 
         VBox playerSetVBox = new VBox(playerAddHBox, buttonPlay);
         playerSetVBox.setAlignment(Pos.CENTER);
@@ -149,7 +151,15 @@ public class WelcomeView {
         this.playerList.setItems(FXCollections.observableArrayList());
     }
 
-    public Button getButtonAjouterAI() {
-        return buttonAjouterAI;
+    public Button getButtonAjouterAIEasy() {
+        return buttonAjouterAIEasy;
     }
+    public Button getButtonAjouterAIMedium() {
+        return buttonAjouterAIMedium;
+    }
+    public Button getButtonAjouterAIHard() {
+        return buttonAjouterAIHard;
+    }
+
+
 }
