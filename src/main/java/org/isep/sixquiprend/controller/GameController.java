@@ -241,10 +241,10 @@ public class GameController {
     }
 
     public void updateBoard(List<Card> cardList) {
-        int score = 0;
         cardList.sort(Comparator.comparingInt(Card::getNumber));
 
         for (Card card: cardList) {
+            int score = 0;
             ArrayList<List<Card>> board = game.getBoard();
             int lastCardDiff = Integer.MAX_VALUE;
             int selectedRowIndex = -1;
