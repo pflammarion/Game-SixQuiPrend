@@ -48,6 +48,9 @@ public class ClientHandler implements Runnable {
             } else if (command.equals("PERFORM_ACTION")) {
 
                 return "Action performed successfully!";
+            } else if (command.equals("GET_PLAYERS")) {
+
+                return "playerlist";
             } else {
                 return "Invalid command";
             }
