@@ -2,6 +2,7 @@ package org.isep.sixquiprend.view.GUI.scenes;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -24,22 +25,18 @@ import javafx.scene.text.Text;
 public class GameView {
 
     private final Button playButton;
-    private final Button skipButton;
     private final Scene scene;
     private final Text playerNames;
     private final Label roundLabel;
-    private final Label totalBullHeads;
     private final VBox boardPane;
     private Label selectedPlayer;
     private ListView<Card> hand;
 
 
     public GameView() {
-        skipButton = new Button("Skip");
         playButton = new Button("Play");
         playerNames = new Text();
         roundLabel = new Label();
-        totalBullHeads = new Label();
         boardPane = new VBox();
         selectedPlayer = new Label();
         selectedPlayer.setStyle("-fx-background-color: lightblue; -fx-padding: 5px;");
@@ -47,11 +44,17 @@ public class GameView {
         this.hand = new ListView<>();
         hand.setMaxSize(200, 200);
 
-        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, hand, playButton, skipButton, boardPane);
+
+        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, playButton, boardPane);
         vbox.setSpacing(10);
         vbox.setAlignment(Pos.CENTER);
 
-        AnchorPane anchorPane = new AnchorPane(vbox);
+        HBox hbox = new HBox(hand, vbox);
+        hbox.setSpacing(300);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(60));
+
+        AnchorPane anchorPane = new AnchorPane(hbox);
         anchorPane.setPrefSize(1200, 600);
         AnchorPane.setTopAnchor(vbox, 100.0);
         AnchorPane.setBottomAnchor(vbox, 100.0);
@@ -69,14 +72,10 @@ public class GameView {
         return playButton;
     }
 
-    public Button getSkipButton() {
-        return skipButton;
-    }
-
     public void updatePlayers(List<Player> players) {
         StringBuilder playerNames = new StringBuilder();
         for (Player player : players) {
-            playerNames.append(player.getName()).append("\n");
+            playerNames.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
         }
         this.playerNames.setText(playerNames.toString());
     }
@@ -103,11 +102,6 @@ public class GameView {
         roundLabel.setText("Round: " + round);
     }
 
-    public void updateTotalBullHeads(int totalBullHeadsInt) {
-        String bullHeadsText = "Total Bull Heads: " + totalBullHeadsInt;
-        this.totalBullHeads.setText(bullHeadsText);
-    }
-
     public void setPlayerTurn(Player currentPlayer) {
         String playerName = currentPlayer.getName();
         List<Card> hand = currentPlayer.getHand();
@@ -120,17 +114,9 @@ public class GameView {
 
     }
 
-    public List<Object> getSelectedCard() {
-        List<Object> playedCard = new ArrayList<>();
+    public Card getSelectedCard() {
         MultipleSelectionModel<Card> selectionModel = this.hand.getSelectionModel();
-        Card selectedCard = selectionModel.getSelectedItem();
 
-        if (selectedCard != null) {
-            playedCard.add(selectedCard);
-            // TODO choisir sa colonne
-            playedCard.add(1);
-        }
-
-        return playedCard;
+        return selectionModel.getSelectedItem();
     }
 }
