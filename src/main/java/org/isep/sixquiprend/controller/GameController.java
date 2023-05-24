@@ -71,7 +71,7 @@ public class GameController {
 
         List<AIPlayer> aiPlayers = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
-            AIPlayer aiPlayer = new AIPlayer("AI "+i);
+            AIPlayer aiPlayer = new AIPlayer("AI "+ i);
             aiPlayers.add(aiPlayer);
         }
 
@@ -82,11 +82,6 @@ public class GameController {
 
         Player currentPlayer = getCurrentPlayer();
         dealCards();
-
-        for (Player player : game.getPlayers()){
-            System.out.println(player.getHand());
-        }
-
 
         gameView.updatePlayers(game.getPlayers());
         gameView.updateBoard(game.getBoard());
@@ -114,11 +109,7 @@ public class GameController {
         ArrayList<List<Card>> board = game.getBoard();
         //TODO select line if no card > to each lines
         Player currentPlayer = getCurrentPlayer();
-        System.out.println(board);
         Card playedCard = gameView.getSelectedCard();
-
-        System.out.println(currentPlayer.getHand());
-        System.out.println(playedCard);
 
         if (playedCard != null) {
             currentPlayer.setLastCardPlayed(playedCard);
@@ -143,8 +134,6 @@ public class GameController {
 
     private void aiPlayerPlayCard(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
-
-        System.out.println(aiPlayerHand);
 
         Card selectedCard = null;
 
@@ -184,7 +173,6 @@ public class GameController {
             System.out.println("Empty hand");
         }
 
-        System.out.println(selectedCard);
 
         if (selectedCard != null) {
             aiPlayer.setLastCardPlayed(selectedCard);
@@ -338,7 +326,6 @@ public class GameController {
                 }
             }
         }
-        System.out.println(game.getBoard());
     }
 
     // --------------- Algo de tri ---------------
@@ -393,6 +380,7 @@ public class GameController {
         if (game.getCardsPlayed().size() / game.getRound() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
+            game.resetCardsPlayed();
 
             gameView.updateBoard(game.getBoard());
             gameView.updateTotalBullHeads(game.getTotalBullHeads());

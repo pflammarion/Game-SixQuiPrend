@@ -26,4 +26,8 @@ public class Game {
             this.board.get(i).add(card);
         }
     }
+
+    public void resetCardsPlayed(){
+        this.cardsPlayed = new ArrayList<>();
+    }
 }
