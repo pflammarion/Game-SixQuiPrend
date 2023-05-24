@@ -25,7 +25,6 @@ import javafx.scene.text.Text;
 public class GameView {
 
     private final Button playButton;
-    private final Button skipButton;
     private final Scene scene;
     private final Text playerNames;
     private final Label roundLabel;
@@ -36,7 +35,6 @@ public class GameView {
 
 
     public GameView() {
-        skipButton = new Button("Skip");
         playButton = new Button("Play");
         playerNames = new Text();
         roundLabel = new Label();
@@ -49,7 +47,7 @@ public class GameView {
         hand.setMaxSize(200, 200);
 
 
-        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, playButton, skipButton, boardPane);
+        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, playButton, boardPane);
         vbox.setSpacing(10);
         vbox.setAlignment(Pos.CENTER);
 
@@ -74,10 +72,6 @@ public class GameView {
 
     public Button getPlayButton() {
         return playButton;
-    }
-
-    public Button getSkipButton() {
-        return skipButton;
     }
 
     public void updatePlayers(List<Player> players) {

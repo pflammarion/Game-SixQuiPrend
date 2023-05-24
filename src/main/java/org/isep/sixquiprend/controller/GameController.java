@@ -40,7 +40,6 @@ public class GameController {
 
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         gameView.getPlayButton().setOnAction(event -> playCard());
-        gameView.getSkipButton().setOnAction(event -> skipTurn());
         endGameView.getRestartButton().setOnAction(event -> restartGame());
         endGameView.getQuitButton().setOnAction(event -> quitGame());
     }
@@ -202,21 +201,6 @@ public class GameController {
         }
 
 
-    }
-
-    private void skipTurn() {
-        Player currentPlayer = getCurrentPlayer();
-        currentPlayer.getHand().add(deck.draw());
-
-        moveToNextPlayer();
-        gameView.updatePlayers(game.getPlayers());
-        gameView.updateRound(game.getRound());
-        gameView.setPlayerTurn(getCurrentPlayer());
-
-        AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
-        if (aiPlayer != null) {
-            aiPlayerPlayCard(aiPlayer);
-        }
     }
 
     private void endGame() {
