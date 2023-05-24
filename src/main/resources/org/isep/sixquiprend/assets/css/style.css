@@ -32,20 +32,21 @@ Button {
     -fx-border-width: 2px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
+    -fx-background-insets: 1px;
+    -fx-border-style: solid;
 }
 
 Button:hover {
-    -fx-background-color: #ddebdd;
+    -fx-background-color: -light-blue-bg;
 }
 
 .play_button {
     -fx-text-fill: -red;
     -fx-font-size: 25px;
     -fx-background-color: white;
-    -fx-border-color: -red;
     -fx-max-width: 300px;
     -fx-max-height: 50px;
-
+    -fx-border-color: -red;
 }
 
 .play_button:hover {
