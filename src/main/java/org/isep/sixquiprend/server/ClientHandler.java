@@ -9,9 +9,11 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
+    private final Server server;
 
-    public ClientHandler(Socket clientSocket) throws IOException {
+    public ClientHandler(Socket clientSocket, Server server) throws IOException {
         this.clientSocket = clientSocket;
+        this.server = server;
         this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
     }
@@ -25,6 +27,12 @@ public class ClientHandler implements Runnable {
                 Object response = processInstruction(instruction);
 
                 outputStream.writeObject(response);
+
+                if (instruction instanceof String && ((String) instruction).equals("GAME_START")) {
+                    if (server.getClientCount() > 10) {
+                        server.broadcastMessage("GAME_START");
+                    }
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -33,6 +41,7 @@ public class ClientHandler implements Runnable {
                 inputStream.close();
                 outputStream.close();
                 clientSocket.close();
+                server.removeClient(this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -43,14 +52,9 @@ public class ClientHandler implements Runnable {
         if (instruction instanceof String) {
             String command = (String) instruction;
             if (command.equals("GET_TIME")) {
-
                 return System.currentTimeMillis();
             } else if (command.equals("PERFORM_ACTION")) {
-
                 return "Action performed successfully!";
-            } else if (command.equals("GET_PLAYERS")) {
-
-                return "playerlist";
             } else {
                 return "Invalid command";
             }
@@ -58,5 +62,14 @@ public class ClientHandler implements Runnable {
 
         return "Invalid instruction";
     }
+
+    public void sendMessage(Object message) {
+        try {
+            outputStream.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
 
