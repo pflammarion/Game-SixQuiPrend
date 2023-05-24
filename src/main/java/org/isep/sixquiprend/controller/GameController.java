@@ -188,6 +188,7 @@ public class GameController {
                 aiPlayerHand.remove(selectedCard);
                 game.getCardsPlayed().add(selectedCard);
 
+
                 if (checkEndTurn()) {
                     return;
                 }
@@ -243,7 +244,7 @@ public class GameController {
     public void setup() {
         this.deck = new Deck(fillDeck());
         game.getCardsPlayed().clear();
-        game.getBoard().clear();
+        game.setBoard(new ArrayList<>());
         game.setRound(1);
         game.setGameEnded(false);
         game.setCurrentPlayerIndex(0);
@@ -254,20 +255,21 @@ public class GameController {
 
         for (Card card: cardList) {
             int score = 0;
-            ArrayList<List<Card>> board = game.getBoard();
             int lastCardDiff = Integer.MAX_VALUE;
             int selectedRowIndex = -1;
+            ArrayList<List<Card>> board = game.getBoard();
             List<Card> selectedRow;
+
             for(int i = 0; i < board.size(); i ++){
                 List<Card> row = board.get(i);
                 int lastCardNumber = row.get(row.size() - 1).getNumber();
                 int cardDiff = card.getNumber() - lastCardNumber;
-                // A revoir, pas sur de cette méthode
-                // On peut reprendre ma méthode pour déterminer la plus petite diff obtenu pour une carte; ca marchait
                 if (cardDiff > 0 && lastCardDiff > cardDiff){
                     selectedRowIndex = i;
+                    lastCardDiff = cardDiff;
                 }
             }
+
             if (selectedRowIndex != -1){
                 selectedRow = board.get(selectedRowIndex);
                 if (selectedRow.size() >= 5) {
@@ -279,19 +281,47 @@ public class GameController {
 
             } else {
                 // Algo in case card played is not playable then choose the min point line
-                int minNumberOfHead = Integer.MAX_VALUE;
-                int currentIndex = 0;
-                for (List<Card> cards : board) {
+                List<Integer> tempNumHeads= new ArrayList<>();
+                for (List<Card> row : board) {
                     int numberOfHead = 0;
-                    for (Card cardInRow : cards) {
+                    for (Card cardInRow : row) {
                         numberOfHead += cardInRow.getBullHeads();
                     }
-                    if (numberOfHead < minNumberOfHead) {
-                        minNumberOfHead = numberOfHead;
-                        selectedRowIndex = currentIndex;
+                    tempNumHeads.add(numberOfHead);
+                }
+                int minNumberOfHead = Collections.min(tempNumHeads);
+
+                List<Integer> indexesMin = new ArrayList<>();
+
+                for (int i = 0; i<tempNumHeads.size();i++){
+                    if (minNumberOfHead == tempNumHeads.get(i)){
+                        indexesMin.add(i);
                     }
-                    // TODO faire quand le nombre est equivalent pour choisir un meilleur ligne en fonction de la derniere carte
-                    currentIndex++;
+                }
+
+                if (indexesMin.size() == 1){
+                    selectedRowIndex = indexesMin.get(0);
+                } else {
+
+                    List<Integer> latestCardRow = new ArrayList<>();
+                    for (int i = 0; i < indexesMin.size(); i++){
+                        List<Card> row = board.get(indexesMin.get(i));
+                        latestCardRow.add(row.get(row.size() - 1).getNumber());
+                    }
+
+                    int highestNumber = Integer.MIN_VALUE;
+                    int highestIndex = -1;
+
+                    for (int i = 0; i < latestCardRow.size(); i++) {
+                        int currentNumber = latestCardRow.get(i);
+                        if (currentNumber > highestNumber) {
+                            highestNumber = currentNumber;
+                            highestIndex = i;
+                        }
+                    }
+
+                    selectedRowIndex = indexesMin.get(highestIndex);
+
                 }
 
                 selectedRow = board.get(selectedRowIndex);
@@ -305,6 +335,7 @@ public class GameController {
 
             selectedRow.add(card);
             board.set(selectedRowIndex, selectedRow);
+
 
             if (score > 0) {
                 for (Player player : game.getPlayers()){
