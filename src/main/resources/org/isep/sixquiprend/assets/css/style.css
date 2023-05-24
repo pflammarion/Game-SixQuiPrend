@@ -1,0 +1,65 @@
+/*@font-face {
+    font-family: "IrishGrover";
+    src: url("../font/IrishGrover.ttf") ;
+}*/
+
+.root{
+    -red: #e10015;
+    -orange: #f07f00;
+    -green: #60ab35;
+    -blue: #1B4898 ;
+    -purple: #363180;
+    -blue-bg: #8aa1fe;
+
+
+    -light-orange: #f38f00;
+    -light-green: #7bda57;
+    -light-blue: #255aa3;
+    -light-purple: #69589d;
+    -light-blue-bg: #b9cafe;
+}
+
+Label {
+    -fx-font-size: 20px;
+    -fx-padding: 10 10 10 10;
+    -fx-font-family: "IrishGrover";
+}
+
+Button {
+    -fx-background-color: white;
+    -fx-border-color: -blue-bg;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+Button:hover {
+    -fx-background-color: #ddebdd;
+}
+
+.play_button {
+    -fx-text-fill: -red;
+    -fx-font-size: 25px;
+    -fx-background-color: white;
+    -fx-border-color: -red;
+    -fx-max-width: 300px;
+    -fx-max-height: 50px;
+
+}
+
+.play_button:hover {
+    -fx-text-fill: white;
+    -fx-background-color: -red;
+    -fx-border-color: -red;
+}
+
+.game_name {
+    -fx-font-family: "IrishGrover";
+    -fx-font-size: 35px;
+    -fx-padding: 0 0 30 0;
+    -fx-font-weight: bold;
+}
+
+.player_add_hbox {
+    -fx-padding: 0 0 30 0;
+}
