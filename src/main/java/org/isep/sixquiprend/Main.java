@@ -2,6 +2,7 @@ package org.isep.sixquiprend;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.isep.sixquiprend.controller.Client;
 import org.isep.sixquiprend.controller.GameController;
 import org.isep.sixquiprend.view.GUI.SceneManager;
 
@@ -14,6 +15,8 @@ public class Main extends Application {
         GameController gameController = new GameController(sceneManager);
 
         //gameController.play();
+        Client client = new Client();
+        client.connectToServer();
         sceneManager.switchToScene("welcome");
         stage.show();
     }
