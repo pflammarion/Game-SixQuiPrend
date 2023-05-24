@@ -208,6 +208,7 @@ public class GameController {
         Player winner = null;
         int minScore = Integer.MAX_VALUE;
 
+        //TODO faire quand deux joueurs ont le même score
         for (Player player : game.getPlayers()) {
             if (player.getScore() < minScore) {
                 minScore = player.getScore();
