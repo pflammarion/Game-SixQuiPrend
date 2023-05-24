@@ -2,6 +2,7 @@ package org.isep.sixquiprend.view.GUI.scenes;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -47,11 +48,17 @@ public class GameView {
         this.hand = new ListView<>();
         hand.setMaxSize(200, 200);
 
-        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, hand, playButton, skipButton, boardPane);
+
+        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, playButton, skipButton, boardPane);
         vbox.setSpacing(10);
         vbox.setAlignment(Pos.CENTER);
 
-        AnchorPane anchorPane = new AnchorPane(vbox);
+        HBox hbox = new HBox(hand, vbox);
+        hbox.setSpacing(300);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(60));
+
+        AnchorPane anchorPane = new AnchorPane(hbox);
         anchorPane.setPrefSize(1200, 600);
         AnchorPane.setTopAnchor(vbox, 100.0);
         AnchorPane.setBottomAnchor(vbox, 100.0);
