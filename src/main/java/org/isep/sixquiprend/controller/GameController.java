@@ -22,6 +22,7 @@ public class GameController {
     private final Game game;
     private Deck deck;
     private final int numCardsPerPlayer = 10;
+    private int numberOfAIPlayer = 0;
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -39,8 +40,10 @@ public class GameController {
 
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
+        welcomeView.getButtonAjouterAI().setOnAction(event -> addAIPlayer());
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
+            this.numberOfAIPlayer = 0;
             game.getPlayers().clear();
             welcomeView.resetPlayerList();
             sceneManager.switchToScene("welcome");
@@ -84,8 +87,13 @@ public class GameController {
             gameView.setPlayerTurn(currentPlayer);
 
             sceneManager.switchToScene("game");
+            AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
+            if (aiPlayer != null) {
+                aiPlayerPlayCard(aiPlayer);
+            }
+
         } else {
-            System.out.println("Il faut au moins un joueur pour commencer à jouer");
+            System.out.println("Il faut au moins deux joueur pour commencer à jouer");
         }
     }
 
@@ -105,6 +113,7 @@ public class GameController {
 
     private void playCard() {
         Player currentPlayer = getCurrentPlayer();
+
         Card playedCard = gameView.getSelectedCard();
 
         if (playedCard != null) {
@@ -331,6 +340,13 @@ public class GameController {
             welcomeView.addNameToPlayerList(playerName);
             welcomeView.setPlayerNameTextField("");
         }
+    }
+
+    private void addAIPlayer() {
+        this.numberOfAIPlayer ++;
+        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer);
+        game.getPlayers().add(aiPlayer);
+        welcomeView.addNameToPlayerList(aiPlayer.getName());
     }
 
     private boolean checkAlreadyUsedName(String name){

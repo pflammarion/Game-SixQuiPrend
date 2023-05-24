@@ -13,7 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.player.Player;
 
 import java.util.List;
@@ -23,6 +22,7 @@ public class WelcomeView {
     
     private final Button buttonQuit;
     private final Button buttonAjouter;
+    private final Button buttonAjouterAI;
     private final Button buttonPlay;
     private final TextField playerNameTextField;
     private final ListView<String> playerList;
@@ -55,8 +55,10 @@ public class WelcomeView {
         this.buttonAjouter.setPrefSize(200, 50);
         this.buttonAjouter.setMinWidth(100);
 
+        this.buttonAjouterAI = new Button("Ajouter AI");
 
-        HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter);
+
+        HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter, buttonAjouterAI);
         playerAddHBox.setSpacing(20);
         playerAddHBox.getStyleClass().add("player_add_hbox");
         playerAddHBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -66,6 +68,8 @@ public class WelcomeView {
         this.buttonPlay.setAlignment(Pos.CENTER);
         this.buttonPlay.setPrefSize(400, 100);
         buttonPlay.getStyleClass().add("play_button");
+
+
 
         VBox playerSetVBox = new VBox(playerAddHBox, buttonPlay);
         playerSetVBox.setAlignment(Pos.CENTER);
@@ -141,7 +145,11 @@ public class WelcomeView {
         this.playerList.setItems(observableList);
     }
 
-    public void resetPlayerList(){
-        this.playerList.setItems(FXCollections.observableArrayList(""));
+    public void resetPlayerList() {
+        this.playerList.setItems(FXCollections.observableArrayList());
+    }
+
+    public Button getButtonAjouterAI() {
+        return buttonAjouterAI;
     }
 }
