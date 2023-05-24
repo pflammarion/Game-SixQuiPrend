@@ -28,6 +28,8 @@ public class ClientHandler implements Runnable {
 
                 outputStream.writeObject(response);
 
+                System.out.println(instruction);
+
                 if (instruction instanceof String && ((String) instruction).equals("GAME_START")) {
                     if (server.getClientCount() > 10) {
                         server.broadcastMessage("GAME_START");
