@@ -418,9 +418,10 @@ public class GameController {
             game.resetCardsPlayed();
 
             gameView.updateBoard(game.getBoard());
+            gameView.updatePlayers(game.getPlayers());
             gameView.updateTotalBullHeads(game.getTotalBullHeads());
 
-            if (game.getRound() == numCardsPerPlayer) {
+            if (game.getRound() == numCardsPerPlayer + 1) {
                 endGame();
                 return true;
             }

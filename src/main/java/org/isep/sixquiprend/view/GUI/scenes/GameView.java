@@ -83,7 +83,7 @@ public class GameView {
     public void updatePlayers(List<Player> players) {
         StringBuilder playerNames = new StringBuilder();
         for (Player player : players) {
-            playerNames.append(player.getName()).append("\n");
+            playerNames.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
         }
         this.playerNames.setText(playerNames.toString());
     }
