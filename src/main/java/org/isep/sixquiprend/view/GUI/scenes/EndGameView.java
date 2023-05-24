@@ -19,11 +19,17 @@ public class EndGameView {
 
     private final Button quitButton;
     private final Button restartButton;
+    private final Label winner;
+    private final Label scores;
     private final Scene scene;
     public EndGameView() {
 
         quitButton = new Button("quit");
         restartButton = new Button("restart");
+
+        scores = new Label();
+        winner = new Label();
+
 
         VBox vbox = new VBox();
         vbox.setSpacing(10);
@@ -57,10 +63,14 @@ public class EndGameView {
         return restartButton;
     }
 
-    public void setTotalBullHeads(int number) {
-
+    public void setScores(List<Player> players) {
+        StringBuilder playerNames = new StringBuilder();
+        for (Player player : players) {
+            playerNames.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
+        }
+        this.scores.setText(playerNames.toString());
     }
     public void setWinner(Player winner) {
-
+        this.winner.setText(winner.getName());
     }
 }

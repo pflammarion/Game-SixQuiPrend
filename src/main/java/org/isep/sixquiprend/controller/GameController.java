@@ -106,8 +106,6 @@ public class GameController {
     }
 
     private void playCard() {
-        ArrayList<List<Card>> board = game.getBoard();
-        //TODO select line if no card > to each lines
         Player currentPlayer = getCurrentPlayer();
         Card playedCard = gameView.getSelectedCard();
 
@@ -243,10 +241,10 @@ public class GameController {
     }
 
     private void endGame() {
-        System.out.println("Je jeu est fini");
-        sceneManager.switchToScene("endGame");
+        System.out.println("Le jeu est fini");
         endGameView.setScores(game.getPlayers());
         endGameView.setWinner(findWinner());
+        sceneManager.switchToScene("endGame");
     }
 
     private Player findWinner() {
