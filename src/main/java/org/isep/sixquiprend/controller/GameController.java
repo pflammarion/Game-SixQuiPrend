@@ -121,8 +121,6 @@ public class GameController {
             currentPlayer.getHand().remove(playedCard);
             game.getCardsPlayed().add(playedCard);
 
-            System.out.println(playedCard);
-
             if (checkEndTurn()) {
                 return;
             }
@@ -190,7 +188,6 @@ public class GameController {
                 aiPlayerHand.remove(selectedCard);
                 game.getCardsPlayed().add(selectedCard);
 
-                System.out.println(selectedCard);
 
                 if (checkEndTurn()) {
                     return;
@@ -339,7 +336,6 @@ public class GameController {
             selectedRow.add(card);
             board.set(selectedRowIndex, selectedRow);
 
-            System.out.println(board);
 
             if (score > 0) {
                 for (Player player : game.getPlayers()){
