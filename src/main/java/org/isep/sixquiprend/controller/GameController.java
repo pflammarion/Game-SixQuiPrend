@@ -12,17 +12,16 @@ import org.isep.sixquiprend.view.GUI.scenes.EndGameView;
 import org.isep.sixquiprend.view.GUI.scenes.GameView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameController {
     private final SceneManager sceneManager;
-    private WelcomeView welcomeView;
-    private GameView gameView;
-    private EndGameView endGameView;
-    private Game game;
-    private Deck deck;
-    private int numCardsPerPlayer = 10;
+    private final WelcomeView welcomeView;
+    private final GameView gameView;
+    private final EndGameView endGameView;
+    private final Game game;
+    private final Deck deck;
+    private final int numCardsPerPlayer = 10;
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -100,7 +99,7 @@ public class GameController {
                 Card card = deck.draw();
                 cards.add(card);
             }
-            sortDeck(cards);
+            cards.sort(Comparator.comparingInt(Card::getNumber));
             player.setHand(cards);
         }
     }
@@ -205,26 +204,6 @@ public class GameController {
 
     }
 
-    private List<Card> sortDeck(List<Card> cardList){
-        Collections.sort(cardList, Comparator.comparingInt(Card::getNumber));
-        return cardList;
-    }
-
-    private void playGameProcess(){
-        List<Card> boardPlayed = sortDeck(game.getCardsPlayed());
-        List<Player> players = game.getPlayers();
-
-        for (Card card : boardPlayed){
-            //int score = updateBoard(card);
-            for (Player player : players){
-                if (player.getLastCardPlayed().getNumber() == card.getNumber()){
-                    //player.setScore(player.getScore() + score);
-                }
-            }
-        }
-        game.getCardsPlayed().clear();
-    }
-
     private void skipTurn() {
         Player currentPlayer = getCurrentPlayer();
         currentPlayer.getHand().add(deck.draw());
@@ -301,7 +280,7 @@ public class GameController {
 
     public void updateBoard(List<Card> cardList) {
         int score = 0;
-        cardList = sortDeck(cardList);
+        cardList.sort(Comparator.comparingInt(Card::getNumber));
 
         for (Card card: cardList) {
             ArrayList<List<Card>> board = game.getBoard();
@@ -362,54 +341,6 @@ public class GameController {
                 }
             }
         }
-    }
-
-    // --------------- Algo de tri ---------------
-
-    // Algo pour trouver l'index de la valeur la plus petite d'une liste, positive. Ajout excep qd pas de jeu possible.
-    protected int indexOfSmallest(List<Integer> array){
-        if (array.size() == 0)
-            return -1;
-        // Condition initial
-        int index = -1;
-        int min = 104;
-        for (int i = 0; i < array.size(); i++){
-            if (array.get(i) <= min && array.get(i) > 0){
-                min = array.get(i);
-                index = i;
-            }
-        }
-        return index;
-    }
-
-    // Algo pour trouver l'index de la valeur la plus grosse d'une liste, pour AI
-    protected int indexOfBiggest(List<Integer> array){
-        if (array.size() == 0)
-            return -1;
-        // Condition initial
-        int index = 0;
-        int max = 0;
-        for (int i = 0; i < array.size(); i++){
-            if (array.get(i) >= max){
-                max = array.get(i);
-                index = i;
-            }
-        }
-        return index;
-    }
-
-    // Algo pour trouver la valeur la plus petite d'une liste, positive. Ajout excep qd pas de jeu possible.
-    protected int smallestPos(List<Integer> array){
-        if (array.size() == 0)
-            return -1;
-        // Condition initial
-        int min = 104;
-        for (int i = 0; i < array.size(); i++){
-            if (array.get(i) <= min && array.get(i) > 0){
-                min = array.get(i);
-            }
-        }
-        return min;
     }
 
     private boolean checkEndTurn(){
