@@ -13,7 +13,7 @@ public class Server {
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     public static void main(String[] args) {
-        int port = 8080; // Le port sur lequel le serveur écoutera les connexions
+        int port = 4444; // Le port sur lequel le serveur écoutera les connexions
 
         try {
             serverSocket = new ServerSocket(port);
