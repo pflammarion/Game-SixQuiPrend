@@ -20,7 +20,7 @@ public class GameController {
     private final GameView gameView;
     private final EndGameView endGameView;
     private final Game game;
-    private final Deck deck;
+    private Deck deck;
     private final int numCardsPerPlayer = 10;
 
     public GameController(SceneManager sceneManager) {
@@ -30,7 +30,6 @@ public class GameController {
         this.endGameView = new EndGameView();
         this.game = new Game();
         eventListener();
-        this.deck = new Deck(fillDeck());
     }
 
     private void eventListener() {
@@ -40,7 +39,7 @@ public class GameController {
 
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         gameView.getPlayButton().setOnAction(event -> playCard());
-        endGameView.getRestartButton().setOnAction(event -> restartGame());
+        endGameView.getRestartButton().setOnAction(event -> sceneManager.switchToScene("welcome"));
         endGameView.getQuitButton().setOnAction(event -> quitGame());
     }
 
@@ -64,6 +63,10 @@ public class GameController {
     }
 
     private void startGame() {
+
+
+        this.reset();
+
         String playerName = welcomeView.getPlayerName();
         HumanPlayer humanPlayer = new HumanPlayer(playerName);
 
@@ -84,7 +87,6 @@ public class GameController {
         gameView.updatePlayers(game.getPlayers());
         gameView.updateBoard(game.getBoard());
         gameView.updateRound(game.getRound());
-        gameView.updateTotalBullHeads(game.getTotalBullHeads());
         gameView.setPlayerTurn(currentPlayer);
 
         sceneManager.switchToScene("game");
@@ -132,15 +134,11 @@ public class GameController {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
 
-            Card selectedCard = null;
-
+            Card selectedCard;
             List<Integer> tempStore = new ArrayList<>();
-
             List<List<Card>> board = game.getBoard();
-
             int smallestDiff = Integer.MAX_VALUE;
             int selectedCardIndex = -1;
-
             int lowestRowValue = Integer.MAX_VALUE;
 
             for (List<Card> row : board) {
@@ -199,12 +197,9 @@ public class GameController {
             }
 
         }
-
-
     }
 
     private void endGame() {
-        System.out.println("Le jeu est fini");
         endGameView.setScores(game.getPlayers());
         endGameView.setWinner(findWinner());
         sceneManager.switchToScene("endGame");
@@ -224,20 +219,6 @@ public class GameController {
         return winner;
     }
 
-    private void restartGame() {
-        reset();
-        deck.shuffle();
-        dealCards();
-
-        gameView.updatePlayers(game.getPlayers());
-        gameView.updateBoard(game.getBoard());
-        gameView.updateRound(game.getRound());
-        gameView.updateTotalBullHeads(game.getTotalBullHeads());
-        gameView.setPlayerTurn(getCurrentPlayer());
-
-        sceneManager.switchToScene("game");
-    }
-
     private void quitGame() {
         Platform.exit();
         System.exit(0);
@@ -253,13 +234,13 @@ public class GameController {
         game.setRound(game.getRound() + 1);
     }
     public void reset() {
-        game.getPlayers().clear(); // To check because of get method, not sure if it modifies
-        game.getCardsPlayed().clear(); // To check because of get method, not sure if it modifies
-        game.getBoard().clear(); // To check because of get method, not sure if it modifies
-        game.boardSetUp(deck);
+        this.deck = new Deck(fillDeck());
+        game.getPlayers().clear();
+        game.getCardsPlayed().clear();
+        game.getBoard().clear();
         game.setRound(1);
-        game.setTotalBullHeads(0);
         game.setGameEnded(false);
+        game.setCurrentPlayerIndex(0);
     }
 
     public void updateBoard(List<Card> cardList) {
@@ -283,7 +264,7 @@ public class GameController {
             }
             if (selectedRowIndex != -1){
                 selectedRow = board.get(selectedRowIndex);
-                if (selectedRow.size() >= 6) {
+                if (selectedRow.size() >= 5) {
                     for (Card cardInRow : selectedRow) {
                         score += cardInRow.getBullHeads();
                     }
@@ -291,10 +272,10 @@ public class GameController {
                 }
             } else {
                 // Algo in case card played is not playable then choose the min point line
-                int numberOfHead = 0;
                 int minNumberOfHead = Integer.MAX_VALUE;
                 int currentIndex = 0;
                 for (List<Card> cards : board) {
+                    int numberOfHead = 0;
                     for (Card cardInRow : cards) {
                         numberOfHead += cardInRow.getBullHeads();
                     }
@@ -303,7 +284,6 @@ public class GameController {
                         selectedRowIndex = currentIndex;
                     }
                     // TODO faire quand le nombre est equivalent pour choisir un meilleur ligne en fonction de la derniere carte
-                    numberOfHead = 0;
                     currentIndex++;
                 }
                 selectedRow = board.get(selectedRowIndex);
@@ -335,7 +315,6 @@ public class GameController {
 
             gameView.updateBoard(game.getBoard());
             gameView.updatePlayers(game.getPlayers());
-            gameView.updateTotalBullHeads(game.getTotalBullHeads());
 
             if (game.getRound() == numCardsPerPlayer + 1) {
                 endGame();
