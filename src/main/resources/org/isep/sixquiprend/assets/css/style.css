@@ -1,7 +1,7 @@
-/*@font-face {
-    font-family: "IrishGrover";
+@font-face {
+    font-family: "Irish Grover";
     src: url("../font/IrishGrover.ttf") ;
-}*/
+}
 
 .root{
     -red: #e10015;
@@ -17,12 +17,13 @@
     -light-blue: #255aa3;
     -light-purple: #69589d;
     -light-blue-bg: #b9cafe;
+
+    -fx-font-family: "Irish Grover";
 }
 
 Label {
     -fx-font-size: 20px;
     -fx-padding: 10 10 10 10;
-    -fx-font-family: "IrishGrover";
 }
 
 Button {
@@ -54,7 +55,6 @@ Button:hover {
 }
 
 .game_name {
-    -fx-font-family: "IrishGrover";
     -fx-font-size: 35px;
     -fx-padding: 0 0 30 0;
     -fx-font-weight: bold;
