@@ -243,8 +243,9 @@ public class GameController {
     }
 
     private void endGame() {
+        System.out.println("Je jeu est fini");
         sceneManager.switchToScene("endGame");
-        endGameView.setTotalBullHeads(game.getTotalBullHeads());
+        endGameView.setScores(game.getPlayers());
         endGameView.setWinner(findWinner());
     }
 
@@ -340,6 +341,8 @@ public class GameController {
                         minNumberOfHead = numberOfHead;
                         selectedRowIndex = currentIndex;
                     }
+                    // TODO faire quand le nombre est equivalent pour choisir un meilleur ligne en fonction de la derniere carte
+                    numberOfHead = 0;
                     currentIndex++;
                 }
                 selectedRow = board.get(selectedRowIndex);
