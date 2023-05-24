@@ -12,6 +12,7 @@ import org.isep.sixquiprend.view.GUI.scenes.EndGameView;
 import org.isep.sixquiprend.view.GUI.scenes.GameView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameController {
@@ -70,7 +71,7 @@ public class GameController {
 
         List<AIPlayer> aiPlayers = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
-            AIPlayer aiPlayer = new AIPlayer("AI");
+            AIPlayer aiPlayer = new AIPlayer("AI "+i);
             aiPlayers.add(aiPlayer);
         }
 
@@ -80,7 +81,12 @@ public class GameController {
         game.boardSetUp(deck);
 
         Player currentPlayer = getCurrentPlayer();
-        this.dealCards();
+        dealCards();
+
+        for (Player player : game.getPlayers()){
+            System.out.println(player.getHand());
+        }
+
 
         gameView.updatePlayers(game.getPlayers());
         gameView.updateBoard(game.getBoard());
@@ -99,15 +105,20 @@ public class GameController {
                 Card card = deck.draw();
                 cards.add(card);
             }
+            sortDeck(cards);
             player.setHand(cards);
         }
     }
 
     private void playCard() {
+        ArrayList<List<Card>> board = game.getBoard();
         //TODO select line if no card > to each lines
         Player currentPlayer = getCurrentPlayer();
+        System.out.println(board);
         Card playedCard = gameView.getSelectedCard();
-        currentPlayer.setLastCardPlayed(playedCard);
+
+        System.out.println(currentPlayer.getHand());
+        System.out.println(playedCard);
 
         if (playedCard != null) {
             currentPlayer.setLastCardPlayed(playedCard);
@@ -132,6 +143,8 @@ public class GameController {
 
     private void aiPlayerPlayCard(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
+
+        System.out.println(aiPlayerHand);
 
         Card selectedCard = null;
 
@@ -171,6 +184,8 @@ public class GameController {
             System.out.println("Empty hand");
         }
 
+        System.out.println(selectedCard);
+
         if (selectedCard != null) {
             aiPlayer.setLastCardPlayed(selectedCard);
             aiPlayerHand.remove(selectedCard);
@@ -187,7 +202,7 @@ public class GameController {
 
             AIPlayer aiPlayerNext = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
             if (aiPlayerNext != null) {
-                aiPlayerPlayCard(aiPlayer);
+                aiPlayerPlayCard(aiPlayerNext);
             }
         }
     }
@@ -297,6 +312,8 @@ public class GameController {
                 List<Card> row = board.get(i);
                 int lastCardNumber = row.get(row.size() - 1).getNumber();
                 int cardDiff = card.getNumber() - lastCardNumber;
+                // A revoir, pas sur de cette méthode
+                // On peut reprendre ma méthode pour déterminer la plus petite diff obtenu pour une carte; ca marchait
                 if (cardDiff > 0 && lastCardDiff > cardDiff){
                     selectedRowIndex = i;
                 }
@@ -320,8 +337,8 @@ public class GameController {
                     }
                 }
             }
-
         }
+        System.out.println(game.getBoard());
     }
 
     // --------------- Algo de tri ---------------
