@@ -226,18 +226,16 @@ public class GameController {
     private void aiPlayerPlayCardMedium(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
-            Card selectedCard ;
+            Card selectedCard;
             List<Integer> tempStore = new ArrayList<>();
             List<List<Card>> board = game.getBoard();
             int smallestDiff = Integer.MAX_VALUE;
             int selectedCardIndex = -1;
-            int bestRow = -1;
-            List<Integer> latestRowValue = new ArrayList<>();
-            List<List<Integer>> differencesLatestRowValue = new ArrayList<>();
-            List<Integer> lowestEachRow = new ArrayList<>();
+            int lowestRowValue = Integer.MAX_VALUE;
             int i;
 
-            // TODO Do lowest value card to rows that are "playable" and without any penalties based on rows
+
+            // Does lowest value card to rows that are "playable" and without any penalties based on rows
             List<Integer> eligibleRows = new ArrayList<>();
             for (i = 0; i < board.size(); i++) {
                 List<Card> row = board.get(i);
@@ -246,59 +244,47 @@ public class GameController {
                 }
             }
 
+            System.out.println(eligibleRows);
+
             if (!eligibleRows.isEmpty()){
                 for (i = 0; i < eligibleRows.size(); i++){
                     List<Card> row = board.get(eligibleRows.get(i));
                     int lastCardNumber = row.get(row.size() - 1).getNumber();
-                    latestRowValue.add(lastCardNumber);
-                }
-
-                for (i = 0; i < latestRowValue.size(); i++){
-                    int lowestRowValue = latestRowValue.get(i);
-                    for (Card card : aiPlayerHand) {
-                        int cardNumber = card.getNumber();
-                        int diff = cardNumber - lowestRowValue;
-                        tempStore.add(diff);
+                    if (lastCardNumber < lowestRowValue) {
+                        lowestRowValue = lastCardNumber;
                     }
-                    differencesLatestRowValue.add(tempStore);
                 }
 
-                for (i = 0; i < differencesLatestRowValue.size(); i++) {
-                    List<Integer> rowDiff = differencesLatestRowValue.get(i);
-                    for (i = 0; i < rowDiff.size(); i++) {
-                        int currentDiff = tempStore.get(i);
-                        if (currentDiff < smallestDiff && currentDiff > 0) {
-                            smallestDiff = currentDiff;
-                        }
-                    }
-                    lowestEachRow.add(smallestDiff);
+                System.out.println(lowestRowValue);
+
+                for (Card card : aiPlayerHand) {
+                    int cardNumber = card.getNumber();
+                    int diff = cardNumber - lowestRowValue;
+                    tempStore.add(diff);
                 }
 
-                for (i = 0; i < lowestEachRow.size(); i++) {
+                for (i = 0; i < tempStore.size(); i++) {
                     int currentDiff = tempStore.get(i);
                     if (currentDiff < smallestDiff && currentDiff > 0) {
                         smallestDiff = currentDiff;
-                        bestRow = i;
+                        selectedCardIndex = i;
                     }
                 }
 
-                int selectedRow = eligibleRows.get(bestRow);
-
-
-                    // Take the lowest card of the player hand
-                    if (selectedCardIndex == -1) {
-                        int minValue = Integer.MAX_VALUE;
-                        int currentIndex = 0;
-                        for (Card card : aiPlayerHand) {
-                            if (card.getNumber() < minValue) {
-                                minValue = card.getNumber();
-                                selectedCardIndex = currentIndex;
-                            }
-                            currentIndex++;
+                // Take the lowest card of the player hand
+                if (selectedCardIndex == -1) {
+                    int minValue = Integer.MAX_VALUE;
+                    int currentIndex = 0;
+                    for (Card card : aiPlayerHand) {
+                        if (card.getNumber() < minValue) {
+                            minValue = card.getNumber();
+                            selectedCardIndex = currentIndex;
                         }
+                        currentIndex++;
                     }
-                // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
-                // penalty
+                }
+            // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
+            // penalty
             } else {
                 int minValue = Integer.MAX_VALUE;
                 int currentIndex = 0;
@@ -311,8 +297,8 @@ public class GameController {
                 }
             }
 
-
             selectedCard = aiPlayerHand.get(selectedCardIndex);
+            System.out.println(selectedCard);
             if (selectedCard != null) {
                 aiPlayer.setLastCardPlayed(selectedCard);
                 aiPlayerHand.remove(selectedCard);
@@ -345,16 +331,17 @@ public class GameController {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
 
-            Card selectedCard;
-            List<Integer> tempStore = new ArrayList<>();
+            Card selectedCard ;
             List<List<Card>> board = game.getBoard();
-            int smallestDiff = Integer.MAX_VALUE;
+            int smallestDiff;
             int selectedCardIndex = -1;
-            int lowestRowValue = Integer.MAX_VALUE;
+            int bestRow = -1;
+            List<Integer> latestRowValue = new ArrayList<>();
+            List<List<Integer>> diffLatestRowValue = new ArrayList<>();
+            List<Integer> lowestEachRow = new ArrayList<>();
             int i;
 
-
-            // TODO Do lowest diff card to rows that are "playable" and without any penalties based on rows
+            // Does lowest Diff to rows that are "playable" and without any penalties based on rows
             List<Integer> eligibleRows = new ArrayList<>();
             for (i = 0; i < board.size(); i++) {
                 List<Card> row = board.get(i);
@@ -367,35 +354,44 @@ public class GameController {
                 for (i = 0; i < eligibleRows.size(); i++){
                     List<Card> row = board.get(eligibleRows.get(i));
                     int lastCardNumber = row.get(row.size() - 1).getNumber();
+                    latestRowValue.add(lastCardNumber);
                 }
 
+                for (i = 0; i < latestRowValue.size(); i++){
+                    List<Integer> tempStore = new ArrayList<>();
+                    int rowValue = latestRowValue.get(i);
                     for (Card card : aiPlayerHand) {
                         int cardNumber = card.getNumber();
-                        int diff = cardNumber - lowestRowValue;
+                        int diff = cardNumber - rowValue;
                         tempStore.add(diff);
                     }
+                    diffLatestRowValue.add(tempStore);
+                }
 
-                    for (int i = 0; i < tempStore.size(); i++) {
-                        int currentDiff = tempStore.get(i);
+                for (i = 0; i < diffLatestRowValue.size(); i++) {
+                    List<Integer> rowDiff = diffLatestRowValue.get(i);
+                    smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff for each row
+                    for (int j = 0; j < rowDiff.size(); j++) {
+                        int currentDiff = rowDiff.get(j);
                         if (currentDiff < smallestDiff && currentDiff > 0) {
                             smallestDiff = currentDiff;
-                            selectedCardIndex = i;
                         }
                     }
+                    lowestEachRow.add(smallestDiff);
+                }
 
-                    // Take the lowest card of the player hand
-                    if (selectedCardIndex == -1) {
-                        int minValue = Integer.MAX_VALUE;
-                        int currentIndex = 0;
-                        for (Card card : aiPlayerHand) {
-                            if (card.getNumber() < minValue) {
-                                minValue = card.getNumber();
-                                selectedCardIndex = currentIndex;
-                            }
-                            currentIndex++;
-                        }
+                smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff
+
+                for (i = 0; i < lowestEachRow.size(); i++) {
+                    int currentDiff = lowestEachRow.get(i);
+                    if (currentDiff < smallestDiff && currentDiff > 0) {
+                        smallestDiff = currentDiff;
+                        bestRow = i;
                     }
                 }
+
+                List<Integer> chosenRowDiff = diffLatestRowValue.get(bestRow);
+                selectedCardIndex = chosenRowDiff.indexOf(smallestDiff);
                 // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
                 // penalty
             } else {
@@ -411,6 +407,8 @@ public class GameController {
             }
 
             selectedCard = aiPlayerHand.get(selectedCardIndex);
+            System.out.println(selectedCardIndex);
+            System.out.println(selectedCard);
             if (selectedCard != null) {
                 aiPlayer.setLastCardPlayed(selectedCard);
                 aiPlayerHand.remove(selectedCard);
