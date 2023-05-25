@@ -10,14 +10,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javafx.scene.text.Text;
 
@@ -34,27 +39,41 @@ public class GameView {
 
 
     public GameView() {
+        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         playButton = new Button("Play");
         playerNames = new Text();
         roundLabel = new Label();
         boardPane = new VBox();
         selectedPlayer = new Label();
-        selectedPlayer.setStyle("-fx-background-color: lightblue; -fx-padding: 5px;");
 
         this.hand = new ListView<>();
         hand.setMaxSize(200, 200);
 
+        selectedPlayer.getStyleClass().add("selected_player");
 
-        VBox vbox = new VBox(selectedPlayer, roundLabel, playerNames, playButton, boardPane);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER);
+        playerNames.getStyleClass().add("player_names");
+        playerNames.setTextAlignment(TextAlignment.RIGHT);
+        boardPane.setAlignment(Pos.TOP_LEFT);
 
-        HBox hbox = new HBox(hand, vbox);
-        hbox.setSpacing(300);
-        hbox.setAlignment(Pos.CENTER);
-        hbox.setPadding(new Insets(60));
 
-        AnchorPane anchorPane = new AnchorPane(hbox);
+        HBox gameInfosHBox = new HBox();
+        HBox.setHgrow(selectedPlayer, Priority.ALWAYS);
+        HBox.setHgrow(roundLabel, Priority.ALWAYS);
+        HBox.setHgrow(playerNames, Priority.ALWAYS);
+        selectedPlayer.setMaxWidth(Double.MAX_VALUE);
+        roundLabel.setMaxWidth(Double.MAX_VALUE);
+        playerNames.maxWidth(Double.MAX_VALUE);
+        gameInfosHBox.getChildren().addAll(selectedPlayer,roundLabel,playerNames);
+        gameInfosHBox.setAlignment(Pos.BASELINE_CENTER);
+        gameInfosHBox.setPrefWidth(1450);
+
+        VBox gameInfosVBox = new VBox(gameInfosHBox,boardPane);
+
+        gameInfosVBox.getStyleClass().add("game-infos-vbox");
+
+        VBox vbox = new VBox(gameInfosVBox);
+
+        AnchorPane anchorPane = new AnchorPane(imageView, gameInfosVBox);
         anchorPane.setPrefSize(1200, 600);
         AnchorPane.setTopAnchor(vbox, 100.0);
         AnchorPane.setBottomAnchor(vbox, 100.0);

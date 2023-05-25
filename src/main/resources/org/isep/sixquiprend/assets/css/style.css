@@ -22,8 +22,9 @@
 }
 
 Label {
-    -fx-font-size: 20px;
+    -fx-font-size: 25px;
     -fx-padding: 10 10 10 10;
+
 }
 
 Button {
@@ -63,4 +64,17 @@ Button:hover {
 
 .player_add_hbox {
     -fx-padding: 0 0 30 0;
+}
+
+.selected_player {
+
+}
+
+.player_names {
+    -fx-font-size: 25px;
+}
+
+.game-infos-vbox {
+    -fx-padding: 30 30 30 30;
+
 }
