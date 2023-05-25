@@ -3,11 +3,9 @@ package org.isep.sixquiprend.server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
@@ -116,34 +114,39 @@ public class ClientHandler implements Runnable {
                 index++;
             }
 
-            // Do something with the board data (boardOnline)
-            System.out.println(boardOnline);
-
+            server.broadcastMessage(setUpListMessage("_BOARD_", boardOnline));
         }
 
         if (gameInfo.get(index).equals("_ROUND_")) {
             index++;
 
             int round = (int) gameInfo.get(index);
+
+            List<Object> roundMessage = new ArrayList<>();
+            roundMessage.add("_ROUND_");
+            roundMessage.add(round);
+            server.broadcastMessage(roundMessage);
+
             index++;
 
-            // Do something with the round info (round)
         }
 
         if (gameInfo.get(index).equals("_PLAYERS_")) {
             index++;
 
-            List<List<?>> playerList = new ArrayList<>();
             while (index < gameInfo.size()) {
-                List<Object> player = new ArrayList<>();
-                player.add(gameInfo.get(index));
-                playerList.add(player);
+                List<?> playerInfo = (List<?>) gameInfo.get(index);
+                server.sendMessageToClientByName((String) playerInfo.get(0),"_PLAYERCARD_", playerInfo.get(1));
                 index++;
             }
-            System.out.println(playerList);
-
-            // Do something with the player info (playerList)
         }
+    }
+
+    private List<Object> setUpListMessage(String title, List<?> list) {
+        List<Object> message = new ArrayList<>();
+        message.add(title);
+        message.add(list);
+        return message;
     }
 }
 

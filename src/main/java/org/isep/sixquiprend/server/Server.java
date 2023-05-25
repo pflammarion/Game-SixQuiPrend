@@ -79,6 +79,14 @@ public class Server {
         return host;
     }
 
+    public void sendMessageToClientByName(String clientName, String title, Object message) {
+        for (ClientHandler client : clientHandlers) {
+            if (client.getClientName().equals(clientName)) {
+                client.sendMessage(title, message);
+            }
+        }
+    }
+
     public synchronized int getClientCount() {
         return clientHandlers.size();
     }
