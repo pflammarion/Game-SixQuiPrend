@@ -12,11 +12,8 @@ public class Main extends Application {
     public void start(Stage stage) {
         SceneManager sceneManager = new SceneManager(stage);
 
-        GameController gameController = new GameController(sceneManager);
+        new GameController(sceneManager);
 
-        //gameController.play();
-        Client client = new Client();
-        client.connectToServer();
         sceneManager.switchToScene("welcome");
         stage.show();
     }

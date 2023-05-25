@@ -23,6 +23,7 @@ public class GameController {
     private Deck deck;
     private final int numCardsPerPlayer = 10;
     private int numberOfAIPlayer = 0;
+    private Client client = null;
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -41,6 +42,7 @@ public class GameController {
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         welcomeView.getButtonAjouterAI().setOnAction(event -> addAIPlayer());
+        welcomeView.getButtonOnline().setOnAction(event -> playOnline());
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -92,7 +94,14 @@ public class GameController {
                 aiPlayerPlayCard(aiPlayer);
             }
 
-        } else {
+        }
+        else if (null != client){
+            client.sendMessageToServer("GET_PLAYERS");
+            if (client.waitForResponse().equals("playerlist")){
+                System.out.println("i have the player list");
+            }
+        }
+        else {
             System.out.println("Il faut au moins deux joueur pour commencer à jouer");
         }
     }
@@ -356,5 +365,13 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    private void playOnline() {
+        this.client = new Client();
+        client.connectToServer();
+        client.sendMessageToServer("GAME_START");
+        System.out.println("response 1 " + client.waitForResponse());
+        System.out.println("response 2 " + client.waitForResponse());
     }
 }
