@@ -92,20 +92,28 @@ public class Server {
         return clientHandlers.size();
     }
 
-    public void setRoundInfo(List<Object> info){
-        if (roundInfo.isEmpty()){
-            this.roundInfo.add(info);
-        }
-        else {
-            for (List<Object> name : roundInfo){
-                if (!name.get(0).equals(info.get(0))){
-                    this.roundInfo.add(info);
+    public void setRoundInfo(List<Object> info) {
+        List<List<Object>> infoToAdd = new ArrayList<>();
+
+        if (roundInfo.isEmpty()) {
+            infoToAdd.add(info);
+        } else {
+            boolean isPresent = false;
+            for (List<Object> name : roundInfo) {
+                if (name.get(0).equals(info.get(0))) {
+                    isPresent = true;
+                    break;
                 }
+            }
+            if (!isPresent) {
+                infoToAdd.add(info);
             }
         }
 
-        if (roundInfo.size() == clientHandlers.size()){
-            sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_" ,roundInfo);
+        roundInfo.addAll(infoToAdd);
+
+        if (roundInfo.size() == clientHandlers.size()) {
+            sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", roundInfo);
             roundInfo.clear();
         }
     }
