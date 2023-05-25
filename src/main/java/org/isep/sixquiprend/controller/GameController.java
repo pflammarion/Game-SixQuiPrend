@@ -14,6 +14,7 @@ import org.isep.sixquiprend.view.GUI.scenes.LobbyView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameController {
     private final SceneManager sceneManager;
@@ -107,9 +108,33 @@ public class GameController {
         if (null != client){
             Map<String, List<?>> gameInfo = new HashMap<>();
             gameInfo.put("_GAMEINFO_", Collections.singletonList("_GAMEINFO_"));
-            gameInfo.put("_BOARD_", game.getBoard());
+            //To have only number in a list
+            List<List<Integer>> boardOnline = game.getBoard().stream()
+                    .map(row -> row.stream().map(Card::getNumber).collect(Collectors.toList()))
+                    .toList();
+            gameInfo.put("_BOARD_", boardOnline);
             gameInfo.put("_ROUND_", Collections.singletonList(game.getRound()));
-            gameInfo.put("_PLAYERS_", game.getPlayers());
+
+            // To have player hand info to list
+
+            List<List<?>> playerList = game.getPlayers().stream()
+                    .map(player -> {
+                        List<Integer> playerHand = player.getHand().stream()
+                                .map(Card::getNumber)
+                                .collect(Collectors.toList());
+
+                        List<Object> playerInfo = new ArrayList<>();
+                        playerInfo.add(player.getName());
+                        playerInfo.add(playerHand);
+                        playerInfo.add(player.getScore());
+                        playerInfo.add(player.getLastCardPlayed().getNumber());
+
+                        return playerInfo;
+                    })
+                    .collect(Collectors.toList());
+
+
+            gameInfo.put("_PLAYERS_", playerList);
             System.out.println(gameInfo);
             client.sendMessageToServer(gameInfo);
         }

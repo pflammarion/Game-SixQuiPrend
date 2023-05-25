@@ -1,5 +1,7 @@
 package org.isep.sixquiprend.controller;
 
+import javafx.application.Platform;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -85,7 +87,11 @@ public class Client {
                         }
                         case "_PLAYERNAME_" -> gameController.setPlayerName((String) listInstruction.get(0));
                         case "_HOST_" -> gameController.setGameHost((String) listInstruction.get(0));
-                        case "GAME_STARTED" -> gameController.onlineChangeView("game");
+                        case "GAME_STARTED" -> {
+                            Platform.runLater(() -> {
+                                gameController.onlineChangeView("game");
+                            });
+                        }
                     }
                 }
             }
