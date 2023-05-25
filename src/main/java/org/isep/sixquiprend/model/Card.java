@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Card implements Serializable {
+public class Card {
     private int number;
     private int bullHeads;
 }

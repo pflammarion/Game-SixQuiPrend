@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Deck implements Serializable {
+public class Deck {
     private List<Card> cards;
 
     public void shuffle() {

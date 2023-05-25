@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class HumanPlayer extends Player implements Serializable {
+public class HumanPlayer extends Player {
     public HumanPlayer(String name) {
         super(name);
     }

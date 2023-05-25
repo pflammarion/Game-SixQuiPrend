@@ -2,7 +2,6 @@ package org.isep.sixquiprend;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.isep.sixquiprend.controller.Client;
 import org.isep.sixquiprend.controller.GameController;
 import org.isep.sixquiprend.view.GUI.SceneManager;
 
