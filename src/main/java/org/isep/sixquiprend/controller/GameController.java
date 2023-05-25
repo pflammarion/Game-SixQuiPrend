@@ -390,12 +390,11 @@ public class GameController {
 
     public void updateOnlinePlayerList(List<String> list) {
         List<Player> players = new ArrayList<>();
-        for (int i = 1; i < list.size(); i++){
-            players.add(new HumanPlayer(list.get(i)));
+        for (String s : list) {
+            players.add(new HumanPlayer(s));
         }
         game.setPlayers(players);
         lobbyView.setPlayers(players);
-        System.out.println(this.playerName);
     }
 
     private void startOnlineGame() {
@@ -404,5 +403,6 @@ public class GameController {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+        System.out.println("Je suis le joueur " + playerName);
     }
 }
