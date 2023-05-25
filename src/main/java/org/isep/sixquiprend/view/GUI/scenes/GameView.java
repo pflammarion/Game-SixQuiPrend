@@ -64,7 +64,7 @@ public class GameView {
         playerNames.maxWidth(Double.MAX_VALUE);
         gameInfosHBox.getChildren().addAll(selectedPlayer,playerNames);
         gameInfosHBox.setAlignment(Pos.TOP_CENTER);
-        gameInfosHBox.setPrefWidth(Double.MAX_VALUE);
+        gameInfosHBox.setPrefWidth(1450);
 
         VBox gameHeader = new VBox(roundLabel, gameInfosHBox);
         gameHeader.setAlignment(Pos.TOP_CENTER);
@@ -72,7 +72,7 @@ public class GameView {
         HBox gameHeaderHBox = new HBox(gameHeader);
         gameHeaderHBox.setAlignment(Pos.TOP_CENTER);
 
-        VBox gameInfosVBox = new VBox(gameHeader,boardPane);
+        VBox gameInfosVBox = new VBox(gameHeaderHBox,boardPane);
 
         gameInfosVBox.getStyleClass().add("game-infos-vbox");
 
