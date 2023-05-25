@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable, Serializable {
         this.server = server;
         this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
-        this.clientName = "Player" + server.getClientCount() + 1;
+        this.clientName = "Player " + server.getClientCount();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ClientHandler implements Runnable, Serializable {
         }
     }
 
-    private Object processInstruction(Object instruction) {
+    private Object processInstruction(Object instruction) throws IOException, ClassNotFoundException {
         Object response = null;
         String command = (String) instruction;
         switch (command) {
@@ -52,6 +52,10 @@ public class ClientHandler implements Runnable, Serializable {
                 break;
             case "GET_PLAYERLIST" :
                 response = server.getPlayerList();
+                break;
+            case "SET_PLAYERNAME" :
+                this.clientName = (String) inputStream.readObject();
+                server.broadcastMessage(server.getPlayerList());
                 break;
         }
 

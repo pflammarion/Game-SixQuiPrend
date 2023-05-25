@@ -46,7 +46,10 @@ public class GameController {
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         welcomeView.getButtonAjouterAI().setOnAction(event -> addAIPlayer());
-        welcomeView.getButtonOnline().setOnAction(event -> playOnline());
+        welcomeView.getButtonOnline().setOnAction(event -> {
+                    sceneManager.switchToScene("lobby");
+                    playOnline();
+                });
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -56,7 +59,10 @@ public class GameController {
         });
         endGameView.getQuitButton().setOnAction(event -> quitGame());
 
-        lobbyView.getQuitButton().setOnAction(event -> sceneManager.switchToScene("welcome"));
+        lobbyView.getQuitButton().setOnAction(event -> {
+            sceneManager.switchToScene("welcome");
+            client.closeConnection();
+        });
         lobbyView.getPlayButton().setOnAction(event -> startOnlineGame());
     }
 
@@ -375,20 +381,13 @@ public class GameController {
     }
 
     private void playOnline() {
-        this.client = new Client();
+        this.client = new Client(this);
         client.connectToServer();
-        Object response = client.waitForResponse();
-
-        while (!(response instanceof List<?> && ((List<Object>) response).get(0).equals("_PLAYERLIST_"))) {
-            client.sendMessageToServer("GET_PLAYERLIST");
-            response = client.waitForResponse();
-        }
-
-        updateOnlinePlayerList((List<String>) response);
-        System.out.println(game.getPlayers());
+        client.sendMessageToServer("SET_PLAYERNAME");
+        client.sendMessageToServer(welcomeView.getPlayerName());
     }
 
-    private void updateOnlinePlayerList(List<String> list) {
+    public void updateOnlinePlayerList(List<String> list) {
         List<Player> players = new ArrayList<>();
         for (int i = 1; i < list.size(); i++){
             players.add(new HumanPlayer(list.get(i)));
