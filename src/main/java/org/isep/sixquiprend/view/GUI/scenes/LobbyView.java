@@ -59,4 +59,8 @@ public class LobbyView {
         }
         this.playerList.setText(playerNames.toString());
     }
+
+    public void setHost(boolean host){
+        playButton.setVisible(host);
+    }
 }

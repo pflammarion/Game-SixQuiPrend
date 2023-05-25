@@ -79,12 +79,13 @@ public class Client {
 
                     listInstruction.remove(0);
 
-                    if (title.equals("_PLAYERLIST_")) {
-                        List<String> playerList = (List<String>) listInstruction;
-                        gameController.updateOnlinePlayerList(playerList);
-                    }
-                    else if (Objects.equals(title, "_PLAYERNAME_")) {
-                        gameController.setPlayerName((String) listInstruction.get(0));
+                    switch (title) {
+                        case "_PLAYERLIST_" -> {
+                            List<String> playerList = (List<String>) listInstruction;
+                            gameController.updateOnlinePlayerList(playerList);
+                        }
+                        case "_PLAYERNAME_" -> gameController.setPlayerName((String) listInstruction.get(0));
+                        case "_HOST_" -> gameController.setGameHost((String) listInstruction.get(0));
                     }
                 }
             }

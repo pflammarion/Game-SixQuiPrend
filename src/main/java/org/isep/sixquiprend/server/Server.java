@@ -32,6 +32,7 @@ public class Server {
                 thread.start();
 
                 broadcastMessage(getPlayerList());
+                broadcastMessage(getHost());
 
                 if (clientHandlers.size() > MAX_CONNECTIONS) {
                     startGame();
@@ -51,6 +52,7 @@ public class Server {
     public synchronized void removeClient(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);
         broadcastMessage(getPlayerList());
+        broadcastMessage(getHost());
     }
 
     public void startGame() {
@@ -65,6 +67,12 @@ public class Server {
         }
 
         return clientNameList;
+    }
+    public Object getHost() {
+        List<String> host = new ArrayList<>();
+        host.add("_HOST_");
+        host.add(clientHandlers.get(0).getClientName());
+        return host;
     }
 
     public synchronized int getClientCount() {
