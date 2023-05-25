@@ -75,7 +75,11 @@ public class ClientHandler implements Runnable {
             List<Object> command = (List<Object>) instruction;
             if (!command.isEmpty()) {
                 if (command.get(0).equals("_GAMEINFO_")) {
-                    processGameInfo(command);
+                    this.processGameInfo(command);
+                }
+                else if (command.get(0).equals("_CARDPLAYED_")) {
+                    command.remove(0);
+                    server.setRoundInfo(command);
                 }
             }
         }
