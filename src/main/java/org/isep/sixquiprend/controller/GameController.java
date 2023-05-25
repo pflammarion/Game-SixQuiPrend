@@ -26,7 +26,7 @@ public class GameController {
     private final int numCardsPerPlayer = 10;
     private int numberOfAIPlayer = 0;
     private Client client = null;
-    private String PlayerName;
+    private String playerName;
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -395,6 +395,7 @@ public class GameController {
         }
         game.setPlayers(players);
         lobbyView.setPlayers(players);
+        System.out.println(this.playerName);
     }
 
     private void startOnlineGame() {
@@ -402,6 +403,6 @@ public class GameController {
     }
 
     public void setPlayerName(String playerName) {
-        PlayerName = playerName;
+        this.playerName = playerName;
     }
 }
