@@ -137,7 +137,6 @@ public class GameController {
                     .collect(Collectors.toList());
             gameInfo.addAll(playerList);
 
-            System.out.println(gameInfo);
             client.sendMessageToServer(gameInfo);
 
         }
