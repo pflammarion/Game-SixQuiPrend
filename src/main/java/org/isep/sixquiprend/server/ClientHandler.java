@@ -74,11 +74,12 @@ public class ClientHandler implements Runnable, Serializable {
             }
         }
         if (instruction instanceof Map<?,?>){
-            Map<String, List<?>> command = (Map<String, List<?>>) instruction;
+            System.out.println(instruction);
+            /*Map<String, List<?>> command = (Map<String, List<?>>) instruction;
             System.out.println(command);
             if (command.get("_GAMEINFO_").equals("_GAMEINFO_")){
                 System.out.println("gameinfo command");
-            }
+            }*/
         }
 
         return response;

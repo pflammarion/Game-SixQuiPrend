@@ -127,7 +127,7 @@ public class GameController {
                         playerInfo.add(player.getName());
                         playerInfo.add(playerHand);
                         playerInfo.add(player.getScore());
-                        playerInfo.add(player.getLastCardPlayed().getNumber());
+                        playerInfo.add(player.getLastCardPlayed() != null ? player.getLastCardPlayed().getNumber() : 0);
 
                         return playerInfo;
                     })
