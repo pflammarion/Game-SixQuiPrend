@@ -45,7 +45,11 @@ public class GameController {
         sceneManager.addScene("endGame", endGameView.getScene());
         sceneManager.addScene("lobby", lobbyView.getScene());
 
-        welcomeView.getButtonPlay().setOnAction(event -> startGame());
+        welcomeView.getButtonPlay().setOnAction(event -> {
+            if (game.getPlayers().size() > 1) {
+                startGame();
+            }
+        });
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         welcomeView.getButtonAjouterAI().setOnAction(event -> addAIPlayer());
         welcomeView.getButtonOnline().setOnAction(event -> {
@@ -65,7 +69,12 @@ public class GameController {
             sceneManager.switchToScene("welcome");
             client.closeConnection();
         });
-        lobbyView.getPlayButton().setOnAction(event -> startOnlineGame());
+        lobbyView.getPlayButton().setOnAction(event ->  {
+            if (game.getPlayers().size() > 1 ){
+                client.sendMessageToServer("START_GAME");
+                startGame();
+            }
+        });
     }
 
     private List<Card> fillDeck() {
@@ -88,19 +97,27 @@ public class GameController {
     }
 
     private void startGame() {
-        if (game.getPlayers().size() >= 2){
 
-            this.setup();
+        this.setup();
 
-            deck.shuffle();
-            game.boardSetUp(deck);
+        deck.shuffle();
+        game.boardSetUp(deck);
+        dealCards();
 
-            Player currentPlayer = getCurrentPlayer();
-            dealCards();
-
+        if (null != client){
+            Map<String, List<?>> gameInfo = new HashMap<>();
+            gameInfo.put("_GAMEINFO_", Collections.singletonList("_GAMEINFO_"));
+            gameInfo.put("_BOARD_", game.getBoard());
+            gameInfo.put("_ROUND_", Collections.singletonList(game.getRound()));
+            gameInfo.put("_PLAYERS_", game.getPlayers());
+            System.out.println(gameInfo);
+            client.sendMessageToServer(gameInfo);
+        }
+        else {
             gameView.updatePlayers(game.getPlayers());
             gameView.updateBoard(game.getBoard());
             gameView.updateRound(game.getRound());
+            Player currentPlayer = getCurrentPlayer();
             gameView.setPlayerTurn(currentPlayer);
 
             sceneManager.switchToScene("game");
@@ -108,16 +125,6 @@ public class GameController {
             if (aiPlayer != null) {
                 aiPlayerPlayCard(aiPlayer);
             }
-
-        }
-        else if (null != client){
-            client.sendMessageToServer("GET_PLAYERS");
-            if (client.waitForResponse().equals("playerlist")){
-                System.out.println("i have the player list");
-            }
-        }
-        else {
-            System.out.println("Il faut au moins deux joueur pour commencer à jouer");
         }
     }
 
@@ -136,29 +143,35 @@ public class GameController {
     }
 
     private void playCard() {
-        Player currentPlayer = getCurrentPlayer();
+        if (null != client){
+            System.out.println("à faire");
+        }
+        else {
+            Player currentPlayer = getCurrentPlayer();
 
-        Card playedCard = gameView.getSelectedCard();
+            Card playedCard = gameView.getSelectedCard();
 
-        if (playedCard != null) {
-            currentPlayer.setLastCardPlayed(playedCard);
-            currentPlayer.getHand().remove(playedCard);
-            game.getCardsPlayed().add(playedCard);
+            if (playedCard != null) {
+                currentPlayer.setLastCardPlayed(playedCard);
+                currentPlayer.getHand().remove(playedCard);
+                game.getCardsPlayed().add(playedCard);
 
-            if (checkEndTurn()) {
-                return;
-            }
+                if (checkEndTurn()) {
+                    return;
+                }
 
-            moveToNextPlayer();
-            gameView.updatePlayers(game.getPlayers());
-            gameView.updateRound(game.getRound());
-            gameView.setPlayerTurn(getCurrentPlayer());
+                moveToNextPlayer();
+                gameView.updatePlayers(game.getPlayers());
+                gameView.updateRound(game.getRound());
+                gameView.setPlayerTurn(getCurrentPlayer());
 
-            AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
-            if (aiPlayer != null) {
-                aiPlayerPlayCard(aiPlayer);
+                AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
+                if (aiPlayer != null) {
+                    aiPlayerPlayCard(aiPlayer);
+                }
             }
         }
+
     }
 
     private void aiPlayerPlayCard(AIPlayer aiPlayer) {
@@ -398,21 +411,21 @@ public class GameController {
         lobbyView.setPlayers(players);
     }
 
-    private void startOnlineGame() {
-
-    }
-
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
         System.out.println("Je suis le joueur " + playerName);
     }
 
-    public void setGameHost(String hoster){
-        if (Objects.equals(this.playerName, hoster)){
+    public void setGameHost(String host){
+        if (Objects.equals(this.playerName, host)){
             this.gameHost = true;
         } else {
             this.gameHost = false;
         }
         lobbyView.setHost(this.gameHost);
+    }
+
+    public void onlineChangeView(String viewName) {
+        sceneManager.switchToScene(viewName);
     }
 }

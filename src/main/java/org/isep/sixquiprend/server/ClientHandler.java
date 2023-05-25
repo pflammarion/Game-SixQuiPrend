@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ClientHandler implements Runnable, Serializable {
     private final Socket clientSocket;
@@ -46,29 +47,38 @@ public class ClientHandler implements Runnable, Serializable {
 
     private Object processInstruction(Object instruction) throws IOException, ClassNotFoundException {
         Object response = null;
-        String command = (String) instruction;
-        switch (command) {
-            case "GET_TIME" :
-                response = System.currentTimeMillis();
-                break;
-            case "GAME_START" :
-                server.startGame();
-                break;
-            case "GET_PLAYERLIST" :
-                response = server.getPlayerList();
-                break;
-            case "GET_HOST" :
-                response = server.getHost();
-                break;
-            case "SET_PLAYERNAME" :
-                String player = (String) inputStream.readObject();
-                if (!player.equals("")){
-                    this.clientName = player;
-                }
-                server.broadcastMessage(server.getPlayerList());
-                server.broadcastMessage(server.getHost());
-                sendMessage("_PLAYERNAME_", this.clientName);
-                break;
+        if (instruction instanceof String) {
+            String command = (String) instruction;
+            switch (command) {
+                case "GET_TIME" :
+                    response = System.currentTimeMillis();
+                    break;
+                case "START_GAME" :
+                    server.startGame();
+                    break;
+                case "GET_PLAYERLIST" :
+                    response = server.getPlayerList();
+                    break;
+                case "GET_HOST" :
+                    response = server.getHost();
+                    break;
+                case "SET_PLAYERNAME" :
+                    String player = (String) inputStream.readObject();
+                    if (!player.equals("")){
+                        this.clientName = player;
+                    }
+                    server.broadcastMessage(server.getPlayerList());
+                    server.broadcastMessage(server.getHost());
+                    sendMessage("_PLAYERNAME_", this.clientName);
+                    break;
+            }
+        }
+        if (instruction instanceof Map<?,?>){
+            Map<String, List<?>> command = (Map<String, List<?>>) instruction;
+            System.out.println(command);
+            if (command.get("_GAMEINFO_").equals("_GAMEINFO_")){
+                System.out.println("gameinfo command");
+            }
         }
 
         return response;
