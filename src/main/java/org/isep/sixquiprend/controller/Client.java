@@ -4,12 +4,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-
+import java.util.List;
 
 public class Client {
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+
+    private GameController gameController;
+
+    public Client(GameController gameController) {
+        this.gameController = gameController;
+    }
 
     public void connectToServer() {
         try {
@@ -17,6 +23,9 @@ public class Client {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
             System.out.println("Connected to the server.");
+
+            Thread instructionThread = new Thread(this::handleInstructions);
+            instructionThread.start();
 
         } catch (IOException e) {
             System.out.println("Failed to connect to the server: " + e.getMessage());
@@ -31,7 +40,7 @@ public class Client {
         }
     }
 
-    public Object waitForResponse(){
+    public Object waitForResponse() {
         try {
             return inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -40,7 +49,7 @@ public class Client {
         return null;
     }
 
-    private void closeConnection() {
+    public void closeConnection() {
         try {
             if (outputStream != null)
                 outputStream.close();
@@ -52,5 +61,29 @@ public class Client {
             System.out.println("Error while closing connection: " + e.getMessage());
         }
     }
-}
 
+    private void handleInstructions() {
+        try {
+            while (true) {
+                Object instruction = inputStream.readObject();
+
+                if (instruction instanceof String) {
+                    String command = (String) instruction;
+                    if (command.equals("GAME_START")) {
+
+                    } else if (command.equals("SOME_OTHER_INSTRUCTION")) {
+
+                    }
+                } else if (instruction instanceof List<?>) {
+                    List<?> listInstruction = (List<?>) instruction;
+                    if (listInstruction.get(0).equals("_PLAYERLIST_")) {
+                        List<String> playerList = (List<String>) listInstruction;
+                        gameController.updateOnlinePlayerList(playerList);
+                    }
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error in instruction handling: " + e.getMessage());
+        }
+    }
+}
