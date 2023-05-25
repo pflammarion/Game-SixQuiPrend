@@ -50,6 +50,7 @@ public class Server {
 
     public synchronized void removeClient(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);
+        broadcastMessage(getPlayerList());
     }
 
     public void startGame() {

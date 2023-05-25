@@ -37,6 +37,8 @@ public class ClientHandler implements Runnable, Serializable {
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Client disconnected: " + clientSocket);
+            server.removeClient(this); // Remove client from the clientHandlers list
         }
     }
 
