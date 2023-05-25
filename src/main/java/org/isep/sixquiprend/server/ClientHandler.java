@@ -52,8 +52,12 @@ public class ClientHandler implements Runnable {
         Object response = null;
         if (instruction instanceof String command) {
             switch (command) {
-                case "GET_TIME" -> response = System.currentTimeMillis();
-                case "GAME_START" -> server.startGame();
+                case "GET_TIME" :
+                    response = System.currentTimeMillis();
+                    break;
+                case "GAME_START" :
+                    server.startGame();
+                    break;
             }
         }
         return response;
