@@ -9,8 +9,9 @@ import java.util.List;
 public class Server {
     private static final int PORT = 4444;
     private static final int MAX_CONNECTIONS = 10;
-
     private List<ClientHandler> clientHandlers;
+
+    private List<List<Object>> roundInfo;
 
     public Server() {
         clientHandlers = new ArrayList<>();
@@ -89,6 +90,19 @@ public class Server {
 
     public synchronized int getClientCount() {
         return clientHandlers.size();
+    }
+
+    public void setRoundInfo(List<Object> info){
+        for (List<Object> name : roundInfo){
+            if (!name.get(0).equals(info.get(0))){
+                this.roundInfo.add(info);
+            }
+        }
+
+        if (roundInfo.size() == clientHandlers.size()){
+            sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_" ,roundInfo);
+            roundInfo.clear();
+        }
     }
 
     public static void main(String[] args) {
