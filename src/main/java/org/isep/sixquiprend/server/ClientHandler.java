@@ -50,16 +50,16 @@ public class ClientHandler implements Runnable {
 
     private Object processInstruction(Object instruction) {
         Object response = null;
-        if (instruction instanceof String command) {
-            switch (command) {
-                case "GET_TIME" :
-                    response = System.currentTimeMillis();
-                    break;
-                case "GAME_START" :
-                    server.startGame();
-                    break;
-            }
+        String command = (String) instruction;
+        switch (command) {
+            case "GET_TIME" :
+                response = System.currentTimeMillis();
+                break;
+            case "GAME_START" :
+                server.startGame();
+                break;
         }
+
         return response;
     }
 
