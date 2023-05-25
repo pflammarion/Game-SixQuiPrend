@@ -38,7 +38,7 @@ public class ClientHandler implements Runnable, Serializable {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             System.out.println("Client disconnected: " + clientSocket);
-            server.removeClient(this); // Remove client from the clientHandlers list
+            server.removeClient(this);
         }
     }
 
@@ -56,7 +56,10 @@ public class ClientHandler implements Runnable, Serializable {
                 response = server.getPlayerList();
                 break;
             case "SET_PLAYERNAME" :
-                this.clientName = (String) inputStream.readObject();
+                String player = (String) inputStream.readObject();
+                if (!player.equals("")){
+                    this.clientName = player;
+                }
                 server.broadcastMessage(server.getPlayerList());
                 break;
         }
