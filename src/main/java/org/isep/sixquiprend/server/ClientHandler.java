@@ -74,9 +74,12 @@ public class ClientHandler implements Runnable {
             }
         }
         if (instruction instanceof List<?>) {
-            List<?> command = (List<?>) instruction;
-            System.out.println(command);
-
+            List<Object> command = (List<Object>) instruction;
+            if (!command.isEmpty()) {
+                if (command.get(0).equals("_GAMEINFO_")) {
+                    processGameInfo(command);
+                }
+            }
         }
 
 
@@ -97,6 +100,64 @@ public class ClientHandler implements Runnable {
 
     public String getClientName() {
         return clientName;
+    }
+
+    private void processGameInfo(List<Object> gameInfo) {
+                int index = 1;
+
+                if (gameInfo.get(index).equals("_BOARD_")) {
+                    index++;
+
+                    List<List<Integer>> boardOnline = new ArrayList<>();
+                    while (index < gameInfo.size() && !(gameInfo.get(index) instanceof String)) {
+                        List<Integer> row = (List<Integer>) gameInfo.get(index);
+                        boardOnline.add(row);
+                        index++;
+                    }
+
+                    // Do something with the board data (boardOnline)
+                    System.out.println(boardOnline);
+
+                }
+
+                if (gameInfo.get(index).equals("_ROUND_")) {
+                    index++;
+
+                    int round = (int) gameInfo.get(index);
+                    index++;
+
+                    // Do something with the round info (round)
+                }
+
+                if (gameInfo.get(index).equals("_PLAYERS_")) {
+                    index++;
+
+                    List<List<?>> playerList = new ArrayList<>();
+                    while (index < gameInfo.size()) {
+                        List<Object> playerInfo = new ArrayList<>();
+                        playerInfo.add(gameInfo.get(index));
+                        index++;
+
+                        List<Integer> playerHand = (List<Integer>) gameInfo.get(index);
+                        playerInfo.add(playerHand);
+                        index++;
+
+                        int score = (int) gameInfo.get(index);
+                        playerInfo.add(score);
+                        index++;
+
+                        int lastCardPlayed = (int) gameInfo.get(index);
+                        playerInfo.add(lastCardPlayed);
+                        index++;
+
+                        playerList.add(playerInfo);
+                    }
+                    System.out.println(playerList);
+
+                    // Do something with the player info (playerList)
+                }
+            }
+        }
     }
 }
 
