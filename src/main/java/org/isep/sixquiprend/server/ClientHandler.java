@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ClientHandler implements Runnable, Serializable {
+public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
