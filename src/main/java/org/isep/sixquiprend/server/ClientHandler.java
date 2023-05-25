@@ -31,7 +31,7 @@ public class ClientHandler implements Runnable, Serializable {
                 System.out.println(instruction);
 
                 Object response = processInstruction(instruction);
-                if (!response.equals("")) {
+                if (null != response) {
                     outputStream.writeObject(response);
                 }
             }
