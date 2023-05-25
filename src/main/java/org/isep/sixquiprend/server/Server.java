@@ -50,10 +50,11 @@ public class Server {
         clientHandlers.remove(clientHandler);
     }
 
-    private void startGame() {
+    public void startGame() {
         System.out.println("Starting the game...");
 
         broadcastMessage("GAME_START");
+        broadcastMessage(clientHandlers);
     }
 
     public synchronized int getClientCount() {
