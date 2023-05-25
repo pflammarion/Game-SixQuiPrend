@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable {
                 System.out.println(instruction);
 
                 Object response = processInstruction(instruction);
-                if (response != ""){
+                if (!response.equals("")) {
                     outputStream.writeObject(response);
                 }
             }
@@ -38,8 +38,8 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         } finally {
             try {
-                inputStream.close();
                 outputStream.close();
+                inputStream.close();
                 clientSocket.close();
                 server.removeClient(this);
             } catch (IOException e) {
