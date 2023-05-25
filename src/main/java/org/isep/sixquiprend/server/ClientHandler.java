@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable, Serializable {
                     this.clientName = player;
                 }
                 server.broadcastMessage(server.getPlayerList());
-                sendMessage("_PLAYERNAME_", player);
+                sendMessage("_PLAYERNAME_", this.clientName);
                 break;
         }
 
@@ -76,6 +76,7 @@ public class ClientHandler implements Runnable, Serializable {
         message.add(content);
         try {
             outputStream.writeObject(message);
+            System.out.println("Message sent : " + message);
         } catch (IOException e) {
             e.printStackTrace();
         }
