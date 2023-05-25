@@ -73,14 +73,52 @@ public class ClientHandler implements Runnable, Serializable {
                     break;
             }
         }
-        if (instruction instanceof Map<?,?>){
-            System.out.println(instruction);
-            /*Map<String, List<?>> command = (Map<String, List<?>>) instruction;
-            System.out.println(command);
-            if (command.get("_GAMEINFO_").equals("_GAMEINFO_")){
-                System.out.println("gameinfo command");
-            }*/
+        if (instruction instanceof Map<?, ?>) {
+            Map<String, List<?>> command = (Map<String, List<?>>) instruction;
+
+            if (command.containsKey("_GAMEINFO_")) {
+                List<?> gameInfoList = command.get("_GAMEINFO_");
+
+                if (gameInfoList != null && gameInfoList.size() == 1 && gameInfoList.get(0).equals("_GAMEINFO_")) {
+                    System.out.println("gameinfo command");
+
+                    // Process the game information here
+
+                    List<List<Integer>> boardOnline = (List<List<Integer>>) command.get("_BOARD_");
+                    List<Integer> roundList = (List<Integer>) command.get("_ROUND_");
+                    List<List<?>> playerList = (List<List<?>>) command.get("_PLAYERS_");
+
+                    // Do further processing with the received data
+
+                    // Example: Print the board
+                    System.out.println("Board:");
+                    for (List<Integer> row : boardOnline) {
+                        System.out.println(row);
+                    }
+
+                    // Example: Print the round
+                    if (roundList != null && !roundList.isEmpty()) {
+                        int round = roundList.get(0);
+                        System.out.println("Round: " + round);
+                    }
+
+                    // Example: Print player information
+                    System.out.println("Players:");
+                    for (List<?> playerInfo : playerList) {
+                        String playerName = (String) playerInfo.get(0);
+                        List<Integer> playerHand = (List<Integer>) playerInfo.get(1);
+                        int playerScore = (int) playerInfo.get(2);
+                        int lastCardPlayed = (int) playerInfo.get(3);
+
+                        System.out.println("Player: " + playerName);
+                        System.out.println("Hand: " + playerHand);
+                        System.out.println("Score: " + playerScore);
+                        System.out.println("Last Card Played: " + lastCardPlayed);
+                    }
+                }
+            }
         }
+
 
         return response;
     }
