@@ -9,9 +9,9 @@ import java.util.List;
 public class Server {
     private static final int PORT = 4444;
     private static final int MAX_CONNECTIONS = 10;
-    private List<ClientHandler> clientHandlers;
+    private final List<ClientHandler> clientHandlers;
 
-    private List<List<Object>> roundInfo;
+    private final List<List<Object>> roundInfo = new ArrayList<>();
 
     public Server() {
         clientHandlers = new ArrayList<>();
