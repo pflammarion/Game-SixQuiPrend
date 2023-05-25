@@ -135,23 +135,10 @@ public class ClientHandler implements Runnable {
 
             List<List<?>> playerList = new ArrayList<>();
             while (index < gameInfo.size()) {
-                List<Object> playerInfo = new ArrayList<>();
-                playerInfo.add(gameInfo.get(index));
+                List<Object> player = new ArrayList<>();
+                player.add(gameInfo.get(index));
+                playerList.add(player);
                 index++;
-
-                List<Integer> playerHand = (List<Integer>) gameInfo.get(index);
-                playerInfo.add(playerHand);
-                index++;
-
-                int score = (int) gameInfo.get(index);
-                playerInfo.add(score);
-                index++;
-
-                int lastCardPlayed = (int) gameInfo.get(index);
-                playerInfo.add(lastCardPlayed);
-                index++;
-
-                playerList.add(playerInfo);
             }
             System.out.println(playerList);
 
