@@ -501,4 +501,25 @@ public class GameController {
         }
         gameView.updateCards(cardList);
     }
+
+    public void onlineUpdateBoard(List<List<Integer>> boardInfo) {
+        List<List<Card>> cardList = new ArrayList<>();
+        List<Card> deckCards = fillDeck();
+        for (List<Integer> row : boardInfo) {
+            List<Card> cardsRow = new ArrayList<>();
+            for (Integer cardNumber : row) {
+                for (Card card : deckCards) {
+                    if (card.getNumber() == cardNumber) {
+                        cardsRow.add(card);
+                        break;
+                    }
+                }
+            }
+            cardList.add(cardsRow);
+        }
+
+        Platform.runLater(() -> {
+            gameView.updateBoard(cardList);
+        });
+    }
 }

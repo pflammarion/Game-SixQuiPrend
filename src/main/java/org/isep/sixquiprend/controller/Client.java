@@ -96,6 +96,10 @@ public class Client {
                             List<Integer> playerList = (List<Integer>) listInstruction.get(0);
                             gameController.onlineUpdatePlayerCard(playerList);
                         }
+                        case "_BOARD_" -> {
+                            List<List<Integer>> boardInfo = (List<List<Integer>>) listInstruction.get(0);
+                            gameController.onlineUpdateBoard(boardInfo);
+                        }
                     }
                 }
             }
