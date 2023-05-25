@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.isep.sixquiprend.model.player.Player;
 
@@ -14,19 +15,36 @@ public class EndGameView {
 
     private final Button quitButton;
     private final Button restartButton;
+    private final Label endLabel;
+    private final Label winnerAnnounce;
     private final Label winner;
     private final Label scores;
     private final Scene scene;
     public EndGameView() {
 
-        this.quitButton = new Button("Quit");
-        this.restartButton = new Button("Restart");
+        this.quitButton = new Button("Quitter");
+        this.restartButton = new Button("Rejouer !");
 
         this.scores = new Label();
         this.winner = new Label();
+        this.endLabel = new Label("Fin du jeu");
+        this.winnerAnnounce = new Label("Le gagnant est:");
+
+        endLabel.getStyleClass().add("end_label");
+        winner.getStyleClass().add("winner_label");
 
 
-        VBox vbox = new VBox(winner, scores, quitButton, restartButton);
+        HBox endLabelHbox = new HBox(endLabel);
+        endLabelHbox.setAlignment(Pos.TOP_CENTER);
+
+        VBox winnerVBox = new VBox(winnerAnnounce, winner);
+        winnerVBox.setAlignment(Pos.CENTER);
+
+
+
+
+
+        VBox vbox = new VBox(endLabelHbox, winnerVBox, scores, quitButton, restartButton);
         vbox.setSpacing(10);
         vbox.setAlignment(Pos.CENTER);
 
