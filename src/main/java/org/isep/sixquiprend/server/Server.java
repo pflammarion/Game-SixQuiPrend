@@ -31,6 +31,8 @@ public class Server {
                 Thread thread = new Thread(clientHandler);
                 thread.start();
 
+                broadcastMessage(getPlayerList());
+
                 if (clientHandlers.size() > MAX_CONNECTIONS) {
                     startGame();
                 }
@@ -51,16 +53,17 @@ public class Server {
     }
 
     public void startGame() {
-        List<String> clientNameList = new ArrayList<>();
         System.out.println("Starting the game...");
+    }
 
-        broadcastMessage("GAME_START");
-
+    public Object getPlayerList() {
+        List<String> clientNameList = new ArrayList<>();
+        clientNameList.add("_PLAYERLIST_");
         for (ClientHandler client: clientHandlers) {
             clientNameList.add(client.getClientName());
         }
 
-        broadcastMessage(clientNameList);
+        return clientNameList;
     }
 
     public synchronized int getClientCount() {

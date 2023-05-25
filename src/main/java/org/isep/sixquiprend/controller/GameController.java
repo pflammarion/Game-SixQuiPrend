@@ -10,6 +10,7 @@ import org.isep.sixquiprend.model.player.Player;
 import org.isep.sixquiprend.view.GUI.SceneManager;
 import org.isep.sixquiprend.view.GUI.scenes.EndGameView;
 import org.isep.sixquiprend.view.GUI.scenes.GameView;
+import org.isep.sixquiprend.view.GUI.scenes.LobbyView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public class GameController {
     private final WelcomeView welcomeView;
     private final GameView gameView;
     private final EndGameView endGameView;
+    private final LobbyView lobbyView;
     private final Game game;
     private Deck deck;
     private final int numCardsPerPlayer = 10;
@@ -30,6 +32,7 @@ public class GameController {
         this.welcomeView = new WelcomeView();
         this.gameView = new GameView();
         this.endGameView = new EndGameView();
+        this.lobbyView = new LobbyView();
         this.game = new Game();
         eventListener();
     }
@@ -38,6 +41,7 @@ public class GameController {
         sceneManager.addScene("welcome", welcomeView.getScene());
         sceneManager.addScene("game", gameView.getScene());
         sceneManager.addScene("endGame", endGameView.getScene());
+        sceneManager.addScene("lobby", lobbyView.getScene());
 
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
@@ -51,6 +55,9 @@ public class GameController {
             sceneManager.switchToScene("welcome");
         });
         endGameView.getQuitButton().setOnAction(event -> quitGame());
+
+        lobbyView.getQuitButton().setOnAction(event -> sceneManager.switchToScene("welcome"));
+        lobbyView.getPlayButton().setOnAction(event -> startOnlineGame());
     }
 
     private List<Card> fillDeck() {
@@ -370,8 +377,27 @@ public class GameController {
     private void playOnline() {
         this.client = new Client();
         client.connectToServer();
-        client.sendMessageToServer("GAME_START");
-        System.out.println("response 1 " + client.waitForResponse());
-        System.out.println("response 2 " + client.waitForResponse());
+        Object response = client.waitForResponse();
+
+        while (!(response instanceof List<?> && ((List<Object>) response).get(0).equals("_PLAYERLIST_"))) {
+            client.sendMessageToServer("GET_PLAYERLIST");
+            response = client.waitForResponse();
+        }
+
+        updateOnlinePlayerList((List<String>) response);
+        System.out.println(game.getPlayers());
+    }
+
+    private void updateOnlinePlayerList(List<String> list) {
+        List<Player> players = new ArrayList<>();
+        for (int i = 1; i < list.size(); i++){
+            players.add(new HumanPlayer(list.get(i)));
+        }
+        game.setPlayers(players);
+        lobbyView.setPlayers(players);
+    }
+
+    private void startOnlineGame() {
+
     }
 }

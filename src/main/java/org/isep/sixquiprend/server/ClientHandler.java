@@ -50,6 +50,9 @@ public class ClientHandler implements Runnable, Serializable {
             case "GAME_START" :
                 server.startGame();
                 break;
+            case "GET_PLAYERLIST" :
+                response = server.getPlayerList();
+                break;
         }
 
         return response;
