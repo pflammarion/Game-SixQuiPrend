@@ -106,17 +106,20 @@ public class GameController {
         dealCards();
 
         if (null != client){
-            Map<String, List<?>> gameInfo = new HashMap<>();
-            gameInfo.put("_GAMEINFO_", Collections.singletonList("_GAMEINFO_"));
-            //To have only number in a list
+            List<Object> gameInfo = new ArrayList<>();
+
+            gameInfo.add("_GAMEINFO_");
+
             List<List<Integer>> boardOnline = game.getBoard().stream()
                     .map(row -> row.stream().map(Card::getNumber).collect(Collectors.toList()))
                     .toList();
-            gameInfo.put("_BOARD_", boardOnline);
-            gameInfo.put("_ROUND_", Collections.singletonList(game.getRound()));
+            gameInfo.add("_BOARD_");
+            gameInfo.addAll(boardOnline);
 
-            // To have player hand info to list
+            gameInfo.add("_ROUND_");
+            gameInfo.add(game.getRound());
 
+            gameInfo.add("_PLAYERS_");
             List<List<?>> playerList = game.getPlayers().stream()
                     .map(player -> {
                         List<Integer> playerHand = player.getHand().stream()
@@ -132,11 +135,11 @@ public class GameController {
                         return playerInfo;
                     })
                     .collect(Collectors.toList());
+            gameInfo.addAll(playerList);
 
-
-            gameInfo.put("_PLAYERS_", playerList);
             System.out.println(gameInfo);
             client.sendMessageToServer(gameInfo);
+
         }
         else {
             gameView.updatePlayers(game.getPlayers());
