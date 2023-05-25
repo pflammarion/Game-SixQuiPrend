@@ -67,10 +67,8 @@ public class GameController {
         endGameView.getQuitButton().setOnAction(event -> quitGame());
 
         lobbyView.getQuitButton().setOnAction(event -> {
-            //sceneManager.switchToScene("welcome");
-            //client.closeConnection();
-            client.sendMessageToServer("START_GAME");
-            startGame();
+            sceneManager.switchToScene("welcome");
+            client.closeConnection();
         });
         lobbyView.getPlayButton().setOnAction(event ->  {
             if (game.getPlayers().size() > 1 ){

@@ -101,7 +101,7 @@ public class Client {
                             gameController.onlineUpdateBoard(boardInfo);
                         }
                         case "_ROUND_" -> gameController.onlineUpdateRound((int) listInstruction.get(0));
-                        case "_PLAYERINFO" -> {
+                        case "_PLAYERINFO_" -> {
                             List<List<?>> playerInfo = (List<List<?>>) listInstruction.get(0);
                             gameController.onlineHandlePlayerInfo(playerInfo);
                         }
