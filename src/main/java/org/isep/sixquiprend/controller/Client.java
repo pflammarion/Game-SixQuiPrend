@@ -69,17 +69,21 @@ public class Client {
                 Object instruction = inputStream.readObject();
                 if (instruction instanceof List<?>) {
                     List<?> listInstruction = (List<?>) instruction;
+
                     String title = (String) listInstruction.get(0);
-                    listInstruction.remove(0);
+
                     if (Objects.equals(title, "_ALL_")){
+                        listInstruction = (List<?>) listInstruction.get(1);
                         title = (String) listInstruction.get(0);
-                        listInstruction.remove(0);
                     }
+
+                    listInstruction.remove(0);
+
                     if (title.equals("_PLAYERLIST_")) {
                         List<String> playerList = (List<String>) listInstruction;
                         gameController.updateOnlinePlayerList(playerList);
                     }
-                    else if (listInstruction.get(0).equals("_PLAYERNAME_")) {
+                    else if (Objects.equals(title, "_PLAYERNAME_")) {
                         gameController.setPlayerName((String) listInstruction.get(0));
                     }
                 }
