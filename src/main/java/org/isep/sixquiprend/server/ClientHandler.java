@@ -10,12 +10,15 @@ public class ClientHandler implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final Server server;
+    private String clientName;
+    private boolean isHoster = false;
 
     public ClientHandler(Socket clientSocket, Server server) throws IOException {
         this.clientSocket = clientSocket;
         this.server = server;
         this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
+        this.clientName = "Player" + server.getClientCount() + 1;
     }
 
     @Override
@@ -24,16 +27,11 @@ public class ClientHandler implements Runnable {
             while (true) {
                 Object instruction = inputStream.readObject();
 
-                Object response = processInstruction(instruction);
-
-                outputStream.writeObject(response);
-
                 System.out.println(instruction);
 
-                if (instruction instanceof String && ((String) instruction).equals("GAME_START")) {
-                    if (server.getClientCount() > 10) {
-                        server.broadcastMessage("GAME_START");
-                    }
+                Object response = processInstruction(instruction);
+                if (response != ""){
+                    outputStream.writeObject(response);
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -51,18 +49,14 @@ public class ClientHandler implements Runnable {
     }
 
     private Object processInstruction(Object instruction) {
-        if (instruction instanceof String) {
-            String command = (String) instruction;
-            if (command.equals("GET_TIME")) {
-                return System.currentTimeMillis();
-            } else if (command.equals("PERFORM_ACTION")) {
-                return "Action performed successfully!";
-            } else {
-                return "Invalid command";
+        Object response = null;
+        if (instruction instanceof String command) {
+            switch (command) {
+                case "GET_TIME" -> response = System.currentTimeMillis();
+                case "GAME_START" -> server.startGame();
             }
         }
-
-        return "Invalid instruction";
+        return response;
     }
 
     public void sendMessage(Object message) {
