@@ -398,12 +398,25 @@ public class GameController {
 
     private boolean checkEndTurn(){
 
+
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
             game.resetCardsPlayed();
 
             if (client != null){
+                //Find link and remove card in player hand
+                for (List<Object> info : this.onlineRoundInfo) {
+                    Player player = (Player) info.get(0);
+                    Card card = (Card) info.get(1);
+                    if (player != null && card != null) {
+                        player.getHand().remove(card);
+                    } else {
+                        System.out.println("Hand not found");
+                    }
+                }
+
+                onlineRoundInfo.clear();
                 this.sendGameInfo();
 
                 if (game.getRound() == numCardsPerPlayer + 1) {
@@ -519,7 +532,9 @@ public class GameController {
     }
 
     public void onlineUpdatePlayerCard(List<Integer> playerCard) {
-        gameView.updateCards(findCardByNumberInList(playerCard));
+        Platform.runLater(() -> {
+            gameView.updateCards(findCardByNumberInList(playerCard));
+        });
     }
 
     public void onlineUpdateBoard(List<List<Integer>> boardInfo) {
@@ -558,6 +573,7 @@ public class GameController {
     }
 
     public void setGameCartPlayed(List<List<Object>> roundInfo) {
+        //TODO check if the played card is not played
         for (int i = 0; i < roundInfo.size(); i++) {
             List<Object> tempInfo = new ArrayList<>();
             String playerName = (String) roundInfo.get(i).get(0);
