@@ -57,7 +57,10 @@ public class Server {
 
     public void startGame() {
         System.out.println("Starting the game...");
-        broadcastMessage("GAME_STARTED");
+        List<String> message = new ArrayList<>();
+        message.add("GAME_STARTED");
+        message.add("GAME_STARTED");
+        broadcastMessage(message);
     }
 
     public Object getPlayerList() {
