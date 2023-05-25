@@ -56,18 +56,23 @@ public class GameView {
         boardPane.setAlignment(Pos.TOP_LEFT);
 
 
+
         HBox gameInfosHBox = new HBox();
         HBox.setHgrow(selectedPlayer, Priority.ALWAYS);
-        HBox.setHgrow(roundLabel, Priority.ALWAYS);
         HBox.setHgrow(playerNames, Priority.ALWAYS);
         selectedPlayer.setMaxWidth(Double.MAX_VALUE);
-        roundLabel.setMaxWidth(Double.MAX_VALUE);
         playerNames.maxWidth(Double.MAX_VALUE);
-        gameInfosHBox.getChildren().addAll(selectedPlayer,roundLabel,playerNames);
-        gameInfosHBox.setAlignment(Pos.BASELINE_CENTER);
-        gameInfosHBox.setPrefWidth(1450);
+        gameInfosHBox.getChildren().addAll(selectedPlayer,playerNames);
+        gameInfosHBox.setAlignment(Pos.TOP_CENTER);
+        gameInfosHBox.setPrefWidth(Double.MAX_VALUE);
 
-        VBox gameInfosVBox = new VBox(gameInfosHBox,boardPane);
+        VBox gameHeader = new VBox(roundLabel, gameInfosHBox);
+        gameHeader.setAlignment(Pos.TOP_CENTER);
+
+        HBox gameHeaderHBox = new HBox(gameHeader);
+        gameHeaderHBox.setAlignment(Pos.TOP_CENTER);
+
+        VBox gameInfosVBox = new VBox(gameHeader,boardPane);
 
         gameInfosVBox.getStyleClass().add("game-infos-vbox");
 
@@ -75,10 +80,10 @@ public class GameView {
 
         AnchorPane anchorPane = new AnchorPane(imageView, gameInfosVBox);
         anchorPane.setPrefSize(1200, 600);
-        AnchorPane.setTopAnchor(vbox, 100.0);
-        AnchorPane.setBottomAnchor(vbox, 100.0);
-        AnchorPane.setLeftAnchor(vbox, 300.0);
-        AnchorPane.setRightAnchor(vbox, 300.0);
+        AnchorPane.setTopAnchor(gameInfosVBox, 100.0);
+        AnchorPane.setBottomAnchor(gameInfosVBox, 100.0);
+        AnchorPane.setLeftAnchor(gameInfosVBox, 300.0);
+        AnchorPane.setRightAnchor(gameInfosVBox, 300.0);
 
         this.scene = new Scene(anchorPane);
     }

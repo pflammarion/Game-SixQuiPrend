@@ -75,6 +75,6 @@ Button:hover {
 }
 
 .game-infos-vbox {
-    -fx-padding: 30 30 30 30;
+    -fx-padding: -10 0 0 0;
 
 }
