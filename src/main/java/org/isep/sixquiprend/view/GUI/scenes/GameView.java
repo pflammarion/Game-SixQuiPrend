@@ -81,6 +81,10 @@ public class GameView {
         this.playerNames.setText(playerNames.toString());
     }
 
+    public void setPlayerText(String text) {
+        this.playerNames.setText(text);
+    }
+
     public void updateBoard(List<List<Card>> board) {
         boardPane.getChildren().clear();
         for (List<Card> row : board) {

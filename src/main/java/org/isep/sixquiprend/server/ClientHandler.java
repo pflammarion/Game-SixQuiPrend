@@ -134,11 +134,16 @@ public class ClientHandler implements Runnable {
         if (gameInfo.get(index).equals("_PLAYERS_")) {
             index++;
 
+            List<Object> playerList = new ArrayList<>();
+
             while (index < gameInfo.size()) {
                 List<?> playerInfo = (List<?>) gameInfo.get(index);
                 server.sendMessageToClientByName((String) playerInfo.get(0),"_PLAYERCARD_", playerInfo.get(1));
+                playerInfo.remove(1);
+                playerList.add(playerInfo);
                 index++;
             }
+            server.broadcastMessage(setUpListMessage("_PLAYERINFO_", playerList));
         }
     }
 
