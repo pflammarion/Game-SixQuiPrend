@@ -54,7 +54,7 @@ public class Server {
         System.out.println("Starting the game...");
 
         broadcastMessage("GAME_START");
-        broadcastMessage(clientHandlers);
+        broadcastMessage(clientHandlers.toString());
     }
 
     public synchronized int getClientCount() {
