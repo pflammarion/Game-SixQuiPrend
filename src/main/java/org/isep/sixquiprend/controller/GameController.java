@@ -456,4 +456,17 @@ public class GameController {
     public void onlineChangeView(String viewName) {
         sceneManager.switchToScene(viewName);
     }
+
+    public void onlineUpdatePlayerCard(List<Integer> playerCard) {
+        List<Card> cardList = new ArrayList<>();
+        for (Integer cardNumber : playerCard) {
+            for (Card card : deck.getCards()){
+                if (card.getNumber() == cardNumber) {
+                    cardList.add(card);
+                    break;
+                }
+            }
+        }
+        gameView.updateCards(cardList);
+    }
 }

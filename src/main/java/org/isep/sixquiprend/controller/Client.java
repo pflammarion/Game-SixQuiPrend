@@ -92,6 +92,10 @@ public class Client {
                                 gameController.onlineChangeView("game");
                             });
                         }
+                        case "_PLAYERCARD_" -> {
+                            List<Integer> playerList = (List<Integer>) listInstruction;
+                            gameController.onlineUpdatePlayerCard(playerList);
+                        }
                     }
                 }
             }
