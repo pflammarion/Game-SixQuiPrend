@@ -490,8 +490,9 @@ public class GameController {
 
     public void onlineUpdatePlayerCard(List<Integer> playerCard) {
         List<Card> cardList = new ArrayList<>();
-        for (Integer cardNumber : playerCard) {
-            for (Card card : deck.getCards()){
+        List<Card> deckCards = fillDeck();
+        for (int cardNumber : playerCard) {
+            for (Card card : deckCards){
                 if (card.getNumber() == cardNumber) {
                     cardList.add(card);
                     break;
