@@ -11,7 +11,6 @@ public class Client {
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
-
     private GameController gameController;
 
     public Client(GameController gameController) {
@@ -86,6 +85,7 @@ public class Client {
                         }
                         case "_PLAYERNAME_" -> gameController.setPlayerName((String) listInstruction.get(0));
                         case "_HOST_" -> gameController.setGameHost((String) listInstruction.get(0));
+                        case "GAME_STARTED" -> gameController.onlineChangeView("game");
                     }
                 }
             }
