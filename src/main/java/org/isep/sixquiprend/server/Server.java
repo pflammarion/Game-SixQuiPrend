@@ -93,10 +93,14 @@ public class Server {
     }
 
     public void setRoundInfo(List<Object> info){
-        System.out.println(info);
-        for (List<Object> name : roundInfo){
-            if (!name.get(0).equals(info.get(0))){
-                this.roundInfo.add(info);
+        if (roundInfo.isEmpty()){
+            this.roundInfo.add(info);
+        }
+        else {
+            for (List<Object> name : roundInfo){
+                if (!name.get(0).equals(info.get(0))){
+                    this.roundInfo.add(info);
+                }
             }
         }
 
