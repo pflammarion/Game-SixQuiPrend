@@ -67,8 +67,10 @@ public class GameController {
         endGameView.getQuitButton().setOnAction(event -> quitGame());
 
         lobbyView.getQuitButton().setOnAction(event -> {
-            sceneManager.switchToScene("welcome");
-            client.closeConnection();
+            //sceneManager.switchToScene("welcome");
+            //client.closeConnection();
+            client.sendMessageToServer("START_GAME");
+            startGame();
         });
         lobbyView.getPlayButton().setOnAction(event ->  {
             if (game.getPlayers().size() > 1 ){
@@ -490,5 +492,19 @@ public class GameController {
         Platform.runLater(() -> {
             gameView.updateBoard(cardList);
         });
+    }
+
+    public void onlineUpdateRound(int round) {
+        Platform.runLater(() -> {
+            gameView.updateRound(round);
+        });
+    }
+
+    public void onlineHandlePlayerInfo(List<List<?>> playerInfo) {
+        StringBuilder playerNames = new StringBuilder();
+        for (List<?> player : playerInfo) {
+            playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
+        }
+        gameView.setPlayerText(playerNames.toString());
     }
 }
