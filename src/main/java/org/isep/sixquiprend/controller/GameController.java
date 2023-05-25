@@ -29,6 +29,7 @@ public class GameController {
     private Client client = null;
     private String playerName;
     private boolean gameHost;
+    private List<List<Object>> onlineRoundInfo = new ArrayList<>();
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -106,39 +107,7 @@ public class GameController {
         dealCards();
 
         if (null != client){
-            List<Object> gameInfo = new ArrayList<>();
-
-            gameInfo.add("_GAMEINFO_");
-
-            List<List<Integer>> boardOnline = game.getBoard().stream()
-                    .map(row -> row.stream().map(Card::getNumber).collect(Collectors.toList()))
-                    .toList();
-            gameInfo.add("_BOARD_");
-            gameInfo.addAll(boardOnline);
-
-            gameInfo.add("_ROUND_");
-            gameInfo.add(game.getRound());
-
-            gameInfo.add("_PLAYERS_");
-            List<List<?>> playerList = game.getPlayers().stream()
-                    .map(player -> {
-                        List<Integer> playerHand = player.getHand().stream()
-                                .map(Card::getNumber)
-                                .collect(Collectors.toList());
-
-                        List<Object> playerInfo = new ArrayList<>();
-                        playerInfo.add(player.getName());
-                        playerInfo.add(playerHand);
-                        playerInfo.add(player.getScore());
-                        playerInfo.add(player.getLastCardPlayed() != null ? player.getLastCardPlayed().getNumber() : 0);
-
-                        return playerInfo;
-                    })
-                    .collect(Collectors.toList());
-            gameInfo.addAll(playerList);
-
-            client.sendMessageToServer(gameInfo);
-
+            this.sendGameInfo();
         }
         else {
             gameView.updatePlayers(game.getPlayers());
@@ -171,7 +140,14 @@ public class GameController {
 
     private void playCard() {
         if (null != client){
-            System.out.println("à faire");
+            Card playedCard = gameView.getSelectedCard();
+            if (playedCard != null) {
+                List<Object> cardPlayedBuilder =  new ArrayList<>();
+                cardPlayedBuilder.add("_CARDPLAYED_");
+                cardPlayedBuilder.add(this.playerName);
+                cardPlayedBuilder.add(playedCard.getNumber());
+                client.sendMessageToServer(cardPlayedBuilder);
+            }
         }
         else {
             Player currentPlayer = getCurrentPlayer();
@@ -403,8 +379,17 @@ public class GameController {
 
             if (score > 0) {
                 for (Player player : game.getPlayers()){
-                    if (player.getLastCardPlayed().getNumber() == card.getNumber()){
-                        player.setScore(player.getScore() + score);
+                    if (null != client){
+                       for(List<Object> info : this.onlineRoundInfo) {
+                           if (info.get(1).equals(card.getNumber())){
+                               player.setScore(player.getScore() + score);
+                           }
+                       }
+                    }
+                    else {
+                        if (player.getLastCardPlayed().getNumber() == card.getNumber()){
+                            player.setScore(player.getScore() + score);
+                        }
                     }
                 }
             }
@@ -412,19 +397,32 @@ public class GameController {
     }
 
     private boolean checkEndTurn(){
+
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
             game.resetCardsPlayed();
 
-            gameView.updateBoard(game.getBoard());
-            gameView.updatePlayers(game.getPlayers());
+            if (client != null){
+                this.sendGameInfo();
 
-            if (game.getRound() == numCardsPerPlayer + 1) {
-                endGame();
-                return true;
+                if (game.getRound() == numCardsPerPlayer + 1) {
+                    client.sendMessageToServer("_ENDGAME_");
+                    System.out.println("Endgame");
+                }
+            }
+
+            else {
+                gameView.updateBoard(game.getBoard());
+                gameView.updatePlayers(game.getPlayers());
+
+                if (game.getRound() == numCardsPerPlayer + 1) {
+                    endGame();
+                    return true;
+                }
             }
         }
+
         return false;
     }
     private void addPlayer(){
@@ -487,10 +485,10 @@ public class GameController {
         sceneManager.switchToScene(viewName);
     }
 
-    public void onlineUpdatePlayerCard(List<Integer> playerCard) {
+    private List<Card> findCardByNumberInList(List<Integer> cardListToFind) {
         List<Card> cardList = new ArrayList<>();
         List<Card> deckCards = fillDeck();
-        for (int cardNumber : playerCard) {
+        for (int cardNumber : cardListToFind) {
             for (Card card : deckCards){
                 if (card.getNumber() == cardNumber) {
                     cardList.add(card);
@@ -498,7 +496,30 @@ public class GameController {
                 }
             }
         }
-        gameView.updateCards(cardList);
+        return cardList;
+    }
+
+    private Card findCardByNumber(int number){
+        List<Card> deckCards = fillDeck();
+        for (Card card : deckCards){
+            if (card.getNumber() == number) {
+                return card;
+            }
+        }
+        return null;
+    }
+
+    private Player findPlayerByName(String name){
+        for (Player player : game.getPlayers()){
+            if (player.getName().equals(name)){
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public void onlineUpdatePlayerCard(List<Integer> playerCard) {
+        gameView.updateCards(findCardByNumberInList(playerCard));
     }
 
     public void onlineUpdateBoard(List<List<Integer>> boardInfo) {
@@ -534,5 +555,64 @@ public class GameController {
             playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
         }
         gameView.setPlayerText(playerNames.toString());
+    }
+
+    public void setGameCartPlayed(List<List<Object>> roundInfo) {
+        for (int i = 0; i < roundInfo.size(); i++) {
+            List<Object> tempInfo = new ArrayList<>();
+            String playerName = (String) roundInfo.get(i).get(0);
+            Player player = findPlayerByName(playerName);
+            if (player != null) {
+                tempInfo.add(player);
+            } else {
+                System.out.println("player not found");
+                // Handle the case where the player is not found
+                // You can throw an exception or handle it as per your requirements
+            }
+            Card card = findCardByNumber((int) roundInfo.get(i).get(1));
+            List<Card> cardList = game.getCardsPlayed();
+            cardList.add(card);
+            game.setCardsPlayed(cardList);
+            tempInfo.add(card);
+            roundInfo.set(i, tempInfo);
+        }
+        this.onlineRoundInfo = roundInfo;
+        checkEndTurn();
+    }
+
+
+    private void sendGameInfo() {
+        List<Object> gameInfo = new ArrayList<>();
+
+        gameInfo.add("_GAMEINFO_");
+
+        List<List<Integer>> boardOnline = game.getBoard().stream()
+                .map(row -> row.stream().map(Card::getNumber).collect(Collectors.toList()))
+                .toList();
+        gameInfo.add("_BOARD_");
+        gameInfo.addAll(boardOnline);
+
+        gameInfo.add("_ROUND_");
+        gameInfo.add(game.getRound());
+
+        gameInfo.add("_PLAYERS_");
+        List<List<?>> playerList = game.getPlayers().stream()
+                .map(player -> {
+                    List<Integer> playerHand = player.getHand().stream()
+                            .map(Card::getNumber)
+                            .collect(Collectors.toList());
+
+                    List<Object> playerInfo = new ArrayList<>();
+                    playerInfo.add(player.getName());
+                    playerInfo.add(playerHand);
+                    playerInfo.add(player.getScore());
+                    playerInfo.add(player.getLastCardPlayed() != null ? player.getLastCardPlayed().getNumber() : 0);
+
+                    return playerInfo;
+                })
+                .collect(Collectors.toList());
+        gameInfo.addAll(playerList);
+
+        client.sendMessageToServer(gameInfo);
     }
 }
