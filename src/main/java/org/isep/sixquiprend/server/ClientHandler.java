@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable, Serializable {
     private final Socket clientSocket;
@@ -61,13 +63,17 @@ public class ClientHandler implements Runnable, Serializable {
                     this.clientName = player;
                 }
                 server.broadcastMessage(server.getPlayerList());
+                sendMessage("_PLAYERNAME_", player);
                 break;
         }
 
         return response;
     }
 
-    public void sendMessage(Object message) {
+    public void sendMessage(String title, Object content) {
+        List<Object> message = new ArrayList<>();
+        message.add(title);
+        message.add(content);
         try {
             outputStream.writeObject(message);
         } catch (IOException e) {
