@@ -105,6 +105,10 @@ public class Client {
                             List<List<?>> playerInfo = (List<List<?>>) listInstruction.get(0);
                             gameController.onlineHandlePlayerInfo(playerInfo);
                         }
+                        case "_ROUNDINFO_" -> {
+                            List<List<Object>> round = (List<List<Object>>) listInstruction.get(0);
+                            gameController.setGameCartPlayed(round);
+                        }
                     }
                 }
             }
