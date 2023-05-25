@@ -18,7 +18,10 @@
     -light-purple: #69589d;
     -light-blue-bg: #b9cafe;
 
+    -text-color: #333333;
+
     -fx-font-family: "Irish Grover";
+
 }
 
 Label {
@@ -39,6 +42,10 @@ Button {
 
 Button:hover {
     -fx-background-color: -light-blue-bg;
+}
+
+Text {
+    -fx-text-fill: grey;
 }
 
 .play_button {
@@ -66,15 +73,11 @@ Button:hover {
     -fx-padding: 0 0 30 0;
 }
 
-.selected_player {
-
-}
-
-.player_names {
+.player_name {
     -fx-font-size: 25px;
-}
-
-.game-infos-vbox {
-    -fx-padding: -10 0 0 0;
+    -fx-fill: -text-color;
 
 }
+
+
+

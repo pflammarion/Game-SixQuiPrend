@@ -51,39 +51,36 @@ public class GameView {
 
         selectedPlayer.getStyleClass().add("selected_player");
 
-        playerNames.getStyleClass().add("player_names");
+        playerNames.getStyleClass().add("player_name");
         playerNames.setTextAlignment(TextAlignment.RIGHT);
-        boardPane.setAlignment(Pos.TOP_LEFT);
 
 
+        VBox roundLabelVBox = new VBox(roundLabel);
+        roundLabelVBox.setAlignment(Pos.CENTER);
+
+        VBox playerPaneVBox = new VBox(selectedPlayer, boardPane);
+        playerPaneVBox.setAlignment(Pos.BASELINE_LEFT);
 
         HBox gameInfosHBox = new HBox();
-        HBox.setHgrow(selectedPlayer, Priority.ALWAYS);
-        HBox.setHgrow(playerNames, Priority.ALWAYS);
-        selectedPlayer.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(playerPaneVBox, Priority.ALWAYS);
+        playerPaneVBox.setMaxWidth(Double.MAX_VALUE);
         playerNames.maxWidth(Double.MAX_VALUE);
-        gameInfosHBox.getChildren().addAll(selectedPlayer,playerNames);
-        gameInfosHBox.setAlignment(Pos.TOP_CENTER);
-        gameInfosHBox.setPrefWidth(1450);
+        gameInfosHBox.getChildren().addAll(playerPaneVBox,playerNames);
+        gameInfosHBox.setAlignment(Pos.TOP_LEFT);
 
-        VBox gameHeader = new VBox(roundLabel, gameInfosHBox);
-        gameHeader.setAlignment(Pos.TOP_CENTER);
 
-        HBox gameHeaderHBox = new HBox(gameHeader);
-        gameHeaderHBox.setAlignment(Pos.TOP_CENTER);
 
-        VBox gameInfosVBox = new VBox(gameHeaderHBox,boardPane);
 
-        gameInfosVBox.getStyleClass().add("game-infos-vbox");
 
-        VBox vbox = new VBox(gameInfosVBox);
 
-        AnchorPane anchorPane = new AnchorPane(imageView, gameInfosVBox);
+
+
+        AnchorPane anchorPane = new AnchorPane(imageView, gameInfosHBox );
         anchorPane.setPrefSize(1200, 600);
-        AnchorPane.setTopAnchor(gameInfosVBox, 100.0);
-        AnchorPane.setBottomAnchor(gameInfosVBox, 100.0);
-        AnchorPane.setLeftAnchor(gameInfosVBox, 300.0);
-        AnchorPane.setRightAnchor(gameInfosVBox, 300.0);
+        AnchorPane.setTopAnchor(gameInfosHBox, 100.0);
+        AnchorPane.setBottomAnchor(gameInfosHBox, 100.0);
+        AnchorPane.setLeftAnchor(gameInfosHBox, 300.0);
+        AnchorPane.setRightAnchor(gameInfosHBox, 300.0);
 
         this.scene = new Scene(anchorPane);
     }
