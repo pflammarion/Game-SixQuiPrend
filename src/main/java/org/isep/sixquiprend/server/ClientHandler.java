@@ -62,6 +62,10 @@ public class ClientHandler implements Runnable, Serializable {
             e.printStackTrace();
         }
     }
+
+    public String getClientName() {
+        return clientName;
+    }
 }
 
 

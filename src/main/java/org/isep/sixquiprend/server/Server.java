@@ -51,10 +51,16 @@ public class Server {
     }
 
     public void startGame() {
+        List<String> clientNameList = new ArrayList<>();
         System.out.println("Starting the game...");
 
         broadcastMessage("GAME_START");
-        broadcastMessage(clientHandlers.toString());
+
+        for (ClientHandler client: clientHandlers) {
+            clientNameList.add(client.getClientName());
+        }
+
+        broadcastMessage(clientNameList);
     }
 
     public synchronized int getClientCount() {
