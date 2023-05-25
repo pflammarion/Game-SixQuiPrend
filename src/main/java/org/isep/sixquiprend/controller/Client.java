@@ -93,7 +93,7 @@ public class Client {
                             });
                         }
                         case "_PLAYERCARD_" -> {
-                            List<Integer> playerList = (List<Integer>) listInstruction;
+                            List<Integer> playerList = (List<Integer>) listInstruction.get(0);
                             gameController.onlineUpdatePlayerCard(playerList);
                         }
                     }
