@@ -57,12 +57,16 @@ public class ClientHandler implements Runnable, Serializable {
             case "GET_PLAYERLIST" :
                 response = server.getPlayerList();
                 break;
+            case "GET_HOST" :
+                response = server.getHost();
+                break;
             case "SET_PLAYERNAME" :
                 String player = (String) inputStream.readObject();
                 if (!player.equals("")){
                     this.clientName = player;
                 }
                 server.broadcastMessage(server.getPlayerList());
+                server.broadcastMessage(server.getHost());
                 sendMessage("_PLAYERNAME_", this.clientName);
                 break;
         }

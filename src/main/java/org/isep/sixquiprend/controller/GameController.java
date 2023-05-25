@@ -27,6 +27,7 @@ public class GameController {
     private int numberOfAIPlayer = 0;
     private Client client = null;
     private String playerName;
+    private boolean gameHost;
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -404,5 +405,14 @@ public class GameController {
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
         System.out.println("Je suis le joueur " + playerName);
+    }
+
+    public void setGameHost(String hoster){
+        if (Objects.equals(this.playerName, hoster)){
+            this.gameHost = true;
+        } else {
+            this.gameHost = false;
+        }
+        lobbyView.setHost(this.gameHost);
     }
 }
