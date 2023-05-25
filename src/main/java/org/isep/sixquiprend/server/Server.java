@@ -44,7 +44,7 @@ public class Server {
 
     public synchronized void broadcastMessage(Object message) {
         for (ClientHandler clientHandler : clientHandlers) {
-            clientHandler.sendMessage(message);
+            clientHandler.sendMessage("_ALL_", message);
         }
     }
 

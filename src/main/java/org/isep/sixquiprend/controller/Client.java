@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 
 public class Client {
     private Socket socket;
@@ -66,19 +67,20 @@ public class Client {
         try {
             while (true) {
                 Object instruction = inputStream.readObject();
-
-                if (instruction instanceof String) {
-                    String command = (String) instruction;
-                    if (command.equals("GAME_START")) {
-
-                    } else if (command.equals("SOME_OTHER_INSTRUCTION")) {
-
-                    }
-                } else if (instruction instanceof List<?>) {
+                if (instruction instanceof List<?>) {
                     List<?> listInstruction = (List<?>) instruction;
-                    if (listInstruction.get(0).equals("_PLAYERLIST_")) {
+                    String title = (String) listInstruction.get(0);
+                    listInstruction.remove(0);
+                    if (Objects.equals(title, "_ALL_")){
+                        title = (String) listInstruction.get(0);
+                        listInstruction.remove(0);
+                    }
+                    if (title.equals("_PLAYERLIST_")) {
                         List<String> playerList = (List<String>) listInstruction;
                         gameController.updateOnlinePlayerList(playerList);
+                    }
+                    else if (listInstruction.get(0).equals("_PLAYERNAME_")) {
+                        gameController.setPlayerName((String) listInstruction.get(0));
                     }
                 }
             }
