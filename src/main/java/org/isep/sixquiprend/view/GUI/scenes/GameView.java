@@ -18,6 +18,7 @@ import org.isep.sixquiprend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javafx.scene.text.Text;
 
@@ -80,6 +81,10 @@ public class GameView {
         this.playerNames.setText(playerNames.toString());
     }
 
+    public void setPlayerText(String text) {
+        this.playerNames.setText(text);
+    }
+
     public void updateBoard(List<List<Card>> board) {
         boardPane.getChildren().clear();
         for (List<Card> row : board) {
@@ -118,5 +123,10 @@ public class GameView {
         MultipleSelectionModel<Card> selectionModel = this.hand.getSelectionModel();
 
         return selectionModel.getSelectedItem();
+    }
+
+    public void updateCards(List<Card> cardList){
+        ObservableList<Card> observableList = FXCollections.observableArrayList(cardList);
+        this.hand.setItems(observableList);
     }
 }

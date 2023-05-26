@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.isep.sixquiprend.model.Card;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
