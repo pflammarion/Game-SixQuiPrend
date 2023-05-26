@@ -111,21 +111,12 @@ public class WelcomeView {
         //imageView.fitWidthProperty().bind(scene.widthProperty());
         //imageView.fitHeightProperty().bind(scene.heightProperty());
 
-        //Initialising path of the media file, replace this with your file path
         String path = "src/main/resources/org/isep/sixquiprend/assets/ThomasLeGoat.mp3";
-
-        //Instantiating Media class
         Media media = new Media(new File(path).toURI().toString());
-
-        //Instantiating MediaPlayer class
         MediaPlayer mediaPlayer = new MediaPlayer(media);
-
         MediaView mediaView = new MediaView(mediaPlayer);
-
         mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
         mediaPlayer.play();
-
-        // Add the MediaView to the scene or any layout container
         anchorPane.getChildren().add(mediaView);
     }
 
