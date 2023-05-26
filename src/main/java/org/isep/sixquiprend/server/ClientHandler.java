@@ -156,7 +156,7 @@ public class ClientHandler implements Runnable {
 
     private void processEndGame(List<Object> gameInfo) {
 
-        int index = 5;
+        int index = 8;
         System.out.println(gameInfo.get(index));
 
         if (gameInfo.get(index).equals("_PLAYERS_")) {
