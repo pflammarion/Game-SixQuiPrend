@@ -96,9 +96,6 @@ public class Server {
         List<List<Object>> infoToAdd = new ArrayList<>();
 
         if (this.roundInfo.isEmpty()) {
-            List<Object> test = new ArrayList<>();
-            test.add("Je suis la");
-            infoToAdd.add(test);
             infoToAdd.add(info);
         } else {
             boolean isPresent = false;
@@ -115,9 +112,9 @@ public class Server {
 
         this.roundInfo.addAll(infoToAdd);
 
-        if (this.roundInfo.size() == clientHandlers.size() + 1) {
+        if (this.roundInfo.size() == clientHandlers.size()) {
             sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", this.roundInfo);
-            this.roundInfo.clear();
+            this.roundInfo = new ArrayList<>();
         }
     }
 
