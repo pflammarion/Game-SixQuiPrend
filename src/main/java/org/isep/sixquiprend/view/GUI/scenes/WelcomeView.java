@@ -26,6 +26,7 @@ public class WelcomeView {
     private final Button buttonAjouterAIMedium;
     private final Button buttonAjouterAIHard;
     private final Button buttonPlay;
+    private final Button buttonOnline;
     private final TextField playerNameTextField;
     private final ListView<String> playerList;
     private final Scene scene;
@@ -60,9 +61,10 @@ public class WelcomeView {
         this.buttonAjouterAIEasy = new Button("Ajouter AI facile");
         this.buttonAjouterAIMedium = new Button("Ajouter AI moyen");
         this.buttonAjouterAIHard = new Button("Ajouter AI fort");
+        this.buttonOnline = new Button("Jouer en ligne");
 
 
-        HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter, buttonAjouterAIEasy, buttonAjouterAIMedium, buttonAjouterAIHard);
+        HBox playerAddHBox = new HBox(playerNameVBox, buttonAjouter, buttonAjouterAIEasy, buttonAjouterAIMedium, buttonAjouterAIHard, buttonOnline);
         playerAddHBox.setSpacing(20);
         playerAddHBox.getStyleClass().add("player_add_hbox");
         playerAddHBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -160,6 +162,7 @@ public class WelcomeView {
     public Button getButtonAjouterAIHard() {
         return buttonAjouterAIHard;
     }
-
-
+    public Button getButtonOnline() {
+        return buttonOnline;
+    }
 }

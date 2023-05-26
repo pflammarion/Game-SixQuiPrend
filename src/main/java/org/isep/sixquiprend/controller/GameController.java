@@ -10,25 +10,33 @@ import org.isep.sixquiprend.model.player.Player;
 import org.isep.sixquiprend.view.GUI.SceneManager;
 import org.isep.sixquiprend.view.GUI.scenes.EndGameView;
 import org.isep.sixquiprend.view.GUI.scenes.GameView;
+import org.isep.sixquiprend.view.GUI.scenes.LobbyView;
 import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameController {
     private final SceneManager sceneManager;
     private final WelcomeView welcomeView;
     private final GameView gameView;
     private final EndGameView endGameView;
+    private final LobbyView lobbyView;
     private final Game game;
     private Deck deck;
     private final int numCardsPerPlayer = 10;
     private int numberOfAIPlayer = 0;
+    private Client client = null;
+    private String playerName;
+    private boolean gameHost;
+    private List<List<Object>> onlineRoundInfo = new ArrayList<>();
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
         this.welcomeView = new WelcomeView();
         this.gameView = new GameView();
         this.endGameView = new EndGameView();
+        this.lobbyView = new LobbyView();
         this.game = new Game();
         eventListener();
     }
@@ -37,9 +45,18 @@ public class GameController {
         sceneManager.addScene("welcome", welcomeView.getScene());
         sceneManager.addScene("game", gameView.getScene());
         sceneManager.addScene("endGame", endGameView.getScene());
+        sceneManager.addScene("lobby", lobbyView.getScene());
 
-        welcomeView.getButtonPlay().setOnAction(event -> startGame());
+        welcomeView.getButtonPlay().setOnAction(event -> {
+            if (game.getPlayers().size() > 1) {
+                startGame();
+            }
+        });
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
+        welcomeView.getButtonOnline().setOnAction(event -> {
+                    sceneManager.switchToScene("lobby");
+                    playOnline();
+                });
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
@@ -50,7 +67,23 @@ public class GameController {
             welcomeView.resetPlayerList();
             sceneManager.switchToScene("welcome");
         });
-        endGameView.getQuitButton().setOnAction(event -> quitGame());
+        endGameView.getQuitButton().setOnAction(event -> {
+            if (null != client) {
+                client.closeConnection();
+            }
+            quitGame();
+        });
+
+        lobbyView.getQuitButton().setOnAction(event -> {
+            sceneManager.switchToScene("welcome");
+            client.closeConnection();
+        });
+        lobbyView.getPlayButton().setOnAction(event ->  {
+            if (game.getPlayers().size() > 1 ){
+                client.sendMessageToServer("START_GAME");
+                startGame();
+            }
+        });
     }
 
     private List<Card> fillDeck() {
@@ -73,26 +106,27 @@ public class GameController {
     }
 
     private void startGame() {
-        if (game.getPlayers().size() >= 2){
 
-            this.setup();
+        this.setup();
 
-            deck.shuffle();
-            game.boardSetUp(deck);
+        deck.shuffle();
+        game.boardSetUp(deck);
+        dealCards();
 
-            Player currentPlayer = getCurrentPlayer();
-            dealCards();
+        if (null != client){
+            this.sendGameInfo(false);
+        }
+        else {
 
             gameView.updatePlayers(game.getPlayers());
             gameView.updateBoard(game.getBoard());
             gameView.updateRound(game.getRound());
+            Player currentPlayer = getCurrentPlayer();
             gameView.setPlayerTurn(currentPlayer);
 
             sceneManager.switchToScene("game");
             nextAIPlayer();
 
-        } else {
-            System.out.println("Il faut au moins deux joueur pour commencer à jouer");
         }
     }
 
@@ -123,27 +157,40 @@ public class GameController {
     }
 
     private void playCard() {
-        Player currentPlayer = getCurrentPlayer();
-
-        Card playedCard = gameView.getSelectedCard();
-
-        if (playedCard != null) {
-            currentPlayer.setLastCardPlayed(playedCard);
-            currentPlayer.getHand().remove(playedCard);
-            game.getCardsPlayed().add(playedCard);
-
-            if (checkEndTurn()) {
-                return;
+        if (null != client){
+            Card playedCard = gameView.getSelectedCard();
+            if (playedCard != null) {
+                List<Object> cardPlayedBuilder =  new ArrayList<>();
+                cardPlayedBuilder.add("_CARDPLAYED_");
+                cardPlayedBuilder.add(this.playerName);
+                cardPlayedBuilder.add(playedCard.getNumber());
+                client.sendMessageToServer(cardPlayedBuilder);
             }
+        }
+        else {
+            Player currentPlayer = getCurrentPlayer();
 
-            moveToNextPlayer();
-            gameView.updatePlayers(game.getPlayers());
-            gameView.updateRound(game.getRound());
-            gameView.setPlayerTurn(getCurrentPlayer());
+            Card playedCard = gameView.getSelectedCard();
 
-            nextAIPlayer();
+            if (playedCard != null) {
+                currentPlayer.setLastCardPlayed(playedCard);
+                currentPlayer.getHand().remove(playedCard);
+                game.getCardsPlayed().add(playedCard);
+
+                if (checkEndTurn()) {
+                    return;
+                }
+
+                moveToNextPlayer();
+                gameView.updatePlayers(game.getPlayers());
+                gameView.updateRound(game.getRound());
+                gameView.setPlayerTurn(getCurrentPlayer());
+
+                nextAIPlayer();
+            }
         }
     }
+
 
     private void aiPlayerPlayCardEasy(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
@@ -498,29 +545,69 @@ public class GameController {
 
 
             if (score > 0) {
-                for (Player player : game.getPlayers()){
-                    if (player.getLastCardPlayed().getNumber() == card.getNumber()){
-                        player.setScore(player.getScore() + score);
+                if (null != client) {
+                    for (List<Object> info : this.onlineRoundInfo) {
+                        if (info.get(1).equals(card)) {
+                            Player player = (Player) info.get(0);
+                            if (player != null) {
+                                player.setScore(player.getScore() + score);
+                            } else {
+                                System.out.println("Player not found");
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (Player player : game.getPlayers()){
+                        if (player.getLastCardPlayed().getNumber() == card.getNumber()){
+                            player.setScore(player.getScore() + score);
+                        }
                     }
                 }
             }
+
         }
     }
 
     private boolean checkEndTurn(){
+
+
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
             game.resetCardsPlayed();
 
-            gameView.updateBoard(game.getBoard());
-            gameView.updatePlayers(game.getPlayers());
+            if (client != null){
+                //Find link and remove card in player hand
+                for (List<Object> info : this.onlineRoundInfo) {
+                    Player player = (Player) info.get(0);
+                    Card card = (Card) info.get(1);
+                    if (player != null && card != null) {
+                        player.getHand().remove(card);
+                    } else {
+                        System.out.println("Hand not found");
+                    }
+                }
 
-            if (game.getRound() == numCardsPerPlayer + 1) {
-                endGame();
-                return true;
+                onlineRoundInfo.clear();
+                this.sendGameInfo(false);
+
+                if (game.getRound() == numCardsPerPlayer + 1) {
+                    this.sendGameInfo(true);
+                }
+            }
+
+            else {
+                gameView.updateBoard(game.getBoard());
+                gameView.updatePlayers(game.getPlayers());
+
+                if (game.getRound() == numCardsPerPlayer + 1) {
+                    endGame();
+                    return true;
+                }
             }
         }
+
         return false;
     }
     private void addPlayer(){
@@ -562,4 +649,205 @@ public class GameController {
         }
         return false;
     }
+
+    private void playOnline() {
+        this.client = new Client(this);
+        client.connectToServer();
+        client.sendMessageToServer("SET_PLAYERNAME");
+        client.sendMessageToServer(welcomeView.getPlayerName());
+    }
+
+    public void updateOnlinePlayerList(List<String> list) {
+        List<Player> players = new ArrayList<>();
+        for (String s : list) {
+            players.add(new HumanPlayer(s));
+        }
+        game.setPlayers(players);
+        lobbyView.setPlayers(players);
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+        System.out.println("Je suis le joueur " + playerName);
+    }
+
+    public void setGameHost(String host){
+        if (Objects.equals(this.playerName, host)){
+            this.gameHost = true;
+        } else {
+            this.gameHost = false;
+        }
+        lobbyView.setHost(this.gameHost);
+    }
+
+    public void onlineChangeView(String viewName) {
+        sceneManager.switchToScene(viewName);
+    }
+
+    private List<Card> findCardByNumberInList(List<Integer> cardListToFind) {
+        List<Card> cardList = new ArrayList<>();
+        List<Card> deckCards = fillDeck();
+        for (int cardNumber : cardListToFind) {
+            for (Card card : deckCards){
+                if (card.getNumber() == cardNumber) {
+                    cardList.add(card);
+                    break;
+                }
+            }
+        }
+        return cardList;
+    }
+
+    private Card findCardByNumber(int number){
+        List<Card> deckCards = fillDeck();
+        for (Card card : deckCards){
+            if (card.getNumber() == number) {
+                return card;
+            }
+        }
+        return null;
+    }
+
+    private Player findPlayerByName(String name){
+        for (Player player : game.getPlayers()){
+            if (player.getName().equals(name)){
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public void onlineUpdatePlayerCard(List<Integer> playerCard) {
+        Platform.runLater(() -> {
+            gameView.updateCards(findCardByNumberInList(playerCard));
+        });
+    }
+
+    public void onlineUpdateBoard(List<List<Integer>> boardInfo) {
+        List<List<Card>> cardList = new ArrayList<>();
+        List<Card> deckCards = fillDeck();
+        for (List<Integer> row : boardInfo) {
+            List<Card> cardsRow = new ArrayList<>();
+            for (Integer cardNumber : row) {
+                for (Card card : deckCards) {
+                    if (card.getNumber() == cardNumber) {
+                        cardsRow.add(card);
+                        break;
+                    }
+                }
+            }
+            cardList.add(cardsRow);
+        }
+
+        Platform.runLater(() -> {
+            gameView.updateBoard(cardList);
+        });
+    }
+
+    public void onlineUpdateRound(int round) {
+        Platform.runLater(() -> {
+            gameView.updateRound(round);
+        });
+    }
+
+    public void onlineHandlePlayerInfo(List<List<?>> playerInfo) {
+        StringBuilder playerNames = new StringBuilder();
+        for (List<?> player : playerInfo) {
+            playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
+        }
+        gameView.setPlayerText(playerNames.toString());
+    }
+
+    public void setGameCartPlayed(List<List<Object>> roundInfo) {
+        boolean isPlayed = false;
+        for (int i = 0; i < roundInfo.size(); i++) {
+            List<Object> tempInfo = new ArrayList<>();
+            String playerName = (String) roundInfo.get(i).get(0);
+            Player player = findPlayerByName(playerName);
+            if (player != null) {
+                tempInfo.add(player);
+            } else {
+                System.out.println("player not found");
+                // Handle the case where the player is not found
+                // You can throw an exception or handle it as per your requirements
+            }
+            Card card = findCardByNumber((int) roundInfo.get(i).get(1));
+            for (Card cardPlayed : game.getCardsPlayed()) {
+                assert card != null;
+                if (cardPlayed.getNumber() == card.getNumber()){
+                    isPlayed = true;
+                    break;
+                }
+            }
+            if (!isPlayed){
+                game.getCardsPlayed().add(card);
+                tempInfo.add(card);
+                roundInfo.set(i, tempInfo);
+            }
+        }
+        if (!isPlayed){
+            this.onlineRoundInfo = roundInfo;
+            checkEndTurn();
+        }
+    }
+
+
+    private void sendGameInfo(boolean endGame) {
+        List<Object> gameInfo = new ArrayList<>();
+
+        if (!endGame) {
+            gameInfo.add("_GAMEINFO_");
+        } else {
+            gameInfo.add("_ENDGAME_");
+        }
+
+        List<List<Integer>> boardOnline = game.getBoard().stream()
+                .map(row -> row.stream().map(Card::getNumber).collect(Collectors.toList()))
+                .toList();
+        gameInfo.add("_BOARD_");
+        gameInfo.addAll(boardOnline);
+
+        gameInfo.add("_ROUND_");
+        gameInfo.add(game.getRound());
+
+        gameInfo.add("_PLAYERS_");
+        List<List<?>> playerList = game.getPlayers().stream()
+                .map(player -> {
+                    List<Integer> playerHand = player.getHand().stream()
+                            .map(Card::getNumber)
+                            .collect(Collectors.toList());
+
+                    List<Object> playerInfo = new ArrayList<>();
+                    playerInfo.add(player.getName());
+                    playerInfo.add(playerHand);
+                    playerInfo.add(player.getScore());
+                    playerInfo.add(player.getLastCardPlayed() != null ? player.getLastCardPlayed().getNumber() : 0);
+
+                    return playerInfo;
+                })
+                .collect(Collectors.toList());
+        gameInfo.addAll(playerList);
+
+        client.sendMessageToServer(gameInfo);
+    }
+
+    public void setOnlineEndGameView(List<List<Object>> playerInfo){
+        Platform.runLater(() -> {
+            StringBuilder playerNames = new StringBuilder();
+
+            playerInfo.sort(Comparator.comparing(player -> (int) player.get(1)));
+
+            List<Object> winner = playerInfo.get(0);
+
+            for (List<?> player : playerInfo) {
+                playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
+            }
+
+            endGameView.setPlayerText(playerNames.toString());
+            endGameView.setWinnerText((String) winner.get(0));
+            sceneManager.switchToScene("endGame");
+            client.closeConnection();
+        });
+    }
 }
+

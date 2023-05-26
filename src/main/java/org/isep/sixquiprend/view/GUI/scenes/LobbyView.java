@@ -6,28 +6,27 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.player.Player;
 
 import java.util.List;
 
-public class EndGameView {
+public class LobbyView {
 
     private final Button quitButton;
-    private final Button restartButton;
-    private final Label winner;
-    private final Label scores;
+    private final Button playButton;
+    private final Text playerList;
     private final Scene scene;
-    public EndGameView() {
+    public LobbyView() {
 
-        this.quitButton = new Button("Quit");
-        this.restartButton = new Button("Restart");
+        this.quitButton = new Button("Quitter le jeu en ligne");
 
-        this.scores = new Label();
-        this.winner = new Label();
+        this.playerList = new Text();
+        this.playButton = new Button("Lancer la partie");
 
 
-        VBox vbox = new VBox(winner, scores, quitButton, restartButton);
-        vbox.setSpacing(10);
+        VBox vbox = new VBox(playerList, playButton, quitButton);
+        vbox.setSpacing(50);
         vbox.setAlignment(Pos.CENTER);
 
         AnchorPane anchorPane = new AnchorPane(vbox);
@@ -49,27 +48,19 @@ public class EndGameView {
         return quitButton;
     }
 
-    public Button getRestartButton() {
-        return restartButton;
+    public Button getPlayButton() {
+        return playButton;
     }
 
-    public void setScores(List<Player> players) {
+    public void setPlayers(List<Player> players) {
         StringBuilder playerNames = new StringBuilder();
         for (Player player : players) {
-            playerNames.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
+            playerNames.append(player.getName()).append("\n");
         }
-        this.scores.setText(playerNames.toString());
+        this.playerList.setText(playerNames.toString());
     }
 
-    public void setPlayerText(String text) {
-        this.scores.setText(text);
-    }
-
-    public void setWinner(Player winner) {
-        this.winner.setText(winner.getName());
-    }
-
-    public void setWinnerText(String winner) {
-        this.winner.setText(winner);
+    public void setHost(boolean host){
+        playButton.setVisible(host);
     }
 }
