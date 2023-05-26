@@ -620,19 +620,21 @@ public class GameController {
     }
 
     public void setOnlineEndGameView(List<List<Object>> playerInfo){
-        StringBuilder playerNames = new StringBuilder();
+        Platform.runLater(() -> {
+            StringBuilder playerNames = new StringBuilder();
 
-        playerInfo.sort(Comparator.comparing(player -> (int) player.get(1)));
+            playerInfo.sort(Comparator.comparing(player -> (int) player.get(1)));
 
-        List<Object> winner = playerInfo.get(0);
+            List<Object> winner = playerInfo.get(0);
 
-        for (List<?> player : playerInfo) {
-            playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
-        }
-        System.out.println(playerNames);
+            for (List<?> player : playerInfo) {
+                playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
+            }
 
-        endGameView.setPlayerText(playerNames.toString());
-        endGameView.setWinnerText((String) winner.get(0));
-        sceneManager.switchToScene("endGame");
+            endGameView.setPlayerText(playerNames.toString());
+            endGameView.setWinnerText((String) winner.get(0));
+            sceneManager.switchToScene("endGame");
+        });
     }
 }
+
