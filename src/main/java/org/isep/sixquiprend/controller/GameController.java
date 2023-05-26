@@ -67,7 +67,12 @@ public class GameController {
             welcomeView.resetPlayerList();
             sceneManager.switchToScene("welcome");
         });
-        endGameView.getQuitButton().setOnAction(event -> quitGame());
+        endGameView.getQuitButton().setOnAction(event -> {
+            if (null != client) {
+                client.closeConnection();
+            }
+            quitGame();
+        });
 
         lobbyView.getQuitButton().setOnAction(event -> {
             sceneManager.switchToScene("welcome");
