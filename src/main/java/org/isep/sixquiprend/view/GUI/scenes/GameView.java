@@ -3,6 +3,7 @@ package org.isep.sixquiprend.view.GUI.scenes;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -12,10 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.player.Player;
@@ -36,6 +34,7 @@ public class GameView {
     private final VBox boardPane;
     private Label selectedPlayer;
     private ListView<Card> hand;
+    private HBox handHBox;
 
 
     public GameView() {
@@ -58,7 +57,10 @@ public class GameView {
         VBox roundLabelVBox = new VBox(roundLabel);
         roundLabelVBox.setAlignment(Pos.CENTER);
 
+        boardPane.setAlignment(Pos.BASELINE_LEFT);
+
         VBox playerPaneVBox = new VBox(selectedPlayer, boardPane);
+        playerPaneVBox.setSpacing(40);
         playerPaneVBox.setAlignment(Pos.BASELINE_LEFT);
 
         HBox gameInfosHBox = new HBox();
@@ -67,20 +69,24 @@ public class GameView {
         playerNames.maxWidth(Double.MAX_VALUE);
         gameInfosHBox.getChildren().addAll(playerPaneVBox,playerNames);
         gameInfosHBox.setAlignment(Pos.TOP_LEFT);
+        gameInfosHBox.setSpacing(40);
+
+        this.handHBox = new HBox();
+
+
+        
+        VBox newvbox = new VBox(gameInfosHBox, handHBox, playButton);
+        newvbox.setSpacing(40);
+        newvbox.setAlignment(Pos.CENTER);
 
 
 
-
-
-
-
-
-        AnchorPane anchorPane = new AnchorPane(imageView, gameInfosHBox );
+        AnchorPane anchorPane = new AnchorPane(imageView, newvbox);
         anchorPane.setPrefSize(1200, 600);
-        AnchorPane.setTopAnchor(gameInfosHBox, 100.0);
-        AnchorPane.setBottomAnchor(gameInfosHBox, 100.0);
-        AnchorPane.setLeftAnchor(gameInfosHBox, 300.0);
-        AnchorPane.setRightAnchor(gameInfosHBox, 300.0);
+        AnchorPane.setTopAnchor(newvbox, 100.0);
+        AnchorPane.setBottomAnchor(newvbox, 100.0);
+        AnchorPane.setLeftAnchor(newvbox, 300.0);
+        AnchorPane.setRightAnchor(newvbox, 300.0);
 
         this.scene = new Scene(anchorPane);
     }
@@ -106,7 +112,7 @@ public class GameView {
         for (List<Card> row : board) {
             HBox rowBox = new HBox();
             rowBox.setSpacing(10);
-            rowBox.setAlignment(Pos.CENTER);
+            rowBox.setAlignment(Pos.BOTTOM_LEFT);
 
             for (Card card : row) {
                 Label cardLabel = new Label(card.getNumber() + " (" + card.getBullHeads() + ")");
@@ -124,11 +130,20 @@ public class GameView {
     }
 
     public void setPlayerTurn(Player currentPlayer) {
-        String playerName = currentPlayer.getName();
-        List<Card> hand = currentPlayer.getHand();
 
-        ObservableList<Card> observableList = FXCollections.observableArrayList(hand);
-        this.hand.setItems(observableList);
+        String playerName = currentPlayer.getName();
+        List<Card> playerHand = currentPlayer.getHand();
+        handHBox.getChildren().clear();
+
+        for (Card card : playerHand) {
+            ImageView cardImage = new ImageView();
+            cardImage.getStyleClass().add("card");
+            String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
+            Image image = new Image(getClass().getResourceAsStream(imagePath));
+            cardImage.setImage(image);
+            cardImage.setFitHeight(120);
+            handHBox.getChildren().add(cardImage);
+        }
 
         this.playerNames.setStyle("-fx-font-weight: bold;");
         this.selectedPlayer.setText(playerName);
