@@ -72,17 +72,16 @@ public class GameView {
         gameInfosHBox.setSpacing(40);
 
         this.handHBox = new HBox();
+        handHBox.setSpacing(10);
 
-
-        
-        VBox newvbox = new VBox(gameInfosHBox, handHBox, playButton);
+        VBox newvbox = new VBox(roundLabelVBox, gameInfosHBox, handHBox, playButton);
         newvbox.setSpacing(40);
         newvbox.setAlignment(Pos.CENTER);
 
 
 
         AnchorPane anchorPane = new AnchorPane(imageView, newvbox);
-        anchorPane.setPrefSize(1200, 600);
+        anchorPane.setPrefSize(1400, 800);
         AnchorPane.setTopAnchor(newvbox, 100.0);
         AnchorPane.setBottomAnchor(newvbox, 100.0);
         AnchorPane.setLeftAnchor(newvbox, 300.0);
@@ -115,10 +114,15 @@ public class GameView {
             rowBox.setAlignment(Pos.BOTTOM_LEFT);
 
             for (Card card : row) {
-                Label cardLabel = new Label(card.getNumber() + " (" + card.getBullHeads() + ")");
-                cardLabel.setStyle("-fx-background-color: lightblue; -fx-padding: 5px;");
+                ImageView cardImagePlayed = new ImageView();
+                cardImagePlayed.getStyleClass().add("card");
+                String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
+                Image image = new Image(getClass().getResourceAsStream(imagePath));
+                cardImagePlayed.setImage(image);
+                cardImagePlayed.setFitHeight(80);
+                cardImagePlayed.setFitWidth(55);
 
-                rowBox.getChildren().add(cardLabel);
+                rowBox.getChildren().add(cardImagePlayed);
             }
 
             boardPane.getChildren().add(rowBox);

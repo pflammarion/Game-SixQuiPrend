@@ -85,7 +85,7 @@ VBox {
     -fx-fill: -text-color;
 
 }
-ImageView {
+.card {
     -fx-padding: 10px;
 }
 
