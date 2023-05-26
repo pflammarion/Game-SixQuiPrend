@@ -40,7 +40,9 @@ public class GameController {
 
         welcomeView.getButtonPlay().setOnAction(event -> startGame());
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
-        welcomeView.getButtonAjouterAI().setOnAction(event -> addAIPlayer());
+        welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
+        welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
+        welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -87,13 +89,22 @@ public class GameController {
             gameView.setPlayerTurn(currentPlayer);
 
             sceneManager.switchToScene("game");
-            AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
-            if (aiPlayer != null) {
-                aiPlayerPlayCard(aiPlayer);
-            }
+            nextAIPlayer();
 
         } else {
             System.out.println("Il faut au moins deux joueur pour commencer à jouer");
+        }
+    }
+
+    private void nextAIPlayer() {
+        AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
+        if (aiPlayer != null) {
+            String diff = aiPlayer.getDiff();
+            switch (diff){
+                case "easy" -> aiPlayerPlayCardEasy(aiPlayer);
+                case "medium" -> aiPlayerPlayCardMedium(aiPlayer);
+                case "hard" -> aiPlayerPlayCardHard(aiPlayer);
+            }
         }
     }
 
@@ -130,18 +141,13 @@ public class GameController {
             gameView.updateRound(game.getRound());
             gameView.setPlayerTurn(getCurrentPlayer());
 
-            AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
-            if (aiPlayer != null) {
-                aiPlayerPlayCard(aiPlayer);
-            }
+            nextAIPlayer();
         }
     }
 
-    private void aiPlayerPlayCard(AIPlayer aiPlayer) {
+    private void aiPlayerPlayCardEasy(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
-
-            Card selectedCard;
             List<Integer> tempStore = new ArrayList<>();
             List<List<Card>> board = game.getBoard();
             int smallestDiff = Integer.MAX_VALUE;
@@ -170,39 +176,193 @@ public class GameController {
             }
 
             // Take the lowest card of the player hand
-            if (selectedCardIndex == -1) {
-                int minValue = Integer.MAX_VALUE;
-                int currentIndex = 0;
-                for (Card card : aiPlayerHand) {
-                    if (card.getNumber() < minValue) {
-                        minValue = card.getNumber();
-                        selectedCardIndex = currentIndex;
-                    }
-                    currentIndex++;
+            selectedCardIndex = conditionSelectedCardIndex(aiPlayerHand, selectedCardIndex);
+
+            fetchSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCardIndex);
+        }
+    }
+
+    private void fetchSelectedCardProcess(AIPlayer aiPlayer, List<Card> aiPlayerHand, int selectedCardIndex) {
+        Card selectedCard;
+        selectedCard = aiPlayerHand.get(selectedCardIndex);
+        endSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCard);
+    }
+
+    private void endSelectedCardProcess(AIPlayer aiPlayer, List<Card> aiPlayerHand, Card selectedCard) {
+        if (selectedCard != null) {
+            aiPlayer.setLastCardPlayed(selectedCard);
+            aiPlayerHand.remove(selectedCard);
+            game.getCardsPlayed().add(selectedCard);
+
+
+            if (checkEndTurn()) {
+                return;
+            }
+
+            moveToNextPlayer();
+            gameView.updatePlayers(game.getPlayers());
+            gameView.updateRound(game.getRound());
+            gameView.setPlayerTurn(getCurrentPlayer());
+
+            nextAIPlayer();
+        }
+    }
+
+    private int conditionSelectedCardIndex(List<Card> aiPlayerHand, int selectedCardIndex) {
+        if (selectedCardIndex == -1) {
+            selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+        }
+        return selectedCardIndex;
+    }
+
+    private void aiPlayerPlayCardMedium(AIPlayer aiPlayer) {
+        List<Card> aiPlayerHand = aiPlayer.getHand();
+        if (aiPlayerHand.size() > 0) {
+            Card selectedCard;
+            List<Integer> tempStore = new ArrayList<>();
+            List<List<Card>> board = game.getBoard();
+            int smallestDiff = Integer.MAX_VALUE;
+            int selectedCardIndex = -1;
+            int lowestRowValue = Integer.MAX_VALUE;
+            int i;
+
+
+            // Does lowest value card to rows that are "playable" and without any penalties based on rows
+            List<Integer> eligibleRows = new ArrayList<>();
+            for (i = 0; i < board.size(); i++) {
+                List<Card> row = board.get(i);
+                if (row.size() < 5){
+                    eligibleRows.add(i);
                 }
+            }
+
+            if (!eligibleRows.isEmpty()){
+                for (i = 0; i < eligibleRows.size(); i++){
+                    List<Card> row = board.get(eligibleRows.get(i));
+                    int lastCardNumber = row.get(row.size() - 1).getNumber();
+                    if (lastCardNumber < lowestRowValue) {
+                        lowestRowValue = lastCardNumber;
+                    }
+                }
+
+                for (Card card : aiPlayerHand) {
+                    int cardNumber = card.getNumber();
+                    int diff = cardNumber - lowestRowValue;
+                    tempStore.add(diff);
+                }
+
+                for (i = 0; i < tempStore.size(); i++) {
+                    int currentDiff = tempStore.get(i);
+                    if (currentDiff < smallestDiff && currentDiff > 0) {
+                        smallestDiff = currentDiff;
+                        selectedCardIndex = i;
+                    }
+                }
+                // Take the lowest card of the player hand
+                selectedCardIndex = conditionSelectedCardIndex(aiPlayerHand, selectedCardIndex);
+                // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
+            // penalty
+            } else {
+                selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
             }
 
             selectedCard = aiPlayerHand.get(selectedCardIndex);
-            if (selectedCard != null) {
-                aiPlayer.setLastCardPlayed(selectedCard);
-                aiPlayerHand.remove(selectedCard);
-                game.getCardsPlayed().add(selectedCard);
 
+            endSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCard);
+        }
+    }
 
-                if (checkEndTurn()) {
-                    return;
-                }
+    private int extremeCaseNoPlayableRows(List<Card> aiPlayerHand, int selectedCardIndex) {
+        int minValue = Integer.MAX_VALUE;
+        int currentIndex = 0;
+        for (Card card : aiPlayerHand) {
+            if (card.getNumber() < minValue) {
+                minValue = card.getNumber();
+                selectedCardIndex = currentIndex;
+            }
+            currentIndex++;
+        }
+        return selectedCardIndex;
+    }
 
-                moveToNextPlayer();
-                gameView.updatePlayers(game.getPlayers());
-                gameView.updateRound(game.getRound());
-                gameView.setPlayerTurn(getCurrentPlayer());
+    private void aiPlayerPlayCardHard(AIPlayer aiPlayer) {
+        List<Card> aiPlayerHand = aiPlayer.getHand();
+        if (aiPlayerHand.size() > 0) {
+            List<List<Card>> board = game.getBoard();
+            int smallestDiff;
+            int selectedCardIndex = -1;
+            int bestRow = -1;
+            List<Integer> latestRowValue = new ArrayList<>();
+            List<List<Integer>> diffLatestRowValue = new ArrayList<>();
+            List<Integer> lowestEachRow = new ArrayList<>();
+            int i;
 
-                AIPlayer aiPlayerNext = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
-                if (aiPlayerNext != null) {
-                    aiPlayerPlayCard(aiPlayerNext);
+            // Does lowest Diff to rows that are "playable" and without any penalties based on rows
+            List<Integer> eligibleRows = new ArrayList<>();
+            for (i = 0; i < board.size(); i++) {
+                List<Card> row = board.get(i);
+                if (row.size() < 5){
+                    eligibleRows.add(i);
                 }
             }
+
+            if (!eligibleRows.isEmpty()){
+                for (i = 0; i < eligibleRows.size(); i++){
+                    List<Card> row = board.get(eligibleRows.get(i));
+                    int lastCardNumber = row.get(row.size() - 1).getNumber();
+                    latestRowValue.add(lastCardNumber);
+                }
+
+                for (i = 0; i < latestRowValue.size(); i++){
+                    List<Integer> tempStore = new ArrayList<>();
+                    int rowValue = latestRowValue.get(i);
+                    for (Card card : aiPlayerHand) {
+                        int cardNumber = card.getNumber();
+                        int diff = cardNumber - rowValue;
+                        tempStore.add(diff);
+                    }
+                    diffLatestRowValue.add(tempStore);
+                }
+
+                for (i = 0; i < diffLatestRowValue.size(); i++) {
+                    List<Integer> rowDiff = diffLatestRowValue.get(i);
+                    smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff for each row
+                    for (int j = 0; j < rowDiff.size(); j++) {
+                        int currentDiff = rowDiff.get(j);
+                        if (currentDiff < smallestDiff && currentDiff > 0) {
+                            smallestDiff = currentDiff;
+                        }
+                    }
+                    lowestEachRow.add(smallestDiff);
+                }
+
+                smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff
+
+                for (i = 0; i < lowestEachRow.size(); i++) {
+                    int currentDiff = lowestEachRow.get(i);
+                    if (currentDiff < smallestDiff && currentDiff > 0) {
+                        smallestDiff = currentDiff;
+                        bestRow = i;
+                    }
+                }
+
+                if (bestRow != -1){
+                    List<Integer> chosenRowDiff = diffLatestRowValue.get(bestRow);
+                    selectedCardIndex = chosenRowDiff.indexOf(smallestDiff);
+                }
+                else {
+                    // Take the lowest card of the player hand
+                    selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+                }
+
+
+                // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
+                // penalty
+            } else {
+                selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+            }
+
+            fetchSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCardIndex);
         }
     }
 
@@ -373,9 +533,23 @@ public class GameController {
         }
     }
 
-    private void addAIPlayer() {
+    private void addAIPlayerEasy() {
         this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer);
+        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", "easy");
+        game.getPlayers().add(aiPlayer);
+        welcomeView.addNameToPlayerList(aiPlayer.getName());
+    }
+
+    private void addAIPlayerMedium() {
+        this.numberOfAIPlayer ++;
+        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", "medium");
+        game.getPlayers().add(aiPlayer);
+        welcomeView.addNameToPlayerList(aiPlayer.getName());
+    }
+
+    private void addAIPlayerHard() {
+        this.numberOfAIPlayer ++;
+        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", "hard");
         game.getPlayers().add(aiPlayer);
         welcomeView.addNameToPlayerList(aiPlayer.getName());
     }
