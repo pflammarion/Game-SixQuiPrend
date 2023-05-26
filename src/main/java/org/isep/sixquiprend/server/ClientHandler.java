@@ -20,7 +20,7 @@ public class ClientHandler implements Runnable {
         this.server = server;
         this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
-        this.clientName = "Player " + server.getClientCount();
+        this.clientName = "Player " + server.nameVerif();
     }
 
     @Override

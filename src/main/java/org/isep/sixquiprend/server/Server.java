@@ -10,7 +10,6 @@ public class Server {
     private static final int PORT = 4444;
     private static final int MAX_CONNECTIONS = 10;
     private final List<ClientHandler> clientHandlers;
-
     private List<List<Object>> roundInfo = new ArrayList<>();
 
     public Server() {
@@ -85,6 +84,16 @@ public class Server {
             if (client.getClientName().equals(clientName)) {
                 client.sendMessage(title, message);
             }
+        }
+    }
+
+    public int nameVerif(){
+        int size = getClientCount();
+        String comp = "Player " + size;
+        if (comp.equals(clientHandlers.get(clientHandlers.size() - 1).getClientName())){
+            return size + 1;
+        } else {
+            return size;
         }
     }
 
