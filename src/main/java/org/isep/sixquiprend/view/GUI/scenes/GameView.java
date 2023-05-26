@@ -53,11 +53,7 @@ public class GameView {
         playerNames.getStyleClass().add("player_name");
         playerNames.setTextAlignment(TextAlignment.RIGHT);
 
-
-        VBox roundLabelVBox = new VBox(roundLabel);
-        roundLabelVBox.setAlignment(Pos.CENTER);
-
-        boardPane.setAlignment(Pos.BASELINE_LEFT);
+        boardPane.setAlignment(Pos.CENTER_LEFT);
 
         VBox playerPaneVBox = new VBox(selectedPlayer, boardPane);
         playerPaneVBox.setSpacing(40);
@@ -65,8 +61,6 @@ public class GameView {
 
         HBox gameInfosHBox = new HBox();
         HBox.setHgrow(playerPaneVBox, Priority.ALWAYS);
-        playerPaneVBox.setMaxWidth(Double.MAX_VALUE);
-        playerNames.maxWidth(Double.MAX_VALUE);
         gameInfosHBox.getChildren().addAll(playerPaneVBox,playerNames);
         gameInfosHBox.setAlignment(Pos.TOP_LEFT);
         gameInfosHBox.setSpacing(40);
@@ -74,10 +68,10 @@ public class GameView {
         this.handHBox = new HBox();
         handHBox.setSpacing(10);
 
-        VBox newvbox = new VBox(roundLabelVBox, gameInfosHBox, handHBox, playButton);
+
+        VBox newvbox = new VBox(roundLabel, gameInfosHBox, boardPane, handHBox, playButton);
         newvbox.setSpacing(40);
         newvbox.setAlignment(Pos.CENTER);
-
 
 
         AnchorPane anchorPane = new AnchorPane(imageView, newvbox);
