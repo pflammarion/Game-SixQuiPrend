@@ -573,7 +573,7 @@ public class GameController {
     }
 
     public void setGameCartPlayed(List<List<Object>> roundInfo) {
-        //TODO check if the played card is not played
+        boolean isPlayed = false;
         for (int i = 0; i < roundInfo.size(); i++) {
             List<Object> tempInfo = new ArrayList<>();
             String playerName = (String) roundInfo.get(i).get(0);
@@ -586,14 +586,23 @@ public class GameController {
                 // You can throw an exception or handle it as per your requirements
             }
             Card card = findCardByNumber((int) roundInfo.get(i).get(1));
-            List<Card> cardList = game.getCardsPlayed();
-            cardList.add(card);
-            game.setCardsPlayed(cardList);
-            tempInfo.add(card);
-            roundInfo.set(i, tempInfo);
+            for (Card cardPlayed : game.getCardsPlayed()) {
+                assert card != null;
+                if (cardPlayed.getNumber() == card.getNumber()){
+                    isPlayed = true;
+                    break;
+                }
+            }
+            if (!isPlayed){
+                game.getCardsPlayed().add(card);
+                tempInfo.add(card);
+                roundInfo.set(i, tempInfo);
+            }
         }
-        this.onlineRoundInfo = roundInfo;
-        checkEndTurn();
+        if (!isPlayed){
+            this.onlineRoundInfo = roundInfo;
+            checkEndTurn();
+        }
     }
 
 
