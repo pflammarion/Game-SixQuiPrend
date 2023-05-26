@@ -115,7 +115,7 @@ public class Server {
         if (roundInfo.size() == clientHandlers.size()) {
             sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", roundInfo);
             System.out.println("Round info list : " + roundInfo);
-            roundInfo.clear();
+            //roundInfo.clear();
             System.out.println("Round info clear : " +roundInfo);
         }
     }
