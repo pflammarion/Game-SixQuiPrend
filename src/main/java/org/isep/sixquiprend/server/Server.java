@@ -115,7 +115,7 @@ public class Server {
 
         this.roundInfo.addAll(infoToAdd);
 
-        if (this.roundInfo.size() == clientHandlers.size()) {
+        if (this.roundInfo.size() == clientHandlers.size() + 1) {
             sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", this.roundInfo);
             this.roundInfo.clear();
         }
