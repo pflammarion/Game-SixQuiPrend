@@ -87,5 +87,11 @@ VBox {
 }
 .card {
     -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+.card_selected {
+    -fx-border-color: -red;
+    -fx-border-width: 2px;
 }
 

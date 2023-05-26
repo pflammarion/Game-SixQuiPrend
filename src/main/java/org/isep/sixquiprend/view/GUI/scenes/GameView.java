@@ -34,6 +34,7 @@ public class GameView {
     private final VBox boardPane;
     private Label selectedPlayer;
     private HBox handHBox;
+    private Card selectedCard;
 
 
     public GameView() {
@@ -131,10 +132,18 @@ public class GameView {
             ImageView cardImage = new ImageView();
             cardImage.getStyleClass().add("card");
             String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
-            Image image = new Image(getClass().getResourceAsStream(imagePath));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             cardImage.setImage(image);
             cardImage.setFitHeight(120);
             handHBox.getChildren().add(cardImage);
+
+            cardImage.setOnMouseClicked(event -> {
+                for (Node child : handHBox.getChildren()) {
+                    child.getStyleClass().remove("card_selected");
+                }
+                this.selectedCard = card;
+                cardImage.getStyleClass().add("card_selected");
+            });
         }
 
         this.playerNames.setStyle("-fx-font-weight: bold;");
@@ -143,7 +152,6 @@ public class GameView {
     }
 
     public Card getSelectedCard() {
-        //TODO
-        return new Card();
+        return this.selectedCard;
     }
 }
