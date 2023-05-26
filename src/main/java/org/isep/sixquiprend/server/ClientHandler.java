@@ -156,20 +156,8 @@ public class ClientHandler implements Runnable {
 
     private void processEndGame(List<Object> gameInfo) {
 
-        int index = 1;
-
-        //SKIP board
-        if (gameInfo.get(index).equals("_BOARD_")) {
-            index++;
-            index++;
-        }
-
-        //SKIP ROUND
-        if (gameInfo.get(index).equals("_ROUND_")) {
-            index++;
-            index++;
-
-        }
+        int index = 5;
+        System.out.println(gameInfo.get(index));
 
         if (gameInfo.get(index).equals("_PLAYERS_")) {
             index++;

@@ -629,6 +629,7 @@ public class GameController {
         for (List<?> player : playerInfo) {
             playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
         }
+        System.out.println(playerNames);
 
         endGameView.setPlayerText(playerNames.toString());
         endGameView.setWinnerText((String) winner.get(0));
