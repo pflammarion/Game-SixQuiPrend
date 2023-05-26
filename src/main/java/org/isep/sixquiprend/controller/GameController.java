@@ -161,15 +161,11 @@ public class GameController {
                 }
             }
 
-            System.out.println(lowestRowValue);
-
             for (Card card : aiPlayerHand) {
                 int cardNumber = card.getNumber();
                 int diff = cardNumber - lowestRowValue;
                 tempStore.add(diff);
             }
-
-            System.out.println(tempStore);
 
             for (int i = 0; i < tempStore.size(); i++) {
                 int currentDiff = tempStore.get(i);
@@ -216,7 +212,6 @@ public class GameController {
         if (selectedCardIndex == -1) {
             selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
         }
-        System.out.println(selectedCardIndex);
         return selectedCardIndex;
     }
 
@@ -241,8 +236,6 @@ public class GameController {
                 }
             }
 
-            System.out.println(eligibleRows);
-
             if (!eligibleRows.isEmpty()){
                 for (i = 0; i < eligibleRows.size(); i++){
                     List<Card> row = board.get(eligibleRows.get(i));
@@ -252,15 +245,11 @@ public class GameController {
                     }
                 }
 
-                System.out.println(lowestRowValue);
-
                 for (Card card : aiPlayerHand) {
                     int cardNumber = card.getNumber();
                     int diff = cardNumber - lowestRowValue;
                     tempStore.add(diff);
                 }
-
-                System.out.println(tempStore);
 
                 for (i = 0; i < tempStore.size(); i++) {
                     int currentDiff = tempStore.get(i);
@@ -293,7 +282,6 @@ public class GameController {
             }
             currentIndex++;
         }
-        System.out.println(selectedCardIndex);
         return selectedCardIndex;
     }
 
@@ -318,16 +306,12 @@ public class GameController {
                 }
             }
 
-            System.out.println(eligibleRows);
-
             if (!eligibleRows.isEmpty()){
                 for (i = 0; i < eligibleRows.size(); i++){
                     List<Card> row = board.get(eligibleRows.get(i));
                     int lastCardNumber = row.get(row.size() - 1).getNumber();
                     latestRowValue.add(lastCardNumber);
                 }
-
-                System.out.println(latestRowValue);
 
                 for (i = 0; i < latestRowValue.size(); i++){
                     List<Integer> tempStore = new ArrayList<>();
@@ -339,8 +323,6 @@ public class GameController {
                     }
                     diffLatestRowValue.add(tempStore);
                 }
-
-                System.out.println(diffLatestRowValue);
 
                 for (i = 0; i < diffLatestRowValue.size(); i++) {
                     List<Integer> rowDiff = diffLatestRowValue.get(i);
@@ -354,8 +336,6 @@ public class GameController {
                     lowestEachRow.add(smallestDiff);
                 }
 
-                System.out.println(lowestEachRow);
-
                 smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff
 
                 for (i = 0; i < lowestEachRow.size(); i++) {
@@ -366,13 +346,9 @@ public class GameController {
                     }
                 }
 
-                System.out.println(bestRow);
-
                 if (bestRow != -1){
                     List<Integer> chosenRowDiff = diffLatestRowValue.get(bestRow);
-                    System.out.println(chosenRowDiff);
                     selectedCardIndex = chosenRowDiff.indexOf(smallestDiff);
-                    System.out.println(selectedCardIndex);
                 }
                 else {
                     // Take the lowest card of the player hand
