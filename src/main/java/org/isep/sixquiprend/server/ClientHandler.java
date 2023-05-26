@@ -92,7 +92,6 @@ public class ClientHandler implements Runnable {
         List<Object> message = new ArrayList<>();
         message.add(title);
         message.add(content);
-        System.out.println("le sout du message est:" + content);
         try {
             outputStream.writeObject(message);
             System.out.println("Message sent : " + message);

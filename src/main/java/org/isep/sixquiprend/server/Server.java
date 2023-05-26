@@ -83,7 +83,6 @@ public class Server {
     public void sendMessageToClientByName(String clientName, String title, Object message) {
         for (ClientHandler client : clientHandlers) {
             if (client.getClientName().equals(clientName)) {
-                System.out.println("Round info Message" + message);
                 client.sendMessage(title, message);
             }
         }
@@ -97,6 +96,9 @@ public class Server {
         List<List<Object>> infoToAdd = new ArrayList<>();
 
         if (this.roundInfo.isEmpty()) {
+            List<Object> test = new ArrayList<>();
+            test.add("Je suis la");
+            infoToAdd.add(test);
             infoToAdd.add(info);
         } else {
             boolean isPresent = false;
