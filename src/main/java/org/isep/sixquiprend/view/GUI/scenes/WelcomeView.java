@@ -13,8 +13,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.util.Duration;
 import org.isep.sixquiprend.model.player.Player;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
@@ -107,6 +112,14 @@ public class WelcomeView {
 
         //imageView.fitWidthProperty().bind(scene.widthProperty());
         //imageView.fitHeightProperty().bind(scene.heightProperty());
+
+        String path = "src/main/resources/org/isep/sixquiprend/assets/ThomasLeGoat.mp3";
+        Media media = new Media(new File(path).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
+        mediaPlayer.play();
+        anchorPane.getChildren().add(mediaView);
     }
 
     public Scene getScene() {
