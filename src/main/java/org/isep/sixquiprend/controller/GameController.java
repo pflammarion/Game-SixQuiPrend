@@ -665,6 +665,7 @@ public class GameController {
             endGameView.setPlayerText(playerNames.toString());
             endGameView.setWinnerText((String) winner.get(0));
             sceneManager.switchToScene("endGame");
+            client.closeConnection();
         });
     }
 }
