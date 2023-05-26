@@ -11,7 +11,7 @@ public class Server {
     private static final int MAX_CONNECTIONS = 10;
     private final List<ClientHandler> clientHandlers;
 
-    private final List<List<Object>> roundInfo = new ArrayList<>();
+    private List<List<Object>> roundInfo = new ArrayList<>();
 
     public Server() {
         clientHandlers = new ArrayList<>();
@@ -83,6 +83,7 @@ public class Server {
     public void sendMessageToClientByName(String clientName, String title, Object message) {
         for (ClientHandler client : clientHandlers) {
             if (client.getClientName().equals(clientName)) {
+                System.out.println("Round info Message" + message);
                 client.sendMessage(title, message);
             }
         }
@@ -95,11 +96,11 @@ public class Server {
     public void setRoundInfo(List<Object> info) {
         List<List<Object>> infoToAdd = new ArrayList<>();
 
-        if (roundInfo.isEmpty()) {
+        if (this.roundInfo.isEmpty()) {
             infoToAdd.add(info);
         } else {
             boolean isPresent = false;
-            for (List<Object> name : roundInfo) {
+            for (List<Object> name : this.roundInfo) {
                 if (name.get(0).equals(info.get(0))) {
                     isPresent = true;
                     break;
@@ -110,12 +111,11 @@ public class Server {
             }
         }
 
-        roundInfo.addAll(infoToAdd);
+        this.roundInfo.addAll(infoToAdd);
 
-        if (roundInfo.size() == clientHandlers.size()) {
-            sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", roundInfo);
-            System.out.println("Round info list : " + roundInfo);
-            roundInfo.clear();
+        if (this.roundInfo.size() == clientHandlers.size()) {
+            sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", this.roundInfo);
+            this.roundInfo.clear();
         }
     }
 
