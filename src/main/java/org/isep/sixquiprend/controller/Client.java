@@ -109,6 +109,10 @@ public class Client {
                             List<List<Object>> round = (List<List<Object>>) listInstruction.get(0);
                             gameController.setGameCartPlayed(round);
                         }
+                        case "_ENDGAME_" -> {
+                            List<List<Object>> endgame = (List<List<Object>>) listInstruction.get(0);
+                            gameController.setOnlineEndGameView(endgame);
+                        }
                     }
                 }
             }

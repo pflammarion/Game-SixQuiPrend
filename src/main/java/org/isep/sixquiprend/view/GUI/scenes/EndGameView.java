@@ -60,7 +60,16 @@ public class EndGameView {
         }
         this.scores.setText(playerNames.toString());
     }
+
+    public void setPlayerText(String text) {
+        this.scores.setText(text);
+    }
+
     public void setWinner(Player winner) {
         this.winner.setText(winner.getName());
+    }
+
+    public void setWinnerText(String winner) {
+        this.winner.setText(winner);
     }
 }

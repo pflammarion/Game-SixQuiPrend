@@ -107,7 +107,7 @@ public class GameController {
         dealCards();
 
         if (null != client){
-            this.sendGameInfo();
+            this.sendGameInfo(false);
         }
         else {
             gameView.updatePlayers(game.getPlayers());
@@ -347,21 +347,27 @@ public class GameController {
             board.set(selectedRowIndex, selectedRow);
 
             if (score > 0) {
-                for (Player player : game.getPlayers()){
-                    if (null != client){
-                       for(List<Object> info : this.onlineRoundInfo) {
-                           if (info.get(1).equals(card.getNumber())){
-                               player.setScore(player.getScore() + score);
-                           }
-                       }
+                if (null != client) {
+                    for (List<Object> info : this.onlineRoundInfo) {
+                        if (info.get(1).equals(card)) {
+                            Player player = (Player) info.get(0);
+                            if (player != null) {
+                                player.setScore(player.getScore() + score);
+                            } else {
+                                System.out.println("Player not found");
+                            }
+                        }
                     }
-                    else {
+                }
+                else {
+                    for (Player player : game.getPlayers()){
                         if (player.getLastCardPlayed().getNumber() == card.getNumber()){
                             player.setScore(player.getScore() + score);
                         }
                     }
                 }
             }
+
         }
     }
 
@@ -386,11 +392,10 @@ public class GameController {
                 }
 
                 onlineRoundInfo.clear();
-                this.sendGameInfo();
+                this.sendGameInfo(false);
 
                 if (game.getRound() == numCardsPerPlayer + 1) {
-                    client.sendMessageToServer("_ENDGAME_");
-                    System.out.println("Endgame");
+                    this.sendGameInfo(true);
                 }
             }
 
@@ -575,10 +580,14 @@ public class GameController {
     }
 
 
-    private void sendGameInfo() {
+    private void sendGameInfo(boolean endGame) {
         List<Object> gameInfo = new ArrayList<>();
 
-        gameInfo.add("_GAMEINFO_");
+        if (!endGame) {
+            gameInfo.add("_GAMEINFO_");
+        } else {
+            gameInfo.add("_ENDGAME_");
+        }
 
         List<List<Integer>> boardOnline = game.getBoard().stream()
                 .map(row -> row.stream().map(Card::getNumber).collect(Collectors.toList()))
@@ -608,5 +617,21 @@ public class GameController {
         gameInfo.addAll(playerList);
 
         client.sendMessageToServer(gameInfo);
+    }
+
+    public void setOnlineEndGameView(List<List<Object>> playerInfo){
+        StringBuilder playerNames = new StringBuilder();
+
+        playerInfo.sort(Comparator.comparing(player -> (int) player.get(1)));
+
+        List<Object> winner = playerInfo.get(0);
+
+        for (List<?> player : playerInfo) {
+            playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
+        }
+
+        endGameView.setPlayerText(playerNames.toString());
+        endGameView.setWinnerText((String) winner.get(0));
+        sceneManager.switchToScene("endGame");
     }
 }

@@ -81,6 +81,9 @@ public class ClientHandler implements Runnable {
                     command.remove(0);
                     server.setRoundInfo(command);
                 }
+                else if (command.get(0).equals("_ENDGAME_")) {
+                    this.processEndGame(command);
+                }
             }
         }
 
@@ -148,6 +151,43 @@ public class ClientHandler implements Runnable {
                 index++;
             }
             server.broadcastMessage(setUpListMessage("_PLAYERINFO_", playerList));
+        }
+    }
+
+    private void processEndGame(List<Object> gameInfo) {
+
+        int index = 1;
+
+        //SKIP board
+        if (gameInfo.get(index).equals("_BOARD_")) {
+            index++;
+            index++;
+        }
+
+        //SKIP ROUND
+        if (gameInfo.get(index).equals("_ROUND_")) {
+            index++;
+            index++;
+
+        }
+
+        if (gameInfo.get(index).equals("_PLAYERS_")) {
+            index++;
+
+            List<Object> playerList = new ArrayList<>();
+
+            while (index < gameInfo.size()) {
+                List<?> playerInfo = (List<?>) gameInfo.get(index);
+                String playerName = (String) playerInfo.get(0);
+                int playerScore = (int) playerInfo.get(2);
+
+                List<Object> list = new ArrayList<>();
+                list.add(playerName);
+                list.add(playerScore);
+                playerList.add(list);
+                index++;
+            }
+            server.broadcastMessage(setUpListMessage("_ENDGAME_", playerList));
         }
     }
 
