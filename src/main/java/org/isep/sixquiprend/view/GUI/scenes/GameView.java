@@ -33,7 +33,6 @@ public class GameView {
     private final Label roundLabel;
     private final VBox boardPane;
     private Label selectedPlayer;
-    private ListView<Card> hand;
     private HBox handHBox;
 
 
@@ -45,33 +44,28 @@ public class GameView {
         boardPane = new VBox();
         selectedPlayer = new Label();
 
-        this.hand = new ListView<>();
-        hand.setMaxSize(200, 200);
-
         selectedPlayer.getStyleClass().add("selected_player");
 
         playerNames.getStyleClass().add("player_name");
         playerNames.setTextAlignment(TextAlignment.RIGHT);
 
         boardPane.setAlignment(Pos.CENTER_LEFT);
+        boardPane.setMaxWidth(500.0);
 
         VBox playerPaneVBox = new VBox(selectedPlayer, boardPane);
         playerPaneVBox.setSpacing(40);
         playerPaneVBox.setAlignment(Pos.BASELINE_LEFT);
 
-        HBox gameInfosHBox = new HBox();
-        HBox.setHgrow(playerPaneVBox, Priority.ALWAYS);
-        gameInfosHBox.getChildren().addAll(playerPaneVBox,playerNames);
+        HBox gameInfosHBox = new HBox(playerPaneVBox,playerNames);
         gameInfosHBox.setAlignment(Pos.TOP_LEFT);
         gameInfosHBox.setSpacing(40);
 
         this.handHBox = new HBox();
         handHBox.setSpacing(10);
+        handHBox.setMaxWidth(500.0);
 
 
         VBox newvbox = new VBox(roundLabel, gameInfosHBox, boardPane, handHBox, playButton);
-        newvbox.setSpacing(40);
-        newvbox.setAlignment(Pos.CENTER);
 
 
         AnchorPane anchorPane = new AnchorPane(imageView, newvbox);
@@ -149,8 +143,7 @@ public class GameView {
     }
 
     public Card getSelectedCard() {
-        MultipleSelectionModel<Card> selectionModel = this.hand.getSelectionModel();
-
-        return selectionModel.getSelectedItem();
+        //TODO
+        return new Card();
     }
 }
