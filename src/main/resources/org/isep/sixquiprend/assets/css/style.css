@@ -63,3 +63,30 @@ Button:hover {
 .player_add_hbox {
     -fx-padding: 0 0 30 0;
 }
+
+.quit_button {
+    -fx-min-width: 70px;
+    -fx-min-height: 50px;
+}
+.quit_button:hover {
+    -fx-text-fill: -red;
+}
+
+.restart_button {
+    -fx-background-color: white;
+    -fx-border-color: -blue-bg;
+    -fx-text-fill: -blue-bg;
+    -fx-font-size: 25px;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 200px;
+    -fx-min-width: 100px;
+    -fx-min-height: 50px;
+}
+.restart_button:hover {
+    -fx-background-color: -blue-bg;
+    -fx-border-color: -blue-bg;
+    -fx-text-fill: white;
+}
+.end_label {
+    -fx-font-size: 35px;
+}
