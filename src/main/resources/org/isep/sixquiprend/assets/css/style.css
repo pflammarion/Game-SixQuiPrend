@@ -105,6 +105,15 @@ VBox {
 }
 .end_label {
     -fx-font-size: 35px;
+
+}
+.winner_label {
+    -fx-font-size: 20px;
+    -fx-background-color: -light-blue-bg;
+    -fx-border-color: -blue-bg;
+    -fx-border-radius: 10px;
+    -fx-border-width: 3px;
+
 }
 
 
