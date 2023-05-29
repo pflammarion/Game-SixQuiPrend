@@ -37,17 +37,16 @@ public class EndGameView {
         this.winnerAnnounce = new Label("Le gagnant est:");
 
         endLabel.getStyleClass().add("end_label");
-        winner.getStyleClass().add("winner_label");
         quitButton.getStyleClass().add("quit_button");
         restartButton.getStyleClass().add("restart_button");
-
-
 
         HBox endLabelHbox = new HBox(endLabel);
         endLabelHbox.setAlignment(Pos.TOP_CENTER);
 
         VBox winnerVBox = new VBox(winnerAnnounce, winner);
+        winner.getStyleClass().add("winner_label");
         winnerVBox.setAlignment(Pos.CENTER);
+        winnerVBox.setSpacing(10);
 
 
         HBox buttonsHBox = new HBox(quitButton, restartButton);
@@ -55,16 +54,16 @@ public class EndGameView {
         buttonsHBox.setSpacing(20);
 
 
-        VBox vbox = new VBox(endLabelHbox, winnerVBox, scores, buttonsHBox);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER);
+        VBox sBox= new VBox(endLabelHbox, winnerVBox, scores, buttonsHBox);
+        sBox.setSpacing(20);
+        sBox.setAlignment(Pos.CENTER);
 
-        AnchorPane anchorPane = new AnchorPane(imageView, vbox);
+        AnchorPane anchorPane = new AnchorPane(imageView, sBox);
         anchorPane.setPrefSize(1200, 600);
-        AnchorPane.setTopAnchor(vbox, 100.0);
-        AnchorPane.setBottomAnchor(vbox, 100.0);
-        AnchorPane.setLeftAnchor(vbox, 300.0);
-        AnchorPane.setRightAnchor(vbox, 300.0);
+        AnchorPane.setTopAnchor(sBox, 100.0);
+        AnchorPane.setBottomAnchor(sBox, 100.0);
+        AnchorPane.setLeftAnchor(sBox, 300.0);
+        AnchorPane.setRightAnchor(sBox, 300.0);
 
         this.scene = new Scene(anchorPane);
 
