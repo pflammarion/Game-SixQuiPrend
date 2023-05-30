@@ -52,29 +52,30 @@ public class GameView {
 
         boardPane.setAlignment(Pos.CENTER_LEFT);
         boardPane.setMaxWidth(500.0);
+        boardPane.setSpacing(10);
 
-        VBox playerPaneVBox = new VBox(selectedPlayer, boardPane);
-        playerPaneVBox.setSpacing(40);
-        playerPaneVBox.setAlignment(Pos.BASELINE_LEFT);
 
-        HBox gameInfosHBox = new HBox(playerPaneVBox,playerNames);
-        gameInfosHBox.setAlignment(Pos.TOP_LEFT);
-        gameInfosHBox.setSpacing(40);
+        HBox gameInfosHBox = new HBox(playerNames, selectedPlayer);
+        gameInfosHBox.setMaxWidth(1500);
+        gameInfosHBox.setSpacing(1000);
 
         this.handHBox = new HBox();
         handHBox.setSpacing(10);
-        handHBox.setMaxWidth(500.0);
+        handHBox.setMinWidth(880.0);
+        handHBox.setMaxWidth(880.0);
 
 
-        VBox newvbox = new VBox(roundLabel, gameInfosHBox, boardPane, handHBox, playButton);
+        VBox mainvbox = new VBox(roundLabel, gameInfosHBox, boardPane, handHBox, playButton);
+        mainvbox.setMinWidth(1400);
+        mainvbox.setMinHeight(800);
+        mainvbox.setSpacing(20);
+        mainvbox.setAlignment(Pos.CENTER);
 
 
-        AnchorPane anchorPane = new AnchorPane(imageView, newvbox);
+        AnchorPane anchorPane = new AnchorPane(imageView, mainvbox);
         anchorPane.setPrefSize(1400, 800);
-        AnchorPane.setTopAnchor(newvbox, 100.0);
-        AnchorPane.setBottomAnchor(newvbox, 100.0);
-        AnchorPane.setLeftAnchor(newvbox, 300.0);
-        AnchorPane.setRightAnchor(newvbox, 300.0);
+        AnchorPane.setTopAnchor(mainvbox, 50.0);
+        AnchorPane.setLeftAnchor(mainvbox, 150.0);
 
         this.scene = new Scene(anchorPane);
     }
@@ -88,11 +89,11 @@ public class GameView {
     }
 
     public void updatePlayers(List<Player> players) {
-        StringBuilder playerNames = new StringBuilder();
+        StringBuilder playerNamesText = new StringBuilder();
         for (Player player : players) {
-            playerNames.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
+            playerNamesText.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
         }
-        this.playerNames.setText(playerNames.toString());
+        this.playerNames.setText(playerNamesText.toString());
     }
 
     public void updateBoard(List<List<Card>> board) {
@@ -106,7 +107,7 @@ public class GameView {
                 ImageView cardImagePlayed = new ImageView();
                 cardImagePlayed.getStyleClass().add("card");
                 String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
-                Image image = new Image(getClass().getResourceAsStream(imagePath));
+                Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
                 cardImagePlayed.setImage(image);
                 cardImagePlayed.setFitHeight(80);
                 cardImagePlayed.setFitWidth(55);
