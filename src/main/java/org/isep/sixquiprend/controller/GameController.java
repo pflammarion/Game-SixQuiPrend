@@ -570,8 +570,6 @@ public class GameController {
     }
 
     private boolean checkEndTurn(){
-
-
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
@@ -850,4 +848,3 @@ public class GameController {
         });
     }
 }
-

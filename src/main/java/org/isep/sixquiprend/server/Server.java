@@ -5,12 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Server {
     private static final int PORT = 4444;
     private static final int MAX_CONNECTIONS = 10;
     private final List<ClientHandler> clientHandlers;
-
     private List<List<Object>> roundInfo = new ArrayList<>();
 
     public Server() {
@@ -88,8 +88,15 @@ public class Server {
         }
     }
 
-    public synchronized int getClientCount() {
-        return clientHandlers.size();
+    public String nameVerif(String name, int index) {
+        for (ClientHandler client : clientHandlers) {
+            if (client.getClientName().equals(name) || name.equals("")) {
+                int number = clientHandlers.size() + index;
+                index++;
+                return nameVerif("Joueur " + number, index);
+            }
+        }
+        return name;
     }
 
     public void setRoundInfo(List<Object> info) {
@@ -116,6 +123,24 @@ public class Server {
             sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", this.roundInfo);
             this.roundInfo = new ArrayList<>();
         }
+    }
+
+    public boolean isPlayerNameDuplicate(String playerName) {
+        List<String> playerList = getClientNames();
+        for (String name : playerList) {
+            if (name.equals(playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getClientNames() {
+        List<String> clientNames = new ArrayList<>();
+        for (ClientHandler client : clientHandlers) {
+            clientNames.add(client.getClientName());
+        }
+        return clientNames;
     }
 
     public static void main(String[] args) {

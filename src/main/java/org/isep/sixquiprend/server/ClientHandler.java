@@ -1,5 +1,6 @@
 package org.isep.sixquiprend.server;
 
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,7 +13,7 @@ public class ClientHandler implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final Server server;
-    private String clientName;
+    private String clientName = "";
     private boolean isHoster = false;
 
     public ClientHandler(Socket clientSocket, Server server) throws IOException {
@@ -20,7 +21,6 @@ public class ClientHandler implements Runnable {
         this.server = server;
         this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
-        this.clientName = "Player " + server.getClientCount();
     }
 
     @Override
@@ -62,9 +62,7 @@ public class ClientHandler implements Runnable {
                     break;
                 case "SET_PLAYERNAME" :
                     String player = (String) inputStream.readObject();
-                    if (!player.equals("")){
-                        this.clientName = player;
-                    }
+                    this.clientName = server.nameVerif(player, 0);
                     server.broadcastMessage(server.getPlayerList());
                     server.broadcastMessage(server.getHost());
                     sendMessage("_PLAYERNAME_", this.clientName);
