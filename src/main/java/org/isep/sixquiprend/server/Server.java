@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Server {
     private static final int PORT = 4444;
@@ -63,7 +64,7 @@ public class Server {
         broadcastMessage(message);
     }
 
-    public List<String> getPlayerList() {
+    public Object getPlayerList() {
         List<String> clientNameList = new ArrayList<>();
         clientNameList.add("_PLAYERLIST_");
         for (ClientHandler client: clientHandlers) {
@@ -130,6 +131,24 @@ public class Server {
             sendMessageToClientByName(clientHandlers.get(0).getClientName(), "_ROUNDINFO_", this.roundInfo);
             this.roundInfo = new ArrayList<>();
         }
+    }
+
+    public boolean isPlayerNameDuplicate(String playerName) {
+        List<String> playerList = getClientNames();
+        for (String name : playerList) {
+            if (name.equals(playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getClientNames() {
+        List<String> clientNames = new ArrayList<>();
+        for (ClientHandler client : clientHandlers) {
+            clientNames.add(client.getClientName());
+        }
+        return clientNames;
     }
 
     public static void main(String[] args) {

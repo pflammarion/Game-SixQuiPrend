@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
@@ -67,22 +68,14 @@ public class ClientHandler implements Runnable {
                     if (!player.equals("")){
                         this.clientName = player;
                     }
-                    List<String> playerList = server.getPlayerList();
-                    List<String> playerName = new ArrayList<>();
-                    for (int i = 1; i<playerList.size(); i++){
-                        playerName.add(playerList.get(i));
+                    boolean isDuplicate = server.isPlayerNameDuplicate(player);
+                    if (!isDuplicate) {
+                        server.broadcastMessage(server.getPlayerList());
+                        server.broadcastMessage(server.getHost());
+                        sendMessage("_PLAYERNAME_", this.clientName);
+                    } else {
+                        sendMessage("_DUPLICATE_NAME_", null);
                     }
-
-                    for (String playerTxt : playerName){
-                        if (playerTxt == clientName){
-                            System.out.println("Nom deja existant");
-                            break;
-                        }
-                    }
-
-                    server.broadcastMessage(server.getPlayerList());
-                    server.broadcastMessage(server.getHost());
-                    sendMessage("_PLAYERNAME_", this.clientName);
                     break;
             }
         }
