@@ -74,7 +74,10 @@ public class ClientHandler implements Runnable {
                         server.broadcastMessage(server.getHost());
                         sendMessage("_PLAYERNAME_", this.clientName);
                     } else {
-                        sendMessage("_DUPLICATE_NAME_", null);
+                        this.clientName = "Player" + server.nameVerif();
+                        server.broadcastMessage(server.getPlayerList());
+                        server.broadcastMessage(server.getHost());
+                        sendMessage("_PLAYERNAME_", this.clientName);
                     }
                     break;
             }
