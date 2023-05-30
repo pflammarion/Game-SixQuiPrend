@@ -110,8 +110,8 @@ public class WelcomeView {
 
         this.scene = new Scene(anchorPane);
 
-        //imageView.fitWidthProperty().bind(scene.widthProperty());
-        //imageView.fitHeightProperty().bind(scene.heightProperty());
+        imageView.fitWidthProperty().bind(scene.widthProperty());
+        imageView.fitHeightProperty().bind(scene.heightProperty());
 
         String path = "src/main/resources/org/isep/sixquiprend/assets/ThomasLeGoat.mp3";
         Media media = new Media(new File(path).toURI().toString());

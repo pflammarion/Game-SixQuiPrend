@@ -4,12 +4,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.player.Player;
 
 import java.util.List;
+import java.util.Objects;
 
 public class LobbyView {
 
@@ -18,6 +21,9 @@ public class LobbyView {
     private final Text playerList;
     private final Scene scene;
     public LobbyView() {
+
+
+        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
 
         this.quitButton = new Button("Quitter le jeu en ligne");
 
@@ -36,8 +42,11 @@ public class LobbyView {
         AnchorPane.setLeftAnchor(vbox, 300.0);
         AnchorPane.setRightAnchor(vbox, 300.0);
 
+
         this.scene = new Scene(anchorPane);
 
+        imageView.fitWidthProperty().bind(scene.widthProperty());
+        imageView.fitHeightProperty().bind(scene.heightProperty());
     }
 
     public Scene getScene() {

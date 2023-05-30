@@ -79,6 +79,8 @@ public class GameView {
         AnchorPane.setLeftAnchor(mainvbox, 150.0);
 
         this.scene = new Scene(anchorPane);
+        imageView.fitWidthProperty().bind(scene.widthProperty());
+        imageView.fitHeightProperty().bind(scene.heightProperty());
     }
 
     public Scene getScene() {

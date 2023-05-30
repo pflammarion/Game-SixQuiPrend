@@ -67,6 +67,9 @@ public class EndGameView {
 
         this.scene = new Scene(anchorPane);
 
+        imageView.fitWidthProperty().bind(scene.widthProperty());
+        imageView.fitHeightProperty().bind(scene.heightProperty());
+
     }
 
     public Scene getScene() {
