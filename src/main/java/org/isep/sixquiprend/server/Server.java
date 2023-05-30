@@ -76,7 +76,13 @@ public class Server {
     public Object getHost() {
         List<String> host = new ArrayList<>();
         host.add("_HOST_");
-        host.add(clientHandlers.get(0).getClientName());
+        if (clientHandlers.size() >= 2) {
+            host.add(clientHandlers.get(0).getClientName());
+        }
+        else {
+            // To return a valid host unique
+            host.add(String.valueOf(System.currentTimeMillis()));
+        }
         return host;
     }
 

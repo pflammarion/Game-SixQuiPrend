@@ -45,9 +45,7 @@ Button:hover {
     -fx-background-color: -light-blue-bg;
 }
 
-Text {
-    -fx-text-fill: grey;
-}
+
 HBox {
     -fx-border-width: 3;
     /*-fx-border-color: #7bda57;*/
@@ -89,7 +87,7 @@ VBox {
     -fx-text-fill: -red;
 }
 
-.restart_button {
+.big_button {
     -fx-background-color: white;
     -fx-border-color: -blue-bg;
     -fx-text-fill: -blue-bg;
@@ -98,8 +96,10 @@ VBox {
     -fx-pref-width: 200px;
     -fx-min-width: 100px;
     -fx-min-height: 50px;
+    -fx-max-width: 400px;
+
 }
-.restart_button:hover {
+.big_button:hover {
     -fx-background-color: -blue-bg;
     -fx-border-color: -blue-bg;
     -fx-text-fill: white;
@@ -117,7 +117,6 @@ VBox {
 
 }
 
-
 .player_name {
     -fx-font-size: 25px;
     -fx-fill: -text-color;
@@ -131,6 +130,12 @@ VBox {
 .card_selected {
     -fx-border-color: -red;
     -fx-border-width: 2px;
+    -fx-background-color: -red;
+}
+
+.waiting {
+    -fx-text-fill: -light-blue;
+    -fx-font-size: 15px;
 }
 
 .player_list {
@@ -138,4 +143,3 @@ VBox {
     -fx-padding: 10px;
     -fx-border-radius: 10px;
 }
-
