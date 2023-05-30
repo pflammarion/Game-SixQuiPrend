@@ -1,5 +1,6 @@
 package org.isep.sixquiprend.view.GUI.scenes;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,7 +32,7 @@ public class LobbyView {
         this.quitButton = new Button("Quitter le jeu en ligne");
         this.players = new Label ("Joueurs dans votre partie:");
         this.playerList = new Text();
-        this.waitingHost = new Label("Attendez que l'hôte lance le jeu...");
+        this.waitingHost = new Label("Il faut au moins deux joueurs pour lancer une partie");
         this.playButton = new Button("Lancer la partie");
 
         playButton.getStyleClass().add("big_button");
@@ -75,6 +76,17 @@ public class LobbyView {
     }
 
     public void setPlayers(List<Player> players) {
+        if (players.size() < 2) {
+            Platform.runLater(() -> {
+
+                this.waitingHost.setText("Il faut au moins deux joueurs pour lancer une partie");
+            });
+        }
+        else {
+            Platform.runLater(() -> {
+                this.waitingHost.setText("Attendez que l'hôte lance le jeu...");
+            });
+        }
         StringBuilder playerNames = new StringBuilder();
         for (Player player : players) {
             playerNames.append(player.getName()).append("\n");

@@ -670,11 +670,7 @@ public class GameController {
     }
 
     public void setGameHost(String host){
-        if (Objects.equals(this.playerName, host)){
-            this.gameHost = true;
-        } else {
-            this.gameHost = false;
-        }
+        this.gameHost = Objects.equals(this.playerName, host);
         lobbyView.setHost(this.gameHost);
     }
 
