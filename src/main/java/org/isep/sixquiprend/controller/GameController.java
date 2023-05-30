@@ -8,10 +8,7 @@ import org.isep.sixquiprend.model.player.AIPlayer;
 import org.isep.sixquiprend.model.player.HumanPlayer;
 import org.isep.sixquiprend.model.player.Player;
 import org.isep.sixquiprend.view.GUI.SceneManager;
-import org.isep.sixquiprend.view.GUI.scenes.EndGameView;
-import org.isep.sixquiprend.view.GUI.scenes.GameView;
-import org.isep.sixquiprend.view.GUI.scenes.LobbyView;
-import org.isep.sixquiprend.view.GUI.scenes.WelcomeView;
+import org.isep.sixquiprend.view.GUI.scenes.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,6 +19,7 @@ public class GameController {
     private final GameView gameView;
     private final EndGameView endGameView;
     private final LobbyView lobbyView;
+    private final LoadingView loadingView;
     private final Game game;
     private Deck deck;
     private final int numCardsPerPlayer = 10;
@@ -37,6 +35,7 @@ public class GameController {
         this.gameView = new GameView();
         this.endGameView = new EndGameView();
         this.lobbyView = new LobbyView();
+        this.loadingView = new LoadingView();
         this.game = new Game();
         eventListener();
     }
@@ -46,6 +45,7 @@ public class GameController {
         sceneManager.addScene("game", gameView.getScene());
         sceneManager.addScene("endGame", endGameView.getScene());
         sceneManager.addScene("lobby", lobbyView.getScene());
+        sceneManager.addScene("loading", loadingView.getScene());
 
         welcomeView.getButtonPlay().setOnAction(event -> {
             if (game.getPlayers().size() > 1) {
@@ -84,6 +84,10 @@ public class GameController {
                 startGame();
             }
         });
+        loadingView.getContinueButton().setOnAction(event -> {
+            sceneManager.switchToScene("game");
+            playCard();
+        });
     }
 
     private List<Card> fillDeck() {
@@ -117,7 +121,6 @@ public class GameController {
             this.sendGameInfo(false);
         }
         else {
-
             gameView.updatePlayers(game.getPlayers());
             gameView.updateBoard(game.getBoard());
             gameView.updateRound(game.getRound());
@@ -125,12 +128,12 @@ public class GameController {
             gameView.setPlayerTurn(currentPlayer);
 
             sceneManager.switchToScene("game");
-            nextAIPlayer();
-
+            nextPlayer();
         }
     }
 
-    private void nextAIPlayer() {
+    private void nextPlayer(){
+        HumanPlayer humanPlayer = getCurrentPlayer() instanceof HumanPlayer ? (HumanPlayer) getCurrentPlayer() : null;
         AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
         if (aiPlayer != null) {
             String diff = aiPlayer.getDiff();
@@ -138,6 +141,21 @@ public class GameController {
                 case "easy" -> aiPlayerPlayCardEasy(aiPlayer);
                 case "medium" -> aiPlayerPlayCardMedium(aiPlayer);
                 case "hard" -> aiPlayerPlayCardHard(aiPlayer);
+            }
+        } else if (humanPlayer != null) {
+            int countHuman = 0;
+            for (Object e : game.getPlayers())
+            {
+                if (e instanceof HumanPlayer)
+                {
+                    countHuman++;
+                }
+            }
+            if (countHuman < 2){
+                playCard();
+            } else {
+                loadingView.setConcernedPlayer(humanPlayer.getName());
+                sceneManager.switchToScene("loading");
             }
         }
     }
@@ -169,25 +187,10 @@ public class GameController {
         }
         else {
             Player currentPlayer = getCurrentPlayer();
-
+            List<Card> currentHand = getCurrentPlayer().getHand();
             Card playedCard = gameView.getSelectedCard();
 
-            if (playedCard != null) {
-                currentPlayer.setLastCardPlayed(playedCard);
-                currentPlayer.getHand().remove(playedCard);
-                game.getCardsPlayed().add(playedCard);
-
-                if (checkEndTurn()) {
-                    return;
-                }
-
-                moveToNextPlayer();
-                gameView.updatePlayers(game.getPlayers());
-                gameView.updateRound(game.getRound());
-                gameView.setPlayerTurn(getCurrentPlayer());
-
-                nextAIPlayer();
-            }
+            endSelectedCardProcess(currentPlayer, currentHand, playedCard);
         }
     }
 
@@ -235,10 +238,10 @@ public class GameController {
         endSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCard);
     }
 
-    private void endSelectedCardProcess(AIPlayer aiPlayer, List<Card> aiPlayerHand, Card selectedCard) {
+    private void endSelectedCardProcess(Player Player, List<Card> PlayerHand, Card selectedCard) {
         if (selectedCard != null) {
-            aiPlayer.setLastCardPlayed(selectedCard);
-            aiPlayerHand.remove(selectedCard);
+            Player.setLastCardPlayed(selectedCard);
+            PlayerHand.remove(selectedCard);
             game.getCardsPlayed().add(selectedCard);
 
 
@@ -251,7 +254,7 @@ public class GameController {
             gameView.updateRound(game.getRound());
             gameView.setPlayerTurn(getCurrentPlayer());
 
-            nextAIPlayer();
+            nextPlayer();
         }
     }
 
@@ -570,8 +573,6 @@ public class GameController {
     }
 
     private boolean checkEndTurn(){
-
-
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
