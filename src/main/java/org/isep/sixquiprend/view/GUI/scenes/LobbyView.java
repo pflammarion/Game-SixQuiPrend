@@ -35,6 +35,7 @@ public class LobbyView {
         this.playButton = new Button("Lancer la partie");
 
         playButton.getStyleClass().add("big_button");
+        playButton.setVisible(false);
         quitButton.getStyleClass().add("quit_button");
         waitingHost.getStyleClass().add("waiting");
         playerList.getStyleClass().add("player_list");
