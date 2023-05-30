@@ -36,6 +36,8 @@ public class GameView {
     private HBox handHBox;
     private Card selectedCard;
 
+    private VBox cardPlayed;
+
 
     public GameView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
@@ -54,19 +56,28 @@ public class GameView {
         boardPane.setMaxWidth(500.0);
         boardPane.setSpacing(10);
 
+        cardPlayed = new VBox();
+        cardPlayed.setAlignment(Pos.CENTER);
+        cardPlayed.setMinHeight(170);
+        cardPlayed.setMinWidth(200);
 
         HBox gameInfosHBox = new HBox(playerNames, selectedPlayer);
         gameInfosHBox.setMaxWidth(1500);
         gameInfosHBox.setSpacing(1000);
 
+
         this.handHBox = new HBox();
-        handHBox.setAlignment(Pos.CENTER);
+        handHBox.setAlignment(Pos.BOTTOM_CENTER);
         handHBox.setSpacing(10);
         handHBox.setMinWidth(880.0);
         handHBox.setMaxWidth(880.0);
 
+        HBox playerArea = new HBox(handHBox, cardPlayed);
+        playerArea.setSpacing(50);
+        playerArea.setAlignment(Pos.BOTTOM_CENTER);
 
-        VBox mainvbox = new VBox(roundLabel, gameInfosHBox, boardPane, handHBox, playButton);
+
+        VBox mainvbox = new VBox(roundLabel, gameInfosHBox, boardPane, playerArea, playButton);
         mainvbox.setMinWidth(1400);
         mainvbox.setMinHeight(800);
         mainvbox.setSpacing(20);
@@ -146,6 +157,7 @@ public class GameView {
     public Card getSelectedCard() {
         Card card = this.selectedCard;
         this.selectedCard = null;
+        cardPlayed.getChildren().clear();
         return card;
     }
 
@@ -166,8 +178,25 @@ public class GameView {
                     child.getStyleClass().remove("card_selected");
                 }
                 this.selectedCard = card;
+                this.updateUIChoosenCard(card);
                 cardImage.getStyleClass().add("card_selected");
             });
         }
+    }
+
+    private void updateUIChoosenCard(Card card) {
+
+        cardPlayed.getChildren().clear();
+
+        Label selectedCardLabel = new Label("Carte jouée : \n");
+
+        ImageView cardImage = new ImageView();
+        cardImage.getStyleClass().add("card");
+        String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+        cardImage.setImage(image);
+        cardImage.setFitHeight(120);
+        this.cardPlayed.getChildren().add(selectedCardLabel);
+        this.cardPlayed.getChildren().add(cardImage);
     }
 }
