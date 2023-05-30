@@ -74,10 +74,13 @@ public class Server {
         return clientNameList;
     }
     public Object getHost() {
-        List<String> host = new ArrayList<>();
-        host.add("_HOST_");
-        host.add(clientHandlers.get(0).getClientName());
-        return host;
+        if (clientHandlers.size() >= 2) {
+            List<String> host = new ArrayList<>();
+            host.add("_HOST_");
+            host.add(clientHandlers.get(0).getClientName());
+            return host;
+        }
+        return null;
     }
 
     public void sendMessageToClientByName(String clientName, String title, Object message) {
