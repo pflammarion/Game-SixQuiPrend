@@ -91,7 +91,6 @@ public class Server {
     public String nameVerif(String name, int index) {
         for (ClientHandler client : clientHandlers) {
             if (client.getClientName().equals(name) || name.equals("")) {
-                System.out.println("je passe dans la boucle " + index);
                 int number = clientHandlers.size() + index;
                 index++;
                 return nameVerif("Joueur " + number, index);
