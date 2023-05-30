@@ -60,6 +60,7 @@ public class GameView {
         gameInfosHBox.setSpacing(1000);
 
         this.handHBox = new HBox();
+        handHBox.setAlignment(Pos.CENTER);
         handHBox.setSpacing(10);
         handHBox.setMinWidth(880.0);
         handHBox.setMaxWidth(880.0);
@@ -151,6 +152,8 @@ public class GameView {
         this.selectedPlayer.setText(playerName);
 
     }
+
+    // TODO faire l'espace pour la selected card en fonction de this.selectedCard
 
     public Card getSelectedCard() {
         return this.selectedCard;
