@@ -570,8 +570,6 @@ public class GameController {
     }
 
     private boolean checkEndTurn(){
-
-
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
@@ -667,6 +665,14 @@ public class GameController {
     }
 
     public void setPlayerName(String playerName) {
+        List<Player> players = game.getPlayers();
+        for (Player player : players){
+            String existingName = player.getName();
+            if (Objects.equals(playerName, existingName)){
+                System.out.println("Nom de joueur existant, veuillez mettre un nouveau nom");
+                return;
+            }
+        }
         this.playerName = playerName;
         System.out.println("Je suis le joueur " + playerName);
     }

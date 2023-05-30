@@ -1,5 +1,7 @@
 package org.isep.sixquiprend.server;
 
+import org.isep.sixquiprend.model.player.Player;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -65,6 +67,19 @@ public class ClientHandler implements Runnable {
                     if (!player.equals("")){
                         this.clientName = player;
                     }
+                    List<String> playerList = server.getPlayerList();
+                    List<String> playerName = new ArrayList<>();
+                    for (int i = 1; i<playerList.size(); i++){
+                        playerName.add(playerList.get(i));
+                    }
+
+                    for (String playerTxt : playerName){
+                        if (playerTxt == clientName){
+                            System.out.println("Nom deja existant");
+                            break;
+                        }
+                    }
+
                     server.broadcastMessage(server.getPlayerList());
                     server.broadcastMessage(server.getHost());
                     sendMessage("_PLAYERNAME_", this.clientName);

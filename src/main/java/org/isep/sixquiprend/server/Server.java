@@ -63,7 +63,7 @@ public class Server {
         broadcastMessage(message);
     }
 
-    public Object getPlayerList() {
+    public List<String> getPlayerList() {
         List<String> clientNameList = new ArrayList<>();
         clientNameList.add("_PLAYERLIST_");
         for (ClientHandler client: clientHandlers) {
