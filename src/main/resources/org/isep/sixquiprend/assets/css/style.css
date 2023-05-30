@@ -132,3 +132,9 @@ VBox {
     -fx-border-width: 2px;
 }
 
+.player_list {
+    -fx-background-color: -blue-bg;
+    -fx-padding: 10px;
+    -fx-border-radius: 10px;
+}
+
