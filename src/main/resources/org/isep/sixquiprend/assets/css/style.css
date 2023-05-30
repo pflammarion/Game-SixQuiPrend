@@ -37,6 +37,7 @@ Button {
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
     -fx-background-insets: 1px;
+    -fx-cursor: hand;
     -fx-border-style: solid;
 }
 
@@ -130,5 +131,11 @@ VBox {
 .card_selected {
     -fx-border-color: -red;
     -fx-border-width: 2px;
+}
+
+.player_list {
+    -fx-background-color: -blue-bg;
+    -fx-padding: 10px;
+    -fx-border-radius: 10px;
 }
 
