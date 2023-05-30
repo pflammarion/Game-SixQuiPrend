@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.player.Player;
 
@@ -19,6 +20,8 @@ public class LobbyView {
     private final Button quitButton;
     private final Button playButton;
     private final Text playerList;
+    private final Label waitingHost;
+    private final Label players;
     private final Scene scene;
     public LobbyView() {
 
@@ -26,16 +29,25 @@ public class LobbyView {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
 
         this.quitButton = new Button("Quitter le jeu en ligne");
-
+        this.players = new Label ("Joueurs dans votre partie:");
         this.playerList = new Text();
+        this.waitingHost = new Label("Attendez que l'hôte lance le jeu...");
         this.playButton = new Button("Lancer la partie");
 
+        playButton.getStyleClass().add("big_button");
+        quitButton.getStyleClass().add("quit_button");
+        waitingHost.getStyleClass().add("waiting");
+        playerList.getStyleClass().add("player_list");
 
-        VBox vbox = new VBox(playerList, playButton, quitButton);
-        vbox.setSpacing(50);
+        VBox waitingPlayers = new VBox(players, playerList, waitingHost);
+        waitingPlayers.setSpacing(30);
+        waitingPlayers.setAlignment(Pos.CENTER);
+
+        VBox vbox = new VBox(waitingPlayers, quitButton, playButton);
+        vbox.setSpacing(5);
         vbox.setAlignment(Pos.CENTER);
 
-        AnchorPane anchorPane = new AnchorPane(vbox);
+        AnchorPane anchorPane = new AnchorPane(imageView, vbox);
         anchorPane.setPrefSize(1200, 600);
         AnchorPane.setTopAnchor(vbox, 100.0);
         AnchorPane.setBottomAnchor(vbox, 100.0);
@@ -71,5 +83,6 @@ public class LobbyView {
 
     public void setHost(boolean host){
         playButton.setVisible(host);
+        waitingHost.setVisible(!host);
     }
 }

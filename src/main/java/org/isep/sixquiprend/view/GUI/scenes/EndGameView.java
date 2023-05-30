@@ -38,7 +38,7 @@ public class EndGameView {
 
         endLabel.getStyleClass().add("end_label");
         quitButton.getStyleClass().add("quit_button");
-        restartButton.getStyleClass().add("restart_button");
+        restartButton.getStyleClass().add("big_button");
 
         HBox endLabelHbox = new HBox(endLabel);
         endLabelHbox.setAlignment(Pos.TOP_CENTER);
