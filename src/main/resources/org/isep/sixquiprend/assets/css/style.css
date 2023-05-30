@@ -1,7 +1,7 @@
-/*@font-face {
-    font-family: "IrishGrover";
+@font-face {
+    font-family: "Irish Grover";
     src: url("../font/IrishGrover.ttf") ;
-}*/
+}
 
 .root{
     -red: #e10015;
@@ -17,12 +17,17 @@
     -light-blue: #255aa3;
     -light-purple: #69589d;
     -light-blue-bg: #b9cafe;
+
+    -text-color: #333333;
+
+    -fx-font-family: "Irish Grover";
+
 }
 
 Label {
-    -fx-font-size: 20px;
+    -fx-font-size: 25px;
     -fx-padding: 10 10 10 10;
-    -fx-font-family: "IrishGrover";
+
 }
 
 Button {
@@ -31,20 +36,32 @@ Button {
     -fx-border-width: 2px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
+    -fx-background-insets: 1px;
+    -fx-border-style: solid;
 }
 
 Button:hover {
-    -fx-background-color: #ddebdd;
+    -fx-background-color: -light-blue-bg;
 }
 
+Text {
+    -fx-text-fill: grey;
+}
+HBox {
+    -fx-border-width: 3;
+    /*-fx-border-color: #7bda57;*/
+}
+VBox {
+    -fx-border-width: 3;
+    /*-fx-border-color: red;*/
+}
 .play_button {
     -fx-text-fill: -red;
     -fx-font-size: 25px;
     -fx-background-color: white;
-    -fx-border-color: -red;
     -fx-max-width: 300px;
     -fx-max-height: 50px;
-
+    -fx-border-color: -red;
 }
 
 .play_button:hover {
@@ -54,7 +71,6 @@ Button:hover {
 }
 
 .game_name {
-    -fx-font-family: "IrishGrover";
     -fx-font-size: 35px;
     -fx-padding: 0 0 30 0;
     -fx-font-weight: bold;
@@ -63,3 +79,19 @@ Button:hover {
 .player_add_hbox {
     -fx-padding: 0 0 30 0;
 }
+
+.player_name {
+    -fx-font-size: 25px;
+    -fx-fill: -text-color;
+
+}
+.card {
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+.card_selected {
+    -fx-border-color: -red;
+    -fx-border-width: 2px;
+}
+
