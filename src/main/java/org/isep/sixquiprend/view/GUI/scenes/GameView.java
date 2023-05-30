@@ -166,6 +166,7 @@ public class GameView {
                     child.getStyleClass().remove("card_selected");
                 }
                 this.selectedCard = card;
+                //ma methode pour update lui (card)
                 cardImage.getStyleClass().add("card_selected");
             });
         }
