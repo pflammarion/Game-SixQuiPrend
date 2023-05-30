@@ -88,19 +88,15 @@ public class Server {
         }
     }
 
-    public int nameVerif(){
-        int size = getClientCount();
-        String comp = "Player " + size;
-        try {
-            String nameLastestPlayer = clientHandlers.get(clientHandlers.size() - 1).getClientName();
-            if (comp.equals(nameLastestPlayer)){
-                return size + 1;
-            } else {
-                return size;
+    public String nameVerif(String name, int index){
+        for (ClientHandler client : clientHandlers){
+            if (client.getClientName().equals(name) || name.equals("")) {
+                int number = clientHandlers.size() + index;
+                index ++;
+                nameVerif("Joueur " + number, index);
             }
-        } catch (Exception e) {
-            return 0;
         }
+        return name;
     }
 
     public synchronized int getClientCount() {

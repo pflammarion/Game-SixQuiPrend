@@ -23,7 +23,6 @@ public class ClientHandler implements Runnable {
         this.server = server;
         this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
-        this.clientName = "Player " + server.nameVerif();
     }
 
     @Override
@@ -65,20 +64,10 @@ public class ClientHandler implements Runnable {
                     break;
                 case "SET_PLAYERNAME" :
                     String player = (String) inputStream.readObject();
-                    if (!player.equals("")){
-                        this.clientName = player;
-                    }
-                    boolean isDuplicate = server.isPlayerNameDuplicate(player);
-                    if (!isDuplicate) {
-                        server.broadcastMessage(server.getPlayerList());
-                        server.broadcastMessage(server.getHost());
-                        sendMessage("_PLAYERNAME_", this.clientName);
-                    } else {
-                        this.clientName = "Player" + server.nameVerif();
-                        server.broadcastMessage(server.getPlayerList());
-                        server.broadcastMessage(server.getHost());
-                        sendMessage("_PLAYERNAME_", this.clientName);
-                    }
+                    this.clientName = server.nameVerif(player, 0);
+                    server.broadcastMessage(server.getPlayerList());
+                    server.broadcastMessage(server.getHost());
+                    sendMessage("_PLAYERNAME_", this.clientName);
                     break;
             }
         }
