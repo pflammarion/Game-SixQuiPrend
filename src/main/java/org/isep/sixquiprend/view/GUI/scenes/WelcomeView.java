@@ -133,6 +133,7 @@ public class WelcomeView {
         anchorPane.getChildren().add(mediaView);
 
         this.playerMode();
+        //TODO after endgame on a un souci car ça ne s'affiche pas car scene non reconstruite
         this.playerListText.setText("Nom des joueurs : \n\n");
     }
 
