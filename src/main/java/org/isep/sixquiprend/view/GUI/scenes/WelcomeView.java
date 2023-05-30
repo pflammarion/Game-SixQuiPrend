@@ -17,6 +17,10 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +59,12 @@ public class WelcomeView {
         menuItemOnline.setOnAction(event -> onlineMode());
 
         menu = new MenuButton("Options");
-        menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemOnline);
+        if (isServerUp()){
+            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemOnline);
+        }
+        else {
+            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA);
+        }
 
         gameName.getStyleClass().add("game_name");
 
@@ -239,5 +248,19 @@ public class WelcomeView {
 
         this.playerSetVBox.getChildren().add(playerAddHBox);
         this.playerSetVBox.getChildren().add(buttonPlay);
+    }
+
+    private boolean isServerUp(){
+        try {
+            Socket socket = new Socket("flaminfo.fr", 4444);
+            // to not make crash the server
+            new ObjectOutputStream(socket.getOutputStream());
+            new ObjectInputStream(socket.getInputStream());
+
+            socket.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
