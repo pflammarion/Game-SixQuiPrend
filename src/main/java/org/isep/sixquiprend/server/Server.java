@@ -89,6 +89,7 @@ public class Server {
     }
 
     public String nameVerif(String name, int index){
+        System.out.println(name);
         for (ClientHandler client : clientHandlers){
             if (client.getClientName().equals(name) || name.equals("")) {
                 int number = clientHandlers.size() + index;
@@ -97,10 +98,6 @@ public class Server {
             }
         }
         return name;
-    }
-
-    public synchronized int getClientCount() {
-        return clientHandlers.size();
     }
 
     public void setRoundInfo(List<Object> info) {

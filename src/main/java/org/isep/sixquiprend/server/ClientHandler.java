@@ -1,6 +1,5 @@
 package org.isep.sixquiprend.server;
 
-import org.isep.sixquiprend.model.player.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
