@@ -125,24 +125,6 @@ public class Server {
         }
     }
 
-    public boolean isPlayerNameDuplicate(String playerName) {
-        List<String> playerList = getClientNames();
-        for (String name : playerList) {
-            if (name.equals(playerName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<String> getClientNames() {
-        List<String> clientNames = new ArrayList<>();
-        for (ClientHandler client : clientHandlers) {
-            clientNames.add(client.getClientName());
-        }
-        return clientNames;
-    }
-
     public static void main(String[] args) {
         Server server = new Server();
         server.start();
