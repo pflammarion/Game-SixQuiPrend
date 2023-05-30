@@ -132,9 +132,25 @@ public class GameView {
 
         String playerName = currentPlayer.getName();
         List<Card> playerHand = currentPlayer.getHand();
+        updateCards(playerHand);
+
+        this.playerNames.setStyle("-fx-font-weight: bold;");
+        this.selectedPlayer.setText(playerName);
+
+    }
+
+    // TODO faire l'espace pour la selected card en fonction de this.selectedCard
+
+    public Card getSelectedCard() {
+        Card card = this.selectedCard;
+        this.selectedCard = null;
+        return card;
+    }
+
+    public void updateCards(List<Card> cardList){
         handHBox.getChildren().clear();
 
-        for (Card card : playerHand) {
+        for (Card card : cardList) {
             ImageView cardImage = new ImageView();
             cardImage.getStyleClass().add("card");
             String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
@@ -151,20 +167,5 @@ public class GameView {
                 cardImage.getStyleClass().add("card_selected");
             });
         }
-
-        this.playerNames.setStyle("-fx-font-weight: bold;");
-        this.selectedPlayer.setText(playerName);
-
-    }
-
-    // TODO faire l'espace pour la selected card en fonction de this.selectedCard
-
-    public Card getSelectedCard() {
-        return this.selectedCard;
-    }
-
-    public void updateCards(List<Card> cardList){
-        ObservableList<Card> observableList = FXCollections.observableArrayList(cardList);
-        this.hand.setItems(observableList);
     }
 }
