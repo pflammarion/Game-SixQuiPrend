@@ -13,7 +13,7 @@ public class ClientHandler implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final Server server;
-    private String clientName;
+    private String clientName = "";
     private boolean isHoster = false;
 
     public ClientHandler(Socket clientSocket, Server server) throws IOException {
