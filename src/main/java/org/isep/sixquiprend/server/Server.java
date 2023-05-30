@@ -90,10 +90,15 @@ public class Server {
     public int nameVerif(){
         int size = getClientCount();
         String comp = "Player " + size;
-        if (comp.equals(clientHandlers.get(clientHandlers.size() - 1).getClientName())){
-            return size + 1;
-        } else {
-            return size;
+        try {
+            String nameLastestPlayer = clientHandlers.get(clientHandlers.size() - 1).getClientName();
+            if (comp.equals(nameLastestPlayer)){
+                return size + 1;
+            } else {
+                return size;
+            }
+        } catch (Exception e) {
+            return 0;
         }
     }
 
