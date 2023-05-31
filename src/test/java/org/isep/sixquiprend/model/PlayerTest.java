@@ -1,7 +1,7 @@
 package org.isep.sixquiprend.model;
 
+import org.isep.sixquiprend.model.player.AIPlayer;
 import org.isep.sixquiprend.model.player.HumanPlayer;
-import org.isep.sixquiprend.model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,57 +11,120 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
-    HumanPlayer player;
+    HumanPlayer humanPlayer;
+    AIPlayer aiPlayer;
+
     @BeforeEach
     void init(){
         List<Card> hand = new ArrayList<>();
         hand.add(new Card(11, 3));
-        player = new HumanPlayer("Paul");
-    }
+        humanPlayer = new HumanPlayer("Paul");
+        humanPlayer.setHand(hand);
 
-    @Test
-    void playCard() {
-        //do the test after the method
+        aiPlayer = new AIPlayer("AI Player", "Easy");
+        aiPlayer.setHand(hand);
     }
 
     @Test
     void getName() {
-        assertEquals("Paul", player.getName());
-        assertNotEquals("Lilla", player.getName());
+        assertEquals("Paul", humanPlayer.getName());
+        assertNotEquals("Lilla", humanPlayer.getName());
+
+        assertEquals("AI Player", aiPlayer.getName());
+        assertNotEquals("Bob", aiPlayer.getName());
     }
 
     @Test
     void getHand() {
         List<Card> list = new ArrayList<>();
         list.add(new Card(12, 3));
-        assertNotEquals(list, player.getHand());
+        assertNotEquals(list, humanPlayer.getHand());
+        assertNotEquals(list, aiPlayer.getHand());
     }
 
     @Test
     void getScore() {
-        assertEquals(0, player.getScore());
-        assertNotEquals(1, player.getScore());
+        assertEquals(0, humanPlayer.getScore());
+        assertNotEquals(1, humanPlayer.getScore());
+
+        assertEquals(0, aiPlayer.getScore());
+        assertNotEquals(1, aiPlayer.getScore());
     }
 
     @Test
     void setName() {
-        player.setName("Vincent");
-        assertNotEquals("Paul", player.getName());
-        assertEquals("Vincent", player.getName());
+        humanPlayer.setName("Vincent");
+        assertNotEquals("Paul", humanPlayer.getName());
+        assertEquals("Vincent", humanPlayer.getName());
+
+        aiPlayer.setName("AI Player 2");
+        assertNotEquals("AI Player", aiPlayer.getName());
+        assertEquals("AI Player 2", aiPlayer.getName());
     }
 
     @Test
     void setHand() {
-        List<Card> hand = player.getHand();
+        List<Card> hand = humanPlayer.getHand();
         hand.add(new Card(12, 3));
-        player.setHand(hand);
-        assertEquals(player.getHand(), hand);
+        humanPlayer.setHand(hand);
+        assertEquals(hand, humanPlayer.getHand());
+
+        hand = aiPlayer.getHand();
+        hand.add(new Card(12, 3));
+        aiPlayer.setHand(hand);
+        assertEquals(hand, aiPlayer.getHand());
     }
 
     @Test
     void setScore() {
-        player.setScore(1);
-        assertEquals(1, player.getScore());
-        assertNotEquals(0, player.getScore());
+        humanPlayer.setScore(1);
+        assertEquals(1, humanPlayer.getScore());
+        assertNotEquals(0, humanPlayer.getScore());
+
+        aiPlayer.setScore(1);
+        assertEquals(1, aiPlayer.getScore());
+        assertNotEquals(0, aiPlayer.getScore());
     }
+
+    @Test
+    void getLastCardPlayed() {
+        assertNull(humanPlayer.getLastCardPlayed());
+
+        Card card = new Card(10, 2);
+        humanPlayer.setLastCardPlayed(card);
+        assertEquals(card, humanPlayer.getLastCardPlayed());
+
+        assertNull(aiPlayer.getLastCardPlayed());
+
+        aiPlayer.setLastCardPlayed(card);
+        assertEquals(card, aiPlayer.getLastCardPlayed());
+    }
+
+    @Test
+    void setLastCardPlayed() {
+        Card card = new Card(10, 2);
+        humanPlayer.setLastCardPlayed(card);
+        assertEquals(card, humanPlayer.getLastCardPlayed());
+
+        card = new Card(8, 4);
+        aiPlayer.setLastCardPlayed(card);
+        assertEquals(card, aiPlayer.getLastCardPlayed());
+    }
+
+    @Test
+    void setLastCardPlayed_Null() {
+        humanPlayer.setLastCardPlayed(null);
+        assertNull(humanPlayer.getLastCardPlayed());
+
+        aiPlayer.setLastCardPlayed(null);
+        assertNull(aiPlayer.getLastCardPlayed());
+    }
+
+    @Test
+    void setDiff() {
+        aiPlayer.setDiff("Hard");
+        assertEquals("Hard", aiPlayer.getDiff());
+        assertNotEquals("Easy", aiPlayer.getDiff());
+    }
+
 }
