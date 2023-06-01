@@ -48,9 +48,9 @@ public class WelcomeView {
     private VBox playerSetVBox;
 
     public WelcomeView() {
-
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         this.buttonQuit = new Button("Quitter");
+        Label playerListLabel = new Label("Joueurs");
         Label gameName = new Label("SUPER six qui prend");
 
         MenuItem menuItemAjouterUnJoueur = new MenuItem("Ajouter un joueur");
@@ -111,7 +111,6 @@ public class WelcomeView {
         this.playerListText = new ListView();
         this.playerListText.setMaxWidth(150);
         this.playerListText.setMaxHeight(300);
-
         playerListText.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 buttonDelete.setVisible(true);
@@ -119,9 +118,9 @@ public class WelcomeView {
                 buttonDelete.setVisible(false);
             }
         });
-
-        VBox playerListVBox = new VBox(this.playerListText, this.buttonDelete);
-        playerListVBox.setAlignment(Pos.CENTER);
+        playerListText.getStyleClass().add("player_list");
+        VBox playerListVBox = new VBox(playerListLabel, this.playerListText, this.buttonDelete);
+        playerListVBox.setAlignment(Pos.TOP_LEFT);
 
         HBox playerContainerHBox = new HBox(menu, playerListVBox, playerSetVBox);
         playerContainerHBox.setSpacing(50);
@@ -197,7 +196,6 @@ public class WelcomeView {
         playerListText.itemsProperty().bind(playerListProperty);
     }
 
-
     public void resetPlayerList() {
         this.playerListText.getItems().clear();
         this.playerList = new ArrayList<>();
@@ -223,10 +221,6 @@ public class WelcomeView {
         playerAddHBox.getChildren().clear();
         playerSetVBox.getChildren().clear();
 
-        VBox playerContainer = new VBox(playerListText);
-        playerContainer.getStyleClass().add("player_list");
-
-        playerAddHBox.getChildren().add(playerContainer);
         playerAddHBox.getChildren().add(buttonAjouterAIEasy);
         playerAddHBox.getChildren().add(buttonAjouterAIMedium);
         playerAddHBox.getChildren().add(buttonAjouterAIHard);
@@ -260,10 +254,6 @@ public class WelcomeView {
         playerNameVBox.setSpacing(10);
         playerNameVBox.setAlignment(Pos.BOTTOM_LEFT);
 
-        VBox playerContainer = new VBox(playerListText);
-        playerContainer.getStyleClass().add("player_list");
-
-        playerAddHBox.getChildren().add(playerContainer);
         playerAddHBox.getChildren().add(playerNameVBox);
         playerAddHBox.getChildren().add(buttonAjouter);
 
