@@ -1,19 +1,13 @@
 package org.isep.sixquiprend.view.GUI.scenes;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -30,9 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class WelcomeView {
-    
     private final Button buttonQuit;
-    private Button buttonDelete;
     private final Button buttonAjouter;
     private final Button buttonAjouterAIEasy;
     private final Button buttonAjouterAIMedium;
@@ -41,15 +33,17 @@ public class WelcomeView {
     private final Button buttonOnline;
     private final TextField playerNameTextField;
     private List<String> playerList = new ArrayList<>();
-    private final ListView playerListText;
+    private final VBox playerListText;
     private final Scene scene;
     private MenuButton menu;
     private HBox playerAddHBox;
     private VBox playerSetVBox;
 
     public WelcomeView() {
+
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         this.buttonQuit = new Button("Quitter");
+
         Label playerListLabel = new Label("Joueurs");
         Label gameName = new Label("SUPER six qui prend");
 
@@ -88,12 +82,14 @@ public class WelcomeView {
         this.buttonOnline = new Button("Jouer en ligne !");
         this.buttonOnline.getStyleClass().add("play_button");
 
+
         this.playerAddHBox = new HBox();
         this.playerAddHBox.setSpacing(20);
         this.playerAddHBox.getStyleClass().add("player_add_hbox");
         this.playerAddHBox.setAlignment(Pos.BOTTOM_CENTER);
         this.playerAddHBox.setMinWidth(300);
         this.playerAddHBox.setMinHeight(100);
+
 
         this.buttonPlay = new Button("Jouer !");
         this.buttonPlay.setAlignment(Pos.CENTER);
@@ -105,24 +101,15 @@ public class WelcomeView {
         this.playerSetVBox.setMinWidth(300);
         this.playerSetVBox.setMinHeight(100);
 
-        this.buttonDelete = new Button("Enlever Joueur");
-        this.buttonDelete.setVisible(false);
+        this.playerListText = new VBox();
+        this.playerListText.setMinWidth(300);
+        this.playerListText.setMinHeight(100);
+        this.playerListText.setAlignment(Pos.CENTER);
 
-        this.playerListText = new ListView();
-        this.playerListText.setMaxWidth(150);
-        this.playerListText.setMaxHeight(300);
-        playerListText.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                buttonDelete.setVisible(true);
-            } else {
-                buttonDelete.setVisible(false);
-            }
-        });
-        playerListText.getStyleClass().add("player_list");
-        VBox playerListVBox = new VBox(playerListLabel, this.playerListText, this.buttonDelete);
-        playerListVBox.setAlignment(Pos.TOP_LEFT);
+        VBox playerListVBox = new VBox(playerListLabel, this.playerListText);
+        playerListVBox.setAlignment(Pos.CENTER);
 
-        HBox playerContainerHBox = new HBox(menu, playerListVBox, playerSetVBox);
+        HBox playerContainerHBox = new HBox(menu, playerSetVBox);
         playerContainerHBox.setSpacing(50);
         playerContainerHBox.setAlignment(Pos.CENTER);
 
@@ -154,6 +141,7 @@ public class WelcomeView {
 
         this.playerMode();
         //TODO after endgame on a un souci car ça ne s'affiche pas car scene non reconstruite
+        this.playerListText.getChildren().add(new Text("Nom des joueurs : \n\n"));
     }
 
     public Scene getScene() {
@@ -163,15 +151,17 @@ public class WelcomeView {
     public Button getButtonQuit() {
         return buttonQuit;
     }
-    public Button getButtonDelete() {
-        return buttonDelete;
-    }
+
     public Button getButtonAjouter() {
         return buttonAjouter;
     }
 
     public Button getButtonPlay() {
         return buttonPlay;
+    }
+
+    public List<String> getPlayerList() {
+        return playerList;
     }
 
     public String getPlayerName(){
@@ -184,26 +174,39 @@ public class WelcomeView {
 
     public void addNameToPlayerList(String name) {
         playerList.add(name);
-        ListProperty<String> playerListProperty= new SimpleListProperty<>();
-        playerListProperty.set(FXCollections.observableArrayList(playerList));
-        playerListText.itemsProperty().bind(playerListProperty);
-    }
+        this.playerListText.getChildren().clear();
+        for (String playerName : this.playerList) {
+            HBox playerHBox = new HBox();
+            playerHBox.setMinWidth(250);
+            Text playerNametxt = new Text("- " + playerName);
+            Button removePlayer = new Button("X");
+            Pane spacer = new Pane();
+            spacer.setMinWidth(Region.USE_PREF_SIZE);
+            HBox.setHgrow(spacer, Priority.ALWAYS);
 
-    public void removeNameToPlayerList(int index){
-        playerList.remove(index);
-        ListProperty<String> playerListProperty= new SimpleListProperty<>();
-        playerListProperty.set(FXCollections.observableArrayList(playerList));
-        playerListText.itemsProperty().bind(playerListProperty);
+            removePlayer.setOnAction(event -> {
+                Button button = (Button) event.getSource();
+                HBox parentHBox = (HBox) button.getParent();
+                int index = playerListText.getChildren().indexOf(parentHBox);
+
+                playerList.remove(index);
+                playerListText.getChildren().remove(parentHBox);
+
+                if (playerListText.getChildren().isEmpty()){
+                    playerListText.getChildren().add(new Text("Nom des joueurs : \n\n"));
+                }
+            });
+
+            playerHBox.getChildren().addAll(playerNametxt, spacer, removePlayer);
+            this.playerListText.getChildren().add(playerHBox);
+        }
     }
 
     public void resetPlayerList() {
-        this.playerListText.getItems().clear();
+        this.playerListText.getChildren().clear();
         this.playerList = new ArrayList<>();
     }
 
-    public ListView getPlayerListText() {
-        return playerListText;
-    }
     public Button getButtonAjouterAIEasy() {
         return buttonAjouterAIEasy;
     }
@@ -221,6 +224,10 @@ public class WelcomeView {
         playerAddHBox.getChildren().clear();
         playerSetVBox.getChildren().clear();
 
+        VBox playerContainer = new VBox(playerListText);
+        playerContainer.getStyleClass().add("player_list");
+
+        playerAddHBox.getChildren().add(playerContainer);
         playerAddHBox.getChildren().add(buttonAjouterAIEasy);
         playerAddHBox.getChildren().add(buttonAjouterAIMedium);
         playerAddHBox.getChildren().add(buttonAjouterAIHard);
@@ -254,6 +261,10 @@ public class WelcomeView {
         playerNameVBox.setSpacing(10);
         playerNameVBox.setAlignment(Pos.BOTTOM_LEFT);
 
+        VBox playerContainer = new VBox(playerListText);
+        playerContainer.getStyleClass().add("player_list");
+
+        playerAddHBox.getChildren().add(playerContainer);
         playerAddHBox.getChildren().add(playerNameVBox);
         playerAddHBox.getChildren().add(buttonAjouter);
 

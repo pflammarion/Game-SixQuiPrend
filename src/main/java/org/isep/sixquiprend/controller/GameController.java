@@ -63,7 +63,6 @@ public class GameController {
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
-        welcomeView.getButtonDelete().setOnAction(event -> deletePlayer());
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -114,7 +113,17 @@ public class GameController {
     }
 
     private void startGame() {
+        List<String> realPlayers = welcomeView.getPlayerList();
+        List<Player> provisionalPlayers = game.getPlayers();
 
+        Iterator<Player> iterator = provisionalPlayers.iterator();
+        while (iterator.hasNext()) {
+            Player player = iterator.next();
+            if (!realPlayers.contains(player.getName())) {
+                iterator.remove();
+            }
+        }
+        game.setPlayers(provisionalPlayers);
         this.setup();
 
         deck.shuffle();
@@ -612,9 +621,9 @@ public class GameController {
                 }
             }
         }
-
         return false;
     }
+
     private void addPlayer(){
         String playerName = welcomeView.getPlayerName();
         if (!playerName.equalsIgnoreCase("") && !checkAlreadyUsedName(playerName)){
@@ -623,12 +632,6 @@ public class GameController {
             welcomeView.addNameToPlayerList(playerName);
             welcomeView.setPlayerNameTextField("");
         }
-    }
-
-    public void deletePlayer(){
-        int index = welcomeView.getPlayerListText().getSelectionModel().getSelectedIndex();
-        game.getPlayers().remove(index);
-        welcomeView.removeNameToPlayerList(index);
     }
 
     private void addAIPlayerEasy() {
