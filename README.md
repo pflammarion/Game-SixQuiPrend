@@ -24,4 +24,8 @@ Il y a trois différentes difficultés pour les IA: facile, moyen et fort.
 
 **IA Fort** : 
 
+### Mode en ligne
+Le mode en ligne permet de jouer sur un serveur avec différentes autres personnes, chacune sur un appareil différent. 
+Pour entrer son nom dans le mode en ligne, il faut rentrer son nom et cliquer sur **"Jouer en ligne"**, cela amène le 
+joueur dans un lobby ou les autres joueurs attendent pour commencer la partie. 
 
