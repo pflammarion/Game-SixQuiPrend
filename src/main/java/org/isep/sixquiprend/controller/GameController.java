@@ -612,34 +612,42 @@ public class GameController {
         return false;
     }
     private void addPlayer(){
-        String playerName = welcomeView.getPlayerName();
-        if (!playerName.equalsIgnoreCase("") && !checkAlreadyUsedName(playerName)){
-            HumanPlayer humanPlayer = new HumanPlayer(playerName);
-            game.getPlayers().add(humanPlayer);
-            welcomeView.addNameToPlayerList(playerName);
-            welcomeView.setPlayerNameTextField("");
+        if (game.getPlayers().size() < 10) {
+            String playerName = welcomeView.getPlayerName();
+            if (!playerName.equalsIgnoreCase("") && !checkAlreadyUsedName(playerName)) {
+                HumanPlayer humanPlayer = new HumanPlayer(playerName);
+                game.getPlayers().add(humanPlayer);
+                welcomeView.addNameToPlayerList(playerName);
+                welcomeView.setPlayerNameTextField("");
+            }
         }
     }
 
     private void addAIPlayerEasy() {
-        this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", "easy");
-        game.getPlayers().add(aiPlayer);
-        welcomeView.addNameToPlayerList(aiPlayer.getName());
+        if (game.getPlayers().size() < 10) {
+            this.numberOfAIPlayer++;
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", "easy");
+            game.getPlayers().add(aiPlayer);
+            welcomeView.addNameToPlayerList(aiPlayer.getName());
+        }
     }
 
     private void addAIPlayerMedium() {
-        this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", "medium");
-        game.getPlayers().add(aiPlayer);
-        welcomeView.addNameToPlayerList(aiPlayer.getName());
+        if (game.getPlayers().size() < 10) {
+            this.numberOfAIPlayer++;
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", "medium");
+            game.getPlayers().add(aiPlayer);
+            welcomeView.addNameToPlayerList(aiPlayer.getName());
+        }
     }
 
     private void addAIPlayerHard() {
-        this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", "hard");
-        game.getPlayers().add(aiPlayer);
-        welcomeView.addNameToPlayerList(aiPlayer.getName());
+        if (game.getPlayers().size() < 10){
+            this.numberOfAIPlayer ++;
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", "hard");
+            game.getPlayers().add(aiPlayer);
+            welcomeView.addNameToPlayerList(aiPlayer.getName());
+        }
     }
 
     private boolean checkAlreadyUsedName(String name){
