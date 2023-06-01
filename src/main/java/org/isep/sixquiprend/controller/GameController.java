@@ -1,6 +1,9 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Deck;
 import org.isep.sixquiprend.model.Game;
@@ -60,6 +63,7 @@ public class GameController {
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
+        welcomeView.getButtonDelete().setOnAction(event -> deletePlayer());
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -619,6 +623,12 @@ public class GameController {
             welcomeView.addNameToPlayerList(playerName);
             welcomeView.setPlayerNameTextField("");
         }
+    }
+
+    public void deletePlayer(){
+        int index = welcomeView.getPlayerListText().getSelectionModel().getSelectedIndex();
+        game.getPlayers().remove(index);
+        welcomeView.removeNameToPlayerList(index);
     }
 
     private void addAIPlayerEasy() {
