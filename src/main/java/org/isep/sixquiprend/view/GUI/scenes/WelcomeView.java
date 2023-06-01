@@ -175,6 +175,7 @@ public class WelcomeView {
     public void addNameToPlayerList(String name) {
         playerList.add(name);
         this.playerListText.getChildren().clear();
+        this.playerListText.getChildren().add(new Text("Nom des joueurs : \n\n"));
         for (String playerName : this.playerList) {
             HBox playerHBox = new HBox();
             playerHBox.setMinWidth(250);
@@ -189,12 +190,9 @@ public class WelcomeView {
                 HBox parentHBox = (HBox) button.getParent();
                 int index = playerListText.getChildren().indexOf(parentHBox);
 
-                playerList.remove(index);
+                playerList.remove(index - 1);
                 playerListText.getChildren().remove(parentHBox);
 
-                if (playerListText.getChildren().isEmpty()){
-                    playerListText.getChildren().add(new Text("Nom des joueurs : \n\n"));
-                }
             });
 
             playerHBox.getChildren().addAll(playerNametxt, spacer, removePlayer);
