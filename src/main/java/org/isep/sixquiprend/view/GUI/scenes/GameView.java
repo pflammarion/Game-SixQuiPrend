@@ -42,6 +42,20 @@ public class GameView {
     private Text namesInOrder;
 
 
+    // Added new view function: previous round cards played.
+    // How I did it: added a HBox for the middle "middlePane" that will hold the
+    // boardPane and a new VBox "playedCards" to hold the later views for previous cards.
+
+    // Check updatePreviousRound for how I modify playedCards. Adding 3 children
+    // Title: playedCardsLabel
+    // Text Players: namesInOrder
+    // The Cards: a new HBox where I add all the ImageView
+
+    // Changes from the old structure:
+    // middlePane = new HBox(boardPane, playedCards)
+    // I also set a minWidth for boardPane to visualize better,
+    // else it's literally next to the board and it's dirty
+
     public GameView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         playButton = new Button("Play");
@@ -218,7 +232,7 @@ public class GameView {
             previousCards.add(player.getLastCardPlayed());
         }
 
-        System.out.println(previousCards);
+        previousCards.sort(Comparator.comparingInt(Card::getNumber));
 
         for (Card card : previousCards){
             for (Player player : players){
@@ -233,9 +247,9 @@ public class GameView {
             playerNames.append(playerName);
         }
 
+        // This part is not properly centered based on the card, to fix
         namesInOrder = new Text();
         namesInOrder.setText(playerNames.toString());
-
 
         UIpreviousCards = new HBox();
         UIpreviousCards.setAlignment(Pos.CENTER);
