@@ -599,6 +599,7 @@ public class GameController {
             }
 
             else {
+                gameView.updatePreviousRound(game.getPlayers());
                 gameView.updateBoard(game.getBoard());
                 gameView.updatePlayers(game.getPlayers());
 
