@@ -44,6 +44,7 @@ public class WelcomeView {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         this.buttonQuit = new Button("Quitter");
 
+        Text playerListTitle = new Text("Nom des joueurs : \n\n");
         Label playerListLabel = new Label("Joueurs");
         Label gameName = new Label("SUPER six qui prend");
 
@@ -141,7 +142,7 @@ public class WelcomeView {
 
         this.playerMode();
         //TODO after endgame on a un souci car ça ne s'affiche pas car scene non reconstruite
-        this.playerListText.getChildren().add(new Text("Nom des joueurs : \n\n"));
+        playerListText.getChildren().add(playerListTitle);
     }
 
     public Scene getScene() {
@@ -175,7 +176,8 @@ public class WelcomeView {
     public void addNameToPlayerList(String name) {
         playerList.add(name);
         this.playerListText.getChildren().clear();
-        this.playerListText.getChildren().add(new Text("Nom des joueurs : \n\n"));
+        Text playerListTitle = new Text("Nom des joueurs : \n\n");
+        this.playerListText.getChildren().add(playerListTitle);
         for (String playerName : this.playerList) {
             HBox playerHBox = new HBox();
             playerHBox.setMinWidth(250);
@@ -202,6 +204,8 @@ public class WelcomeView {
 
     public void resetPlayerList() {
         this.playerListText.getChildren().clear();
+        Text playerListTitle = new Text("Nom des joueurs : \n\n");
+        this.playerListText.getChildren().add(playerListTitle);
         this.playerList = new ArrayList<>();
     }
 
