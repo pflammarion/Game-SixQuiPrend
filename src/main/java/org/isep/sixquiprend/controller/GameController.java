@@ -1,6 +1,9 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Deck;
 import org.isep.sixquiprend.model.Game;
@@ -110,7 +113,17 @@ public class GameController {
     }
 
     private void startGame() {
+        List<String> realPlayers = welcomeView.getPlayerList();
+        List<Player> provisionalPlayers = game.getPlayers();
 
+        Iterator<Player> iterator = provisionalPlayers.iterator();
+        while (iterator.hasNext()) {
+            Player player = iterator.next();
+            if (!realPlayers.contains(player.getName())) {
+                iterator.remove();
+            }
+        }
+        game.setPlayers(provisionalPlayers);
         this.setup();
 
         deck.shuffle();
@@ -608,9 +621,9 @@ public class GameController {
                 }
             }
         }
-
         return false;
     }
+
     private void addPlayer(){
         if (game.getPlayers().size() < 10) {
             String playerName = welcomeView.getPlayerName();
