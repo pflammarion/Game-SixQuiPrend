@@ -18,13 +18,15 @@ import java.util.Objects;
 public class LoadingView {
     private final Button continueButton;
     private final Label concernedPlayer;
+    private final Label roundCounter;
     private final Scene scene;
     public LoadingView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
+        this.roundCounter = new Label();
         this.continueButton = new Button("Continuer");
         this.concernedPlayer = new Label();
 
-        VBox sBox = new VBox(concernedPlayer, continueButton);
+        VBox sBox = new VBox(roundCounter, concernedPlayer, continueButton);
         sBox.setAlignment(Pos.CENTER);
         sBox.setSpacing(20);
 
@@ -54,4 +56,5 @@ public class LoadingView {
         concernedPlayer.setText(text);
     }
 
+    public void setRoundCounter(String text) {roundCounter.setText(text);}
 }

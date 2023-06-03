@@ -152,12 +152,11 @@ public class GameController {
                     countHuman++;
                 }
             }
-            if (countHuman < 2){
-                playCard();
-            } else {
+            if (countHuman >= 2) {
                 loadingView.setConcernedPlayer(humanPlayer.getName());
-                sceneManager.switchToScene("loading");
             }
+            loadingView.setRoundCounter("Round "+ game.getRound());
+            sceneManager.switchToScene("loading");
         }
     }
 
