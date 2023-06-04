@@ -1,9 +1,6 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Deck;
 import org.isep.sixquiprend.model.Game;
@@ -32,6 +29,8 @@ public class GameController {
     private boolean gameHost;
     private List<List<Object>> onlineRoundInfo = new ArrayList<>();
 
+    private CardController cardController;
+
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
         this.welcomeView = new WelcomeView();
@@ -40,6 +39,7 @@ public class GameController {
         this.lobbyView = new LobbyView();
         this.loadingView = new LoadingView();
         this.game = new Game();
+        this.cardController = new CardController();
         eventListener();
     }
 
@@ -93,24 +93,6 @@ public class GameController {
         });
     }
 
-    private List<Card> fillDeck() {
-        List<Card> cards = new ArrayList<>();
-        for (int i = 1; i <= 104; i++) {
-            int bullHeads;
-            if (i % 11 == 0) {
-                bullHeads = 5;
-            } else if (i % 10 == 0) {
-                bullHeads = 3;
-            } else if (i % 5 == 0) {
-                bullHeads = 2;
-            } else {
-                bullHeads = 1;
-            }
-            Card card = new Card(i, bullHeads);
-            cards.add(card);
-        }
-        return cards;
-    }
 
     private void startGame() {
         List<String> realPlayers = welcomeView.getPlayerList();
@@ -273,7 +255,7 @@ public class GameController {
 
     private int conditionSelectedCardIndex(List<Card> aiPlayerHand, int selectedCardIndex) {
         if (selectedCardIndex == -1) {
-            selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+            selectedCardIndex =  cardController.extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
         }
         return selectedCardIndex;
     }
@@ -326,7 +308,7 @@ public class GameController {
                 // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
             // penalty
             } else {
-                selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+                selectedCardIndex = cardController.extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
             }
 
             selectedCard = aiPlayerHand.get(selectedCardIndex);
@@ -335,18 +317,7 @@ public class GameController {
         }
     }
 
-    private int extremeCaseNoPlayableRows(List<Card> aiPlayerHand, int selectedCardIndex) {
-        int minValue = Integer.MAX_VALUE;
-        int currentIndex = 0;
-        for (Card card : aiPlayerHand) {
-            if (card.getNumber() < minValue) {
-                minValue = card.getNumber();
-                selectedCardIndex = currentIndex;
-            }
-            currentIndex++;
-        }
-        return selectedCardIndex;
-    }
+
 
     private void aiPlayerPlayCardHard(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
@@ -415,14 +386,14 @@ public class GameController {
                 }
                 else {
                     // Take the lowest card of the player hand
-                    selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+                    selectedCardIndex =  cardController.extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
                 }
 
 
                 // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
                 // penalty
             } else {
-                selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+                selectedCardIndex =  cardController.extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
             }
 
             fetchSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCardIndex);
@@ -465,7 +436,7 @@ public class GameController {
         game.setRound(game.getRound() + 1);
     }
     public void setup() {
-        this.deck = new Deck(fillDeck());
+        this.deck = new Deck(cardController.fillDeck());
         game.getCardsPlayed().clear();
         game.setBoard(new ArrayList<>());
         game.setRound(1);
@@ -581,7 +552,6 @@ public class GameController {
                     }
                 }
             }
-
         }
     }
 
@@ -702,30 +672,6 @@ public class GameController {
         sceneManager.switchToScene(viewName);
     }
 
-    private List<Card> findCardByNumberInList(List<Integer> cardListToFind) {
-        List<Card> cardList = new ArrayList<>();
-        List<Card> deckCards = fillDeck();
-        for (int cardNumber : cardListToFind) {
-            for (Card card : deckCards){
-                if (card.getNumber() == cardNumber) {
-                    cardList.add(card);
-                    break;
-                }
-            }
-        }
-        return cardList;
-    }
-
-    private Card findCardByNumber(int number){
-        List<Card> deckCards = fillDeck();
-        for (Card card : deckCards){
-            if (card.getNumber() == number) {
-                return card;
-            }
-        }
-        return null;
-    }
-
     private Player findPlayerByName(String name){
         for (Player player : game.getPlayers()){
             if (player.getName().equals(name)){
@@ -737,13 +683,13 @@ public class GameController {
 
     public void onlineUpdatePlayerCard(List<Integer> playerCard) {
         Platform.runLater(() -> {
-            gameView.updateCards(findCardByNumberInList(playerCard));
+            gameView.updateCards(cardController.findCardByNumberInList(playerCard));
         });
     }
 
     public void onlineUpdateBoard(List<List<Integer>> boardInfo) {
         List<List<Card>> cardList = new ArrayList<>();
-        List<Card> deckCards = fillDeck();
+        List<Card> deckCards = cardController.fillDeck();
         for (List<Integer> row : boardInfo) {
             List<Card> cardsRow = new ArrayList<>();
             for (Integer cardNumber : row) {
@@ -789,7 +735,7 @@ public class GameController {
                 // Handle the case where the player is not found
                 // You can throw an exception or handle it as per your requirements
             }
-            Card card = findCardByNumber((int) roundInfo.get(i).get(1));
+            Card card = cardController.findCardByNumber((int) roundInfo.get(i).get(1));
             for (Card cardPlayed : game.getCardsPlayed()) {
                 assert card != null;
                 if (cardPlayed.getNumber() == card.getNumber()){
