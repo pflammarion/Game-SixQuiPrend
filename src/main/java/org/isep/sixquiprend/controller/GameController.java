@@ -156,6 +156,7 @@ public class GameController {
                 playCard();
             } else {
                 loadingView.setConcernedPlayer(humanPlayer.getName());
+                loadingView.setRoundCounter("Round "+ game.getRound());
                 sceneManager.switchToScene("loading");
             }
         }
