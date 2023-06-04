@@ -18,9 +18,11 @@ ajouter des adversaires. Comme le nombre de joueurs ne peut dépasser dix, les I
 participants pour arriver a dix.
 Il y a trois différentes difficultés pour les IA: facile, moyen et fort.
 
-**IA Facile** : 
+**IA Facile** : l'IA facile va jouer la carte la plus proche de la dernière carte d'une rangée sans tenir compte d'aucun
+autre facteur. 
 
-**IA Moyen** : 
+**IA Moyen** : l'IA moyen va jouer la carte la plus proche de la dernière carte d'une rangée si cette carte n'est pas 
+placée en 5ème ou 6ème position d'une rangée. 
 
 **IA Fort** : 
 
