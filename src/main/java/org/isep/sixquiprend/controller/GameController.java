@@ -168,7 +168,6 @@ public class GameController {
                 loadingView.setConcernedPlayer(humanPlayer.getName());
             }
             loadingView.setRoundCounter("Round "+ game.getRound());
-            loadingView.updateBoard(game.getBoard());
             sceneManager.switchToScene("loading");
         }
     }
