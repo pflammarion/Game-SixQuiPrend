@@ -1,6 +1,7 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
+import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Game;
 import org.isep.sixquiprend.model.player.AIPlayer;
@@ -19,6 +20,7 @@ public class GameController {
     private final EndGameView endGameView;
     private final LobbyView lobbyView;
     private final LoadingView loadingView;
+    private final SimulationView simulationView;
     private final Game game;
     private int numberOfAIPlayer = 0;
     private Client client = null;
@@ -34,6 +36,7 @@ public class GameController {
         this.endGameView = new EndGameView();
         this.lobbyView = new LobbyView();
         this.loadingView = new LoadingView();
+        this.simulationView = new SimulationView();
         this.game = new Game();
         this.cardController = new CardController();
         this.playerController = new PlayerController();
@@ -42,6 +45,7 @@ public class GameController {
 
     private void eventListener() {
         sceneManager.addScene("welcome", welcomeView.getScene());
+        sceneManager.addScene("simulation", simulationView.getScene());
         sceneManager.addScene("game", gameView.getScene());
         sceneManager.addScene("endGame", endGameView.getScene());
         sceneManager.addScene("lobby", lobbyView.getScene());
@@ -54,12 +58,15 @@ public class GameController {
         });
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         welcomeView.getButtonOnline().setOnAction(event -> {
-                    sceneManager.switchToScene("lobby");
-                    playOnline();
-                });
+            sceneManager.switchToScene("lobby");
+            playOnline();
+        });
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
+        welcomeView.getButtonSimulation().setOnAction(event -> sceneManager.switchToScene("simulation"));
+        simulationView.getButtonBack().setOnAction(event -> sceneManager.switchToScene("welcome"));
+        simulationView.getButtonSimu().setOnAction(event -> simulateGameIa(simulationView.getAIList(), simulationView.getGamesRep()));
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -295,6 +302,7 @@ public class GameController {
         endGameView.setScores(game.getPlayers());
         endGameView.setWinner(findWinner());
         sceneManager.switchToScene("endGame");
+        game.setGameEnded(true);
     }
 
     private Player findWinner() {
@@ -639,5 +647,89 @@ public class GameController {
             sceneManager.switchToScene("endGame");
             client.closeConnection();
         });
+    }
+
+    public void simulateGameIa(List<String> AIList, int gamesRep) {
+        simulationView.getEasyResult().setText("");
+        simulationView.getMediumResult().setText("");
+        simulationView.getHardResult().setText("");
+        HashMap<String, Integer> result = new HashMap<>();
+        boolean easyAI = false;
+        boolean mediumAI = false;
+        boolean hardAI = false;
+        for (String AI : AIList){
+            if (Objects.equals(AI, "AI: Facile")){
+                easyAI = true;
+            } else if (Objects.equals(AI, "AI: Moyen")){
+                mediumAI = true;
+            } else if (Objects.equals(AI, "AI: Dure")){
+                hardAI = true;
+            }
+        }
+
+        if (easyAI){
+            result.put("Facile", 0);
+        }
+        if (mediumAI){
+            result.put("Moyen", 0);
+        }
+        if (hardAI){
+            result.put("Dure", 0);
+        }
+
+        for(int i = 1; i <= gamesRep; i++) {
+            int count = 0;
+            List<Player> playerList = new ArrayList<>();
+            for (String AIname : AIList){
+                count++;
+                switch(AIname){
+                    case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
+                    case "AI: Moyen" -> playerList.add(new AIPlayer("AI "+ count+": Moyen", "medium"));
+                    case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
+                }
+            }
+            game.setPlayers(playerList);
+            this.setup();
+            deck.shuffle();
+            game.boardSetUp(deck);
+            dealCards();
+
+            nextPlayer();
+            if (game.isGameEnded()) {
+                AIPlayer winner = null;
+                int minScore = Integer.MAX_VALUE;
+                for (Player player : game.getPlayers()) {
+                    if (player.getScore() < minScore) {
+                        minScore = player.getScore();
+                        winner = (AIPlayer) player;
+                    }
+                }
+                if (null != winner) {
+                    switch (winner.getDiff()) {
+                        case "easy" -> result.replace("Facile", result.get("Facile")+1);
+                        case "medium" -> result.replace("Moyen", result.get("Moyen")+1);
+                        case "hard" -> result.replace("Dure", result.get("Dure")+1);
+                    }
+                }
+            }
+        }
+        if (easyAI){
+            int easyResult = result.get("Facile");
+            String s = String.valueOf(easyResult);
+            simulationView.getEasyResult().setText(s);
+        }
+
+        if (mediumAI){
+            int mediumResult = result.get("Moyen");
+            String s = String.valueOf(mediumResult);
+            simulationView.getMediumResult().setText(s);
+        }
+
+        if (hardAI){
+            int hardResult = result.get("Dure");
+            String s = String.valueOf(hardResult);
+            simulationView.getHardResult().setText(s);
+        }
+        sceneManager.switchToScene("simulation");
     }
 }
