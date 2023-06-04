@@ -1,10 +1,11 @@
 # Jeu six qui prend
 ### Bienvenus sur notre super _Six Qui Prend_, have fun :)
-La première page qui apparait lorsque le jeu est lancé est la page d'accueil, centre et point de départ de toute partie du Six qui prend. 
+La première page qui apparait lorsque le jeu est lancé est la page d'accueil, centre et point de départ de toute partie 
+du Six qui prend. 
 ## Page d'accueil 
-La page d'accueil continent tous les différentes façons de jouer au *Six qui prend*, soit en local soit en ligne, avec 
-ou sans IA. Pour accéder aux différentes façons de composer une partie, le menu déroulant **"Options"** permet de 
-séléctionner parmi l'ajout d'un joueur local, l'ajout d'IA et la connexion a une partie en ligne. 
+La page d'accueil contient toutes les différentes façons de jouer au *Six qui prend*, soit en local, soit en ligne, avec 
+ou sans IA. Pour accéder aux différentes manières de composer une partie, le menu déroulant **"Options"** permet de 
+sélectionner parmi l'ajout d'un joueur local, l'ajout d'IA et la connexion à une partie en ligne. 
 ### Mode Local 
 ![localgame.png](./documentation/localgame.png)
 En local, il est possible d'ajouter jusqu'à **dix joueurs** qui joueront sur le même appareil. 
@@ -14,8 +15,8 @@ pour continuer le tour, le joueur doit appuyer sur **"Continuer"**.
 ### Jouer avec une IA
 ![aigame.png](./documentation/aigame.png)
 Il est possible d'ajouter une ou plusieurs IA lors d'une partie locale, pour compléter la liste des participants ou 
-ajouter des adversaires. Comme le nombre de joueurs ne peut dépasser dix, les IA peuvent seulement complétér la liste des 
-participants pour arriver a dix.
+ajouter des adversaires. Comme le nombre de joueurs ne peut dépasser dix, les IA peuvent seulement compléter la liste des 
+participants pour arriver à dix.
 Il y a trois différentes difficultés pour les IA: facile, moyen et fort.
 
 **IA Facile** : l'IA facile va jouer la carte la plus proche de la dernière carte d'une rangée sans tenir compte d'aucun
@@ -32,20 +33,20 @@ Pour entrer son nom dans le mode en ligne, il faut rentrer son nom et cliquer su
 joueur dans un lobby ou les autres joueurs attendent pour commencer la partie. Si le joueur ne rentre pas de nom, il aura 
 automatiquement un nom de la forme *"joueur X"* avec son numéro dans la liste des joueurs en attente. 
 
-L'**hôte** est le leader de la partie en ligne, il est le premier à être entré dans le lobby et a le pouvoir de lancer 
+L'**hôte** est le leader de la partie en ligne, il est le premier à être entré dans le lobby et il a le pouvoir de lancer 
 la partie. Il est le seul à avoir accès au bouton **"Lancer la partie"**, les autres joueurs ont simplement une instruction
-demandant d'attendre que l'hote lance la partie. 
+demandant d'attendre que l'hôte lance la partie. 
 
 ## Déroulement d'une partie 
 ### Table de jeu
-La table de jeu est séparée en plusieurs parties : le numéro de round, le nom du joueur entrain de jouer, les scores du round,
-les quatre lignes de cartes déjà posées et la main du joueur entrain de jouer. 
+La table de jeu est séparée en plusieurs parties : le numéro de round, le nom du joueur en train de jouer, les scores du round,
+les quatre rangées de cartes déjà posées et la main du joueur en train de jouer. 
 ###  Le jeu
-Les règles sont les mêmes que lors d'une partie de _Six Qui Prend_. Le joueur séléctionne la carte qu'il souhaite jouer 
-en cliquant dessus, elle sera alors affichée dans le cadre **"carte jouée"** à coté de la main du joueur et lorsque le 
-tour est fini la carte se place automatiquement sur la lignes avec le numéro le plus proche. Lorsque le joueur joue une
-carte qui ne peut aller sur aucune des lignes, d'après les règles le joueur doit ramasser une des lignes et poser sa carte 
-en tant que première de cette ligne maintenant vierge. La ligne qui est ramassée par le joueur est automatiquement 
+Les règles sont les mêmes que lors d'une partie de _Six Qui Prend_. Le joueur sélectionne la carte qu'il souhaite jouer 
+en cliquant dessus, elle sera alors affichée dans le cadre **"carte jouée"** à côté de la main du joueur et lorsque le 
+tour est fini, la carte se place automatiquement sur la rangée avec le numéro le plus proche. Lorsque le joueur joue une
+carte qui ne peut aller sur aucune des lignes, d'après les règles le joueur doit ramasser une des rangées et poser sa carte 
+en tant que première de cette rangée maintenant vierge. La rangée qui est ramassée par le joueur est automatiquement 
 celle qui lui rapportera le minimum de points, il n'a pas la possibilité de choisir. 
 ### Fin de la partie
 La partie se termine lorsque toutes les cartes ont été posées par tous les joueurs, le gagnant est celui avec le moins de 
