@@ -690,8 +690,8 @@ public class GameController {
             }
             game.setPlayers(playerList);
             this.setup();
-            deck.shuffle();
-            game.boardSetUp(deck);
+            cardController.shuffle();
+            this.boardSetUp(cardController);
             dealCards();
 
             nextPlayer();
