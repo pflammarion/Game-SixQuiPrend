@@ -11,6 +11,7 @@ import org.isep.sixquiprend.view.GUI.scenes.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class GameController {
     private final SceneManager sceneManager;
@@ -322,117 +323,67 @@ public class GameController {
         game.setCurrentPlayerIndex(0);
     }
 
-    // TODO faire le tri dans cette longue methode
     public void updateBoard(List<Card> cardList) {
-        cardList.sort(Comparator.comparingInt(Card::getNumber));
+        cardList = cardController.sortCardList(cardList);
 
-        for (Card card: cardList) {
+        for (Card card : cardList) {
             int score = 0;
-            int lastCardDiff = Integer.MAX_VALUE;
-            int selectedRowIndex = -1;
-            ArrayList<List<Card>> board = game.getBoard();
-            List<Card> selectedRow;
+            int selectedRowIndex = cardController.findSelectedRowIndex(card, game.getBoard());
 
-            for(int i = 0; i < board.size(); i ++){
-                List<Card> row = board.get(i);
-                int lastCardNumber = row.get(row.size() - 1).getNumber();
-                int cardDiff = card.getNumber() - lastCardNumber;
-                if (cardDiff > 0 && lastCardDiff > cardDiff){
-                    selectedRowIndex = i;
-                    lastCardDiff = cardDiff;
-                }
-            }
+            if (selectedRowIndex != -1) {
+                List<Card> selectedRow = game.getBoard().get(selectedRowIndex);
 
-            if (selectedRowIndex != -1){
-                selectedRow = board.get(selectedRowIndex);
                 if (selectedRow.size() >= 5) {
-                    for (Card cardInRow : selectedRow) {
-                        score += cardInRow.getBullHeads();
-                    }
+                    score = cardController.calculateScore(selectedRow);
                     selectedRow.clear();
                 }
-
             } else {
-                // Algo in case card played is not playable then choose the min point line
-                List<Integer> tempNumHeads= new ArrayList<>();
-                for (List<Card> row : board) {
-                    int numberOfHead = 0;
-                    for (Card cardInRow : row) {
-                        numberOfHead += cardInRow.getBullHeads();
-                    }
-                    tempNumHeads.add(numberOfHead);
+                selectedRowIndex = cardController.findSelectedRowIndexForNonPlayableCard(game.getBoard());
+
+                if (selectedRowIndex != -1) {
+                    List<Card> selectedRow = game.getBoard().get(selectedRowIndex);
+                    score = cardController.calculateScore(selectedRow);
+                    selectedRow.clear();
                 }
-                int minNumberOfHead = Collections.min(tempNumHeads);
-
-                List<Integer> indexesMin = new ArrayList<>();
-
-                for (int i = 0; i<tempNumHeads.size();i++){
-                    if (minNumberOfHead == tempNumHeads.get(i)){
-                        indexesMin.add(i);
-                    }
-                }
-
-                if (indexesMin.size() == 1){
-                    selectedRowIndex = indexesMin.get(0);
-                } else {
-
-                    List<Integer> latestCardRow = new ArrayList<>();
-                    for (Integer integer : indexesMin) {
-                        List<Card> row = board.get(integer);
-                        latestCardRow.add(row.get(row.size() - 1).getNumber());
-                    }
-
-                    int highestNumber = Integer.MIN_VALUE;
-                    int highestIndex = -1;
-
-                    for (int i = 0; i < latestCardRow.size(); i++) {
-                        int currentNumber = latestCardRow.get(i);
-                        if (currentNumber > highestNumber) {
-                            highestNumber = currentNumber;
-                            highestIndex = i;
-                        }
-                    }
-
-                    selectedRowIndex = indexesMin.get(highestIndex);
-
-                }
-
-                selectedRow = board.get(selectedRowIndex);
-
-                for (Card cardInRow : selectedRow) {
-                    score += cardInRow.getBullHeads();
-                }
-
-                selectedRow.clear();
             }
 
-            selectedRow.add(card);
-            board.set(selectedRowIndex, selectedRow);
-
+            addToSelectedRow(card, selectedRowIndex);
 
             if (score > 0) {
-                if (null != client) {
-                    for (List<Object> info : this.onlineRoundInfo) {
-                        if (info.get(1).equals(card)) {
-                            Player player = (Player) info.get(0);
-                            if (player != null) {
-                                player.setScore(player.getScore() + score);
-                            } else {
-                                System.out.println("Player not found");
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Player player : game.getPlayers()){
-                        if (player.getLastCardPlayed().getNumber() == card.getNumber()){
-                            player.setScore(player.getScore() + score);
-                        }
+                updatePlayerScores(card, score);
+            }
+        }
+    }
+
+
+    private void addToSelectedRow(Card card, int selectedRowIndex) {
+        List<Card> selectedRow = game.getBoard().get(selectedRowIndex);
+        selectedRow.add(card);
+        game.getBoard().set(selectedRowIndex, selectedRow);
+    }
+
+    private void updatePlayerScores(Card card, int score) {
+        if (null != client) {
+            for (List<Object> info : this.onlineRoundInfo) {
+                if (info.get(1).equals(card)) {
+                    Player player = (Player) info.get(0);
+                    if (player != null) {
+                        player.setScore(player.getScore() + score);
+                    } else {
+                        System.out.println("Player not found");
                     }
                 }
             }
         }
+        else {
+            for (Player player : game.getPlayers()){
+                if (player.getLastCardPlayed().getNumber() == card.getNumber()){
+                    player.setScore(player.getScore() + score);
+                }
+            }
+        }
     }
+
 
     private boolean checkEndTurn(){
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Data
 @NoArgsConstructor
@@ -72,6 +73,11 @@ public class CardController {
         return null;
     }
 
+    public List<Card> sortCardList(List<Card> cardList) {
+        cardList.sort(Comparator.comparingInt(Card::getNumber));
+        return cardList;
+    }
+
     public List<Card> drawHand(){
         List<Card> cards = new ArrayList<>();
         for (int j = 0; j < numCardsPerPlayer; j++) {
@@ -79,8 +85,7 @@ public class CardController {
             cards.add(card);
         }
 
-        cards.sort(Comparator.comparingInt(Card::getNumber));
-        return cards;
+        return sortCardList(cards);
     }
 
     public void shuffle(){
@@ -182,6 +187,55 @@ public class CardController {
             selectedCardIndex =  extremeCaseNoPlayableRows(hand, selectedCardIndex);
         }
         return selectedCardIndex;
+    }
+
+    //TODO faire ca pour au dessus ou on fait toujours ça
+    public int findSelectedRowIndex(Card card, List<List<Card>> board) {
+        int lastCardDiff = Integer.MAX_VALUE;
+        int selectedRowIndex = -1;
+
+        for (int i = 0; i < board.size(); i++) {
+            List<Card> row = board.get(i);
+            int lastCardNumber = row.get(row.size() - 1).getNumber();
+            int cardDiff = card.getNumber() - lastCardNumber;
+
+            if (cardDiff > 0 && lastCardDiff > cardDiff) {
+                selectedRowIndex = i;
+                lastCardDiff = cardDiff;
+            }
+        }
+
+        return selectedRowIndex;
+    }
+
+    public int findSelectedRowIndexForNonPlayableCard(List<List<Card>> board) {
+        List<Integer> tempNumHeads = board.stream()
+                .map(row -> row.stream().mapToInt(Card::getBullHeads).sum())
+                .toList();
+
+        int minNumberOfHead = Collections.min(tempNumHeads);
+        List<Integer> indexesMin = IntStream.range(0, tempNumHeads.size())
+                .filter(i -> tempNumHeads.get(i) == minNumberOfHead)
+                .boxed()
+                .toList();
+
+        if (indexesMin.size() == 1) {
+            return indexesMin.get(0);
+        } else {
+            List<Integer> latestCardRow = indexesMin.stream()
+                    .map(index -> board.get(index).get(board.get(index).size() - 1).getNumber())
+                    .toList();
+
+            int highestIndex = IntStream.range(0, latestCardRow.size())
+                    .reduce((i, j) -> latestCardRow.get(i) > latestCardRow.get(j) ? i : j)
+                    .orElse(-1);
+
+            return indexesMin.get(highestIndex);
+        }
+    }
+
+    public int calculateScore(List<Card> row) {
+        return row.stream().mapToInt(Card::getBullHeads).sum();
     }
 
 }
