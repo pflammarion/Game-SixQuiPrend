@@ -57,9 +57,9 @@ public class GameController {
         });
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         welcomeView.getButtonOnline().setOnAction(event -> {
-                    sceneManager.switchToScene("lobby");
-                    playOnline();
-                });
+            sceneManager.switchToScene("lobby");
+            playOnline();
+        });
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
@@ -324,7 +324,7 @@ public class GameController {
                 // Take the lowest card of the player hand
                 selectedCardIndex = conditionSelectedCardIndex(aiPlayerHand, selectedCardIndex);
                 // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
-            // penalty
+                // penalty
             } else {
                 selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
             }
@@ -433,6 +433,7 @@ public class GameController {
         endGameView.setScores(game.getPlayers());
         endGameView.setWinner(findWinner());
         sceneManager.switchToScene("endGame");
+        game.setGameEnded(true);
     }
 
     private Player findWinner() {
@@ -866,5 +867,46 @@ public class GameController {
             sceneManager.switchToScene("endGame");
             client.closeConnection();
         });
+    }
+
+    public void simulateGameIa() {
+        List<Integer> result = new ArrayList<>();
+        result.add(0);
+        result.add(0);
+        result.add(0);
+        for(int i = 0; i < 1000; i++) {
+            List<Player> playerList = new ArrayList<>();
+            playerList.add(new AIPlayer("AI 1", "easy"));
+            playerList.add(new AIPlayer("AI 2", "medium"));
+            playerList.add(new AIPlayer("AI 3", "hard"));
+
+            game.setPlayers(playerList);
+            this.setup();
+
+            deck.shuffle();
+            game.boardSetUp(deck);
+            dealCards();
+
+            nextPlayer();
+            if (game.isGameEnded()) {
+                AIPlayer winner = null;
+                int minScore = Integer.MAX_VALUE;
+                for (Player player : game.getPlayers()) {
+                    if (player.getScore() < minScore) {
+                        minScore = player.getScore();
+                        winner = (AIPlayer) player;
+                    }
+                }
+                if (null != winner) {
+                    switch (winner.getDiff()) {
+                        case "easy" -> result.set(0, result.get(0) + 1);
+                        case "medium" -> result.set(1, result.get(1) + 1);
+                        case "hard" -> result.set(2, result.get(2) + 1);
+                    }
+                }
+            }
+            System.out.println(i);
+        }
+        System.out.println(result);
     }
 }
