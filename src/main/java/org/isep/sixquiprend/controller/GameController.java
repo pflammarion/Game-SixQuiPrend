@@ -874,6 +874,9 @@ public class GameController {
     }
 
     public void simulateGameIa(List<String> AIList, int gamesRep) {
+        simulationView.getEasyResult().setText("");
+        simulationView.getMediumResult().setText("");
+        simulationView.getHardResult().setText("");
         HashMap<String, Integer> result = new HashMap<>();
         boolean easyAI = false;
         boolean mediumAI = false;

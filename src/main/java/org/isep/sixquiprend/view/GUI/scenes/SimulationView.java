@@ -36,9 +36,9 @@ public class SimulationView {
     private final VBox easyPart;
     private final VBox mediumPart;
     private final VBox hardPart;
-    private Text easyResult;
-    private Text mediumResult;
-    private Text hardResult;
+    private Label easyResult;
+    private Label mediumResult;
+    private Label hardResult;
     private final Scene scene;
 
     public SimulationView(){
@@ -47,9 +47,9 @@ public class SimulationView {
         Label easyTitle = new Label("Victoires des AI Facile");
         Label mediumTitle = new Label("Victoires des AI Moyenne");
         Label hardTitle = new Label("Victoires des AI Dure");
-        this.easyResult = new Text();
-        this.mediumResult = new Text();
-        this.hardResult = new Text();
+        this.easyResult = new Label();
+        this.mediumResult = new Label();
+        this.hardResult = new Label();
         this.titleSimu = new Label("Simulation: AI / Bots");
         this.buttonBack = new Button("Retour");
         this.buttonSimu = new Button("Simuler");
@@ -113,6 +113,24 @@ public class SimulationView {
         summaryResults.setSpacing(20);
         summaryResults.setAlignment(Pos.CENTER);
 
+        easyResult.textProperty().addListener((observable, oldValue, newValue) -> {
+            boolean visible = !newValue.isEmpty();
+            easyPart.setVisible(visible);
+            summaryResults.setVisible(visible || !mediumResult.getText().isEmpty() || !hardResult.getText().isEmpty());
+        });
+
+        mediumResult.textProperty().addListener((observable, oldValue, newValue) -> {
+            boolean visible = !newValue.isEmpty();
+            mediumPart.setVisible(visible);
+            summaryResults.setVisible(!easyResult.getText().isEmpty() || visible || !hardResult.getText().isEmpty());
+        });
+
+        hardResult.textProperty().addListener((observable, oldValue, newValue) -> {
+            boolean visible = !newValue.isEmpty();
+            hardPart.setVisible(visible);
+            summaryResults.setVisible(!easyResult.getText().isEmpty() || !mediumResult.getText().isEmpty() || visible);
+        });
+
         this.generalVBox = new VBox(titleSimu, generalHBox, summaryResults, choiceHBox);
         generalVBox.setSpacing(10);
         generalVBox.setAlignment(Pos.CENTER);
@@ -135,9 +153,9 @@ public class SimulationView {
     public int getGamesRep(){return Integer.parseInt(gamesRep.getText());}
     public Button getButtonBack(){return buttonBack;}
     public Button getButtonSimu(){return buttonSimu;}
-    public Text getEasyResult(){return easyResult;}
-    public Text getMediumResult(){return mediumResult;}
-    public Text getHardResult(){return hardResult;}
+    public Label getEasyResult(){return easyResult;}
+    public Label getMediumResult(){return mediumResult;}
+    public Label getHardResult(){return hardResult;}
     public List<String> getAIList(){return AIList;}
     public void addNameToPlayerList(String name) {
         AIList.add(name);
