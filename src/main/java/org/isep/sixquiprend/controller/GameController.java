@@ -163,7 +163,7 @@ public class GameController {
                 playCard();
             } else {
                 loadingView.setConcernedPlayer(humanPlayer.getName());
-                loadingView.setRoundCounter("Round "+ game.getRound());
+                loadingView.setRoundCounter("Tour "+ game.getRound());
                 sceneManager.switchToScene("loading");
             }
         }
@@ -460,7 +460,7 @@ public class GameController {
     private void addAIPlayerEasy() {
         if (game.getPlayers().size() < 10) {
             this.numberOfAIPlayer++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", "easy");
+            AIPlayer aiPlayer = new AIPlayer("IA " + numberOfAIPlayer + ": Facile", "easy");
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -469,7 +469,7 @@ public class GameController {
     private void addAIPlayerMedium() {
         if (game.getPlayers().size() < 10) {
             this.numberOfAIPlayer++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyenne", "medium");
+            AIPlayer aiPlayer = new AIPlayer("IA " + numberOfAIPlayer + ": Moyenne", "medium");
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -478,7 +478,7 @@ public class GameController {
     private void addAIPlayerHard() {
         if (game.getPlayers().size() < 10){
             this.numberOfAIPlayer ++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Forte", "hard");
+            AIPlayer aiPlayer = new AIPlayer("IA " + numberOfAIPlayer + ": Forte", "hard");
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -684,9 +684,9 @@ public class GameController {
             for (String AIname : AIList){
                 count++;
                 switch(AIname){
-                    case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
-                    case "AI: Moyenne" -> playerList.add(new AIPlayer("AI "+ count+": Moyenne", "medium"));
-                    case "AI: Forte" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
+                    case "IA: Facile" -> playerList.add(new AIPlayer("IA "+ count+": Facile", "easy"));
+                    case "IA: Moyenne" -> playerList.add(new AIPlayer("IA "+ count+": Moyenne", "medium"));
+                    case "IA: Forte" -> playerList.add(new AIPlayer("IA "+ count+": Dure", "hard"));
                 }
             }
             game.setPlayers(playerList);

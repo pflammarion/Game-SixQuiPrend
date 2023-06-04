@@ -158,7 +158,7 @@ public class GameView {
     }
 
     public void updateRound(int round) {
-        roundLabel.setText("Round: " + round);
+        roundLabel.setText("Tour : " + round);
     }
 
     public void setPlayerTurn(Player currentPlayer) {
