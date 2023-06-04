@@ -33,20 +33,6 @@ public class GameTest {
     }
 
     @Test
-    public void testGetDeck() {
-        Deck deck = new Deck();
-        game.setDeck(deck);
-        Assertions.assertEquals(deck, game.getDeck());
-    }
-
-    @Test
-    public void testSetDeck() {
-        Deck deck = new Deck();
-        game.setDeck(deck);
-        Assertions.assertEquals(deck, game.getDeck());
-    }
-
-    @Test
     public void testGetCardsPlayed() {
         List<Card> playedCards = new ArrayList<>(Arrays.asList(new Card(2, 1), new Card(6, 1)));
         game.setCardsPlayed(playedCards);
@@ -124,47 +110,6 @@ public class GameTest {
         game.setCurrentPlayerIndex(currentPlayerIndex);
 
         Assertions.assertEquals(currentPlayerIndex, game.getCurrentPlayerIndex());
-    }    @Test
-    public void testBoardSetUp() {
-        // Create a sample deck
-
-        Deck deck = new Deck();
-        List<Card> deckCard = new ArrayList<>();
-        deckCard.add(new Card(1, 1));
-        deckCard.add(new Card(2, 1));
-        deckCard.add(new Card(3, 1));
-        deckCard.add(new Card(4, 1));
-        deckCard.add(new Card(5, 5));
-        deckCard.add(new Card(6, 1));
-        deckCard.add(new Card(7, 1));
-        deckCard.add(new Card(8, 1));
-        deck.setCards(deckCard);
-
-
-        // Set the deck in the game
-        game.setDeck(deck);
-
-        // Call the boardSetUp() method
-        game.boardSetUp(deck);
-
-        ArrayList<List<Card>> expectedBoard = new ArrayList<>();
-        expectedBoard.add(List.of(new Card(1, 1)));
-        expectedBoard.add(List.of(new Card(2, 1)));
-        expectedBoard.add(List.of(new Card(3, 1)));
-        expectedBoard.add(List.of(new Card(4, 1)));
-
-        Assertions.assertEquals(expectedBoard, game.getBoard());
     }
-
-    @Test
-    public void testResetCardsPlayed() {
-        List<Card> playedCards = new ArrayList<>(Arrays.asList(new Card(2, 1), new Card(6, 1)));
-        game.setCardsPlayed(playedCards);
-
-        game.resetCardsPlayed();
-
-        Assertions.assertTrue(game.getCardsPlayed().isEmpty());
-    }
-
 
 }

@@ -1,5 +1,6 @@
 package org.isep.sixquiprend.model;
 
+import org.isep.sixquiprend.controller.CardController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import java.util.List;
 
 
 class DeckTest {
+    private CardController cardController;
     private Deck deck;
 
     @BeforeEach
@@ -20,7 +22,9 @@ class DeckTest {
                 new Card(3, 1),
                 new Card(4, 1)
         ));
-        deck = new Deck(cards);
+        cardController = new CardController();
+        cardController.setDeck(new Deck(cards));
+        deck = cardController.getDeck();
     }
 
     @Test
@@ -49,7 +53,7 @@ class DeckTest {
 
     @Test
     public void testShuffle() {
-        deck.shuffle();
+        cardController.shuffle();
 
         Assertions.assertNotEquals(
                 Arrays.asList(
@@ -64,7 +68,7 @@ class DeckTest {
 
     @Test
     public void testDraw() {
-        Card drawnCard = deck.draw();
+        Card drawnCard = cardController.draw();
 
         Card expectedCard = new Card(1, 1);
         Assertions.assertEquals(expectedCard, drawnCard);
@@ -80,7 +84,7 @@ class DeckTest {
     @Test
     public void testDrawEmptyDeck() {
         deck.getCards().clear();
-        Card drawnCard = deck.draw();
+        Card drawnCard = cardController.draw();
         Assertions.assertNull(drawnCard);
     }
 
