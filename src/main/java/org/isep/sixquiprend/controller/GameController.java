@@ -23,6 +23,7 @@ public class GameController {
     private final EndGameView endGameView;
     private final LobbyView lobbyView;
     private final LoadingView loadingView;
+    private final SimulationView simulationView;
     private final Game game;
     private Deck deck;
     private final int numCardsPerPlayer = 10;
@@ -39,12 +40,14 @@ public class GameController {
         this.endGameView = new EndGameView();
         this.lobbyView = new LobbyView();
         this.loadingView = new LoadingView();
+        this.simulationView = new SimulationView();
         this.game = new Game();
         eventListener();
     }
 
     private void eventListener() {
         sceneManager.addScene("welcome", welcomeView.getScene());
+        sceneManager.addScene("simulation", simulationView.getScene());
         sceneManager.addScene("game", gameView.getScene());
         sceneManager.addScene("endGame", endGameView.getScene());
         sceneManager.addScene("lobby", lobbyView.getScene());
@@ -63,6 +66,9 @@ public class GameController {
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
+        welcomeView.getButtonSimulation().setOnAction(event -> sceneManager.switchToScene("simulation"));
+        simulationView.getButtonBack().setOnAction(event -> sceneManager.switchToScene("welcome"));
+        simulationView.getButtonSimu().setOnAction(event -> simulateGameIa(simulationView.getAIList(), simulationView.getGamesRep()));
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -869,20 +875,44 @@ public class GameController {
         });
     }
 
-    public void simulateGameIa() {
-        List<Integer> result = new ArrayList<>();
-        result.add(0);
-        result.add(0);
-        result.add(0);
-        for(int i = 0; i < 1000; i++) {
-            List<Player> playerList = new ArrayList<>();
-            playerList.add(new AIPlayer("AI 1", "easy"));
-            playerList.add(new AIPlayer("AI 2", "medium"));
-            playerList.add(new AIPlayer("AI 3", "hard"));
+    public void simulateGameIa(List<String> AIList, int gamesRep) {
+        HashMap<String, Integer> result = new HashMap<>();
+        boolean easyAI = false;
+        boolean mediumAI = false;
+        boolean hardAI = false;
+        for (String AI : AIList){
+            if (Objects.equals(AI, "AI: Facile")){
+                easyAI = true;
+            } else if (Objects.equals(AI, "AI: Moyen")){
+                mediumAI = true;
+            } else if (Objects.equals(AI, "AI: Dure")){
+                hardAI = true;
+            }
+        }
 
+        if (easyAI){
+            result.put("Facile", 0);
+        }
+        if (mediumAI){
+            result.put("Moyen", 0);
+        }
+        if (hardAI){
+            result.put("Dure", 0);
+        }
+
+        for(int i = 1; i <= gamesRep; i++) {
+            int count = 0;
+            List<Player> playerList = new ArrayList<>();
+            for (String AIname : AIList){
+                count++;
+                switch(AIname){
+                    case "AI: Facile" : playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
+                    case "AI: Moyen" : playerList.add(new AIPlayer("AI "+ count+": Moyen", "medium"));
+                    case "AI: Dure" : playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
+                }
+            }
             game.setPlayers(playerList);
             this.setup();
-
             deck.shuffle();
             game.boardSetUp(deck);
             dealCards();
@@ -899,13 +929,13 @@ public class GameController {
                 }
                 if (null != winner) {
                     switch (winner.getDiff()) {
-                        case "easy" -> result.set(0, result.get(0) + 1);
-                        case "medium" -> result.set(1, result.get(1) + 1);
-                        case "hard" -> result.set(2, result.get(2) + 1);
+                        case "easy" -> result.replace("Facile", result.get("Facile")+1);
+                        case "medium" -> result.replace("Moyen", result.get("Moyen")+1);
+                        case "hard" -> result.replace("Dure", result.get("Dure")+1);
                     }
                 }
             }
-            System.out.println(i);
+            simulationView.getProgressBar().setProgress(i/gamesRep);
         }
         System.out.println(result);
     }

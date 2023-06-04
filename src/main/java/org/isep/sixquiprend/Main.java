@@ -10,7 +10,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         SceneManager sceneManager = new SceneManager(stage);
-        GameController game = new GameController(sceneManager);
+        new GameController(sceneManager);
         sceneManager.switchToScene("welcome");
         stage.show();
     }

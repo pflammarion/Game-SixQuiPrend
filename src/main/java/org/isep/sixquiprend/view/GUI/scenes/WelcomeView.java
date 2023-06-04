@@ -30,6 +30,7 @@ public class WelcomeView {
     private final Button buttonAjouterAIMedium;
     private final Button buttonAjouterAIHard;
     private final Button buttonPlay;
+    private final Button buttonSimu;
     private final Button buttonOnline;
     private final TextField playerNameTextField;
     private List<String> playerList = new ArrayList<>();
@@ -38,6 +39,7 @@ public class WelcomeView {
     private MenuButton menu;
     private HBox playerAddHBox;
     private VBox playerSetVBox;
+    private HBox choiceHBox;
 
     public WelcomeView() {
 
@@ -83,7 +85,6 @@ public class WelcomeView {
         this.buttonOnline = new Button("Jouer en ligne !");
         this.buttonOnline.getStyleClass().add("play_button");
 
-
         this.playerAddHBox = new HBox();
         this.playerAddHBox.setSpacing(20);
         this.playerAddHBox.getStyleClass().add("player_add_hbox");
@@ -91,11 +92,20 @@ public class WelcomeView {
         this.playerAddHBox.setMinWidth(300);
         this.playerAddHBox.setMinHeight(100);
 
+        this.choiceHBox = new HBox();
+        this.choiceHBox.setSpacing(20);
+        this.choiceHBox.setAlignment(Pos.BOTTOM_CENTER);
+        this.choiceHBox.setMinWidth(300);
+        this.choiceHBox.setMinHeight(100);
 
         this.buttonPlay = new Button("Jouer !");
         this.buttonPlay.setAlignment(Pos.CENTER);
         this.buttonPlay.setPrefSize(400, 100);
         buttonPlay.getStyleClass().add("play_button");
+
+        this.buttonSimu = new Button("Simuler");
+        this.buttonSimu.setAlignment(Pos.CENTER);
+        this.buttonSimu.setPrefSize(400, 50);
 
         this.playerSetVBox = new VBox();
         this.playerSetVBox.setAlignment(Pos.CENTER);
@@ -132,7 +142,7 @@ public class WelcomeView {
         imageView.fitWidthProperty().bind(scene.widthProperty());
         imageView.fitHeightProperty().bind(scene.heightProperty());
 
-        String path = "src/main/resources/org/isep/sixquiprend/assets/ThomasLeGoat.mp3";
+        String path = "src/main/resources/org/isep/sixquiprend/assets/LuigiCasino.mp3";
         Media media = new Media(new File(path).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         MediaView mediaView = new MediaView(mediaPlayer);
@@ -144,6 +154,8 @@ public class WelcomeView {
         //TODO after endgame on a un souci car ça ne s'affiche pas car scene non reconstruite
         playerListText.getChildren().add(playerListTitle);
     }
+
+    public Button getButtonSimulation() {return buttonSimu;}
 
     public Scene getScene() {
         return scene;
@@ -226,6 +238,8 @@ public class WelcomeView {
         playerAddHBox.getChildren().clear();
         playerSetVBox.getChildren().clear();
 
+        choiceHBox.getChildren().clear();
+
         VBox playerContainer = new VBox(playerListText);
         playerContainer.getStyleClass().add("player_list");
 
@@ -234,8 +248,10 @@ public class WelcomeView {
         playerAddHBox.getChildren().add(buttonAjouterAIMedium);
         playerAddHBox.getChildren().add(buttonAjouterAIHard);
 
+        choiceHBox.getChildren().addAll(buttonPlay, buttonSimu);
+
         this.playerSetVBox.getChildren().add(playerAddHBox);
-        this.playerSetVBox.getChildren().add(buttonPlay);
+        this.playerSetVBox.getChildren().add(choiceHBox);
     }
     private void onlineMode(){
         playerAddHBox.getChildren().clear();
@@ -257,6 +273,8 @@ public class WelcomeView {
         playerAddHBox.getChildren().clear();
         playerSetVBox.getChildren().clear();
 
+        choiceHBox.getChildren().clear();
+
         Label playerNameLabel = new Label("Nom du joueur");
 
         VBox playerNameVBox = new VBox(playerNameLabel, playerNameTextField);
@@ -270,8 +288,10 @@ public class WelcomeView {
         playerAddHBox.getChildren().add(playerNameVBox);
         playerAddHBox.getChildren().add(buttonAjouter);
 
+        choiceHBox.getChildren().addAll(buttonPlay, buttonSimu);
+
         this.playerSetVBox.getChildren().add(playerAddHBox);
-        this.playerSetVBox.getChildren().add(buttonPlay);
+        this.playerSetVBox.getChildren().add(choiceHBox);
     }
 
     private boolean isServerUp(){
