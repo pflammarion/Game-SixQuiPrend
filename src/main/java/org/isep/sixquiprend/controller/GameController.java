@@ -21,7 +21,6 @@ public class GameController {
     private final LobbyView lobbyView;
     private final LoadingView loadingView;
     private final Game game;
-    private Deck deck;
     private final int numCardsPerPlayer = 10;
     private int numberOfAIPlayer = 0;
     private Client client = null;
@@ -98,18 +97,12 @@ public class GameController {
         List<String> realPlayers = welcomeView.getPlayerList();
         List<Player> provisionalPlayers = game.getPlayers();
 
-        Iterator<Player> iterator = provisionalPlayers.iterator();
-        while (iterator.hasNext()) {
-            Player player = iterator.next();
-            if (!realPlayers.contains(player.getName())) {
-                iterator.remove();
-            }
-        }
+        provisionalPlayers.removeIf(player -> !realPlayers.contains(player.getName()));
         game.setPlayers(provisionalPlayers);
         this.setup();
 
-        deck.shuffle();
-        game.boardSetUp(deck);
+        cardController.shuffle();
+        game.boardSetUp(cardController);
         dealCards();
 
         if (null != client){
@@ -158,14 +151,7 @@ public class GameController {
     private void dealCards() {
         List<Player> players = game.getPlayers();
         for (Player player : players) {
-            List<Card> cards = new ArrayList<>();
-            for (int j = 0; j < numCardsPerPlayer; j++) {
-                Card card = deck.draw();
-                cards.add(card);
-            }
-
-            cards.sort(Comparator.comparingInt(Card::getNumber));
-            player.setHand(cards);
+            player.setHand(cardController.drawHand());
         }
     }
 
@@ -436,7 +422,7 @@ public class GameController {
         game.setRound(game.getRound() + 1);
     }
     public void setup() {
-        this.deck = new Deck(cardController.fillDeck());
+        cardController.newDeck();
         game.getCardsPlayed().clear();
         game.setBoard(new ArrayList<>());
         game.setRound(1);

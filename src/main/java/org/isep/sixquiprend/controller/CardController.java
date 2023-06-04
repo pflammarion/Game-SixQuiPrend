@@ -1,11 +1,20 @@
 package org.isep.sixquiprend.controller;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.isep.sixquiprend.model.Card;
+import org.isep.sixquiprend.model.Deck;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 public class CardController {
+    private Deck deck;
+    private int numCardsPerPlayer = 10;
 
     public List<Card> fillDeck() {
         List<Card> cards = new ArrayList<>();
@@ -61,5 +70,31 @@ public class CardController {
             }
         }
         return null;
+    }
+
+    public List<Card> drawHand(){
+        List<Card> cards = new ArrayList<>();
+        for (int j = 0; j < numCardsPerPlayer; j++) {
+            Card card = this.draw();
+            cards.add(card);
+        }
+
+        cards.sort(Comparator.comparingInt(Card::getNumber));
+        return cards;
+    }
+
+    public void shuffle(){
+        Collections.shuffle(deck.getCards());
+    }
+
+    public void newDeck(){
+        this.deck = new Deck(this.fillDeck());
+    }
+
+    public Card draw() {
+        if (deck.getCards().isEmpty()) {
+            return null;
+        }
+        return deck.getCards().remove(0);
     }
 }
