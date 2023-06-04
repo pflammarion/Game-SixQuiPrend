@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,33 +18,42 @@ import java.util.List;
 import java.util.Objects;
 
 public class SimulationView {
-    private final List<String> AIList = new ArrayList<>();
+    private List<String> AIList = new ArrayList<>();
+    private final Label titleSimu;
+    private final VBox generalVBox;
+    private final HBox generalHBox;
+    private final HBox choiceHBox;
     private final VBox AIListTxt;
+    private final VBox gamesRepPart;
+    private final Text gamesRepTitle;
     private final TextField gamesRep;
     private final Button buttonBack;
     private final Button buttonSimu;
+    private final Button buttonAjouterAIEasy;
+    private final Button buttonAjouterAIMedium;
+    private final Button buttonAjouterAIHard;
     private final HBox summaryResults;
     private final VBox easyPart;
     private final VBox mediumPart;
     private final VBox hardPart;
-    private final Label easyResult;
-    private final Label mediumResult;
-    private final Label hardResult;
+    private Label easyResult;
+    private Label mediumResult;
+    private Label hardResult;
     private final Scene scene;
 
     public SimulationView(){
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
-        Text AIListTitle = new Text("Nom des IA : \n\n");
-        Label easyTitle = new Label("Victoires des IA Facile");
-        Label mediumTitle = new Label("Victoires des IA Moyenne");
-        Label hardTitle = new Label("Victoires des IA Forte");
+        Text AIListTitle = new Text("Nom des AI : \n\n");
+        Label easyTitle = new Label("Victoires des AI Facile");
+        Label mediumTitle = new Label("Victoires des AI Moyenne");
+        Label hardTitle = new Label("Victoires des AI Dure");
         this.easyResult = new Label();
         this.mediumResult = new Label();
         this.hardResult = new Label();
-        Label titleSimu = new Label("Simulation: IA / Bots");
+        this.titleSimu = new Label("Simulation: AI / Bots");
         this.buttonBack = new Button("Retour");
         this.buttonSimu = new Button("Simuler");
-        Text gamesRepTitle = new Text("Nombre de répétions");
+        this.gamesRepTitle = new Text("Nombre de répétitions");
         this.gamesRep = new TextField();
         this.gamesRep.setMinWidth(150);
         this.gamesRep.setMinHeight(25);
@@ -52,27 +62,27 @@ public class SimulationView {
             public void changed(ObservableValue<? extends String> observable, String oldValue,
                                 String newValue) {
                 if (!newValue.matches("\\d*")) {
-                    gamesRep.setText(newValue.replaceAll("\\D", ""));
+                    gamesRep.setText(newValue.replaceAll("[^\\d]", ""));
                 }
             }
         });
 
-        VBox gamesRepPart = new VBox(gamesRepTitle, gamesRep);
-        Button buttonAjouterAIEasy = new Button("Ajouter IA facile");
-        Button buttonAjouterAIMedium = new Button("Ajouter IA moyenne");
-        Button buttonAjouterAIHard = new Button("Ajouter IA forte");
+        this.gamesRepPart = new VBox(gamesRepTitle, gamesRep);
+        this.buttonAjouterAIEasy = new Button("Ajouter IA facile");
+        this.buttonAjouterAIMedium = new Button("Ajouter IA moyen");
+        this.buttonAjouterAIHard = new Button("Ajouter IA fort");
         gamesRepPart.setAlignment(Pos.CENTER);
 
         buttonAjouterAIEasy.setOnAction(event -> {
-            addNameToPlayerList("IA: Facile");
+            addNameToPlayerList("AI: Facile");
         });
 
         buttonAjouterAIMedium.setOnAction(event -> {
-            addNameToPlayerList("IA: Moyenne");
+            addNameToPlayerList("AI: Moyen");
         });
 
         buttonAjouterAIHard.setOnAction(event -> {
-            addNameToPlayerList("IA: Forte");
+            addNameToPlayerList("AI: Dure");
         });
 
         this.AIListTxt = new VBox();
@@ -80,11 +90,11 @@ public class SimulationView {
         this.AIListTxt.setMaxHeight(100);
         this.AIListTxt.setAlignment(Pos.CENTER);
 
-        HBox choiceHBox = new HBox(buttonSimu, buttonBack);
+        this.choiceHBox = new HBox(buttonSimu, buttonBack);
         choiceHBox.setSpacing(10);
         choiceHBox.setAlignment(Pos.CENTER);
 
-        HBox generalHBox = new HBox(AIListTxt, gamesRepPart, buttonAjouterAIEasy, buttonAjouterAIMedium, buttonAjouterAIHard);
+        this.generalHBox = new HBox(AIListTxt, gamesRepPart, buttonAjouterAIEasy, buttonAjouterAIMedium, buttonAjouterAIHard);
         generalHBox.setSpacing(10);
         generalHBox.setAlignment(Pos.CENTER);
 
@@ -121,7 +131,7 @@ public class SimulationView {
             summaryResults.setVisible(!easyResult.getText().isEmpty() || !mediumResult.getText().isEmpty() || visible);
         });
 
-        VBox generalVBox = new VBox(titleSimu, generalHBox, summaryResults, choiceHBox);
+        this.generalVBox = new VBox(titleSimu, generalHBox, summaryResults, choiceHBox);
         generalVBox.setSpacing(10);
         generalVBox.setAlignment(Pos.CENTER);
 
