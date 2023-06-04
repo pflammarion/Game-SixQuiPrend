@@ -469,7 +469,7 @@ public class GameController {
     private void addAIPlayerMedium() {
         if (game.getPlayers().size() < 10) {
             this.numberOfAIPlayer++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", "medium");
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyenne", "medium");
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -478,7 +478,7 @@ public class GameController {
     private void addAIPlayerHard() {
         if (game.getPlayers().size() < 10){
             this.numberOfAIPlayer ++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", "hard");
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Forte", "hard");
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -659,11 +659,11 @@ public class GameController {
         boolean mediumAI = false;
         boolean hardAI = false;
         for (String AI : AIList){
-            if (Objects.equals(AI, "AI: Facile")){
+            if (Objects.equals(AI, "IA: Facile")){
                 easyAI = true;
-            } else if (Objects.equals(AI, "AI: Moyen")){
+            } else if (Objects.equals(AI, "IA: Moyenne")){
                 mediumAI = true;
-            } else if (Objects.equals(AI, "AI: Dure")){
+            } else if (Objects.equals(AI, "IA: Forte")){
                 hardAI = true;
             }
         }
@@ -672,10 +672,10 @@ public class GameController {
             result.put("Facile", 0);
         }
         if (mediumAI){
-            result.put("Moyen", 0);
+            result.put("Moyenne", 0);
         }
         if (hardAI){
-            result.put("Dure", 0);
+            result.put("Forte", 0);
         }
 
         for(int i = 1; i <= gamesRep; i++) {
@@ -685,8 +685,8 @@ public class GameController {
                 count++;
                 switch(AIname){
                     case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
-                    case "AI: Moyen" -> playerList.add(new AIPlayer("AI "+ count+": Moyen", "medium"));
-                    case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
+                    case "AI: Moyenne" -> playerList.add(new AIPlayer("AI "+ count+": Moyenne", "medium"));
+                    case "AI: Forte" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
                 }
             }
             game.setPlayers(playerList);
@@ -708,8 +708,8 @@ public class GameController {
                 if (null != winner) {
                     switch (winner.getDiff()) {
                         case "easy" -> result.replace("Facile", result.get("Facile")+1);
-                        case "medium" -> result.replace("Moyen", result.get("Moyen")+1);
-                        case "hard" -> result.replace("Dure", result.get("Dure")+1);
+                        case "medium" -> result.replace("Moyenne", result.get("Moyenne")+1);
+                        case "hard" -> result.replace("Forte", result.get("Forte")+1);
                     }
                 }
             }
@@ -721,13 +721,13 @@ public class GameController {
         }
 
         if (mediumAI){
-            int mediumResult = result.get("Moyen");
+            int mediumResult = result.get("Moyenne");
             String s = String.valueOf(mediumResult);
             simulationView.getMediumResult().setText(s);
         }
 
         if (hardAI){
-            int hardResult = result.get("Dure");
+            int hardResult = result.get("Forte");
             String s = String.valueOf(hardResult);
             simulationView.getHardResult().setText(s);
         }

@@ -58,7 +58,7 @@ public class GameView {
 
     public GameView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
-        playButton = new Button("Play");
+        playButton = new Button("Jouer cette carte");
         playerNames = new Text();
         roundLabel = new Label();
         boardPane = new VBox();
