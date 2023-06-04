@@ -30,6 +30,7 @@ public class WelcomeView {
     private final Button buttonAjouterAIMedium;
     private final Button buttonAjouterAIHard;
     private final Button buttonPlay;
+    private final MenuItem menuItemSimu;
     private final Button buttonOnline;
     private final TextField playerNameTextField;
     private List<String> playerList = new ArrayList<>();
@@ -38,6 +39,7 @@ public class WelcomeView {
     private MenuButton menu;
     private HBox playerAddHBox;
     private VBox playerSetVBox;
+    private HBox choiceHBox;
 
     public WelcomeView() {
 
@@ -51,6 +53,7 @@ public class WelcomeView {
         MenuItem menuItemAjouterUnJoueur = new MenuItem("Ajouter un joueur");
         MenuItem menuItemAjouterUneIA = new MenuItem("Ajouter une IA");
         MenuItem menuItemOnline = new MenuItem("Jouer en ligne");
+        this.menuItemSimu = new MenuItem("Simulation");
 
         menuItemAjouterUnJoueur.setOnAction(event -> playerMode());
         menuItemAjouterUneIA.setOnAction(event -> IAMode());
@@ -58,10 +61,10 @@ public class WelcomeView {
 
         menu = new MenuButton("Options");
         if (isServerUp()){
-            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemOnline);
+            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemOnline, menuItemSimu);
         }
         else {
-            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA);
+            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemSimu);
         }
 
         gameName.getStyleClass().add("game_name");
@@ -83,7 +86,6 @@ public class WelcomeView {
         this.buttonOnline = new Button("Jouer en ligne !");
         this.buttonOnline.getStyleClass().add("play_button");
 
-
         this.playerAddHBox = new HBox();
         this.playerAddHBox.setSpacing(20);
         this.playerAddHBox.getStyleClass().add("player_add_hbox");
@@ -91,6 +93,11 @@ public class WelcomeView {
         this.playerAddHBox.setMinWidth(300);
         this.playerAddHBox.setMinHeight(100);
 
+        this.choiceHBox = new HBox();
+        this.choiceHBox.setSpacing(20);
+        this.choiceHBox.setAlignment(Pos.BOTTOM_CENTER);
+        this.choiceHBox.setMinWidth(300);
+        this.choiceHBox.setMinHeight(100);
 
         this.buttonPlay = new Button("Jouer !");
         this.buttonPlay.setAlignment(Pos.CENTER);
@@ -132,7 +139,7 @@ public class WelcomeView {
         imageView.fitWidthProperty().bind(scene.widthProperty());
         imageView.fitHeightProperty().bind(scene.heightProperty());
 
-        String path = "src/main/resources/org/isep/sixquiprend/assets/ThomasLeGoat.mp3";
+        String path = "src/main/resources/org/isep/sixquiprend/assets/LuigiCasino.mp3";
         Media media = new Media(new File(path).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         MediaView mediaView = new MediaView(mediaPlayer);
@@ -143,6 +150,10 @@ public class WelcomeView {
         this.playerMode();
         //TODO after endgame on a un souci car ça ne s'affiche pas car scene non reconstruite
         playerListText.getChildren().add(playerListTitle);
+    }
+
+    public MenuItem getButtonSimulation() {
+        return menuItemSimu;
     }
 
     public Scene getScene() {
@@ -226,6 +237,8 @@ public class WelcomeView {
         playerAddHBox.getChildren().clear();
         playerSetVBox.getChildren().clear();
 
+        choiceHBox.getChildren().clear();
+
         VBox playerContainer = new VBox(playerListText);
         playerContainer.getStyleClass().add("player_list");
 
@@ -234,8 +247,10 @@ public class WelcomeView {
         playerAddHBox.getChildren().add(buttonAjouterAIMedium);
         playerAddHBox.getChildren().add(buttonAjouterAIHard);
 
+        choiceHBox.getChildren().addAll(buttonPlay);
+
         this.playerSetVBox.getChildren().add(playerAddHBox);
-        this.playerSetVBox.getChildren().add(buttonPlay);
+        this.playerSetVBox.getChildren().add(choiceHBox);
     }
     private void onlineMode(){
         playerAddHBox.getChildren().clear();
@@ -257,6 +272,8 @@ public class WelcomeView {
         playerAddHBox.getChildren().clear();
         playerSetVBox.getChildren().clear();
 
+        choiceHBox.getChildren().clear();
+
         Label playerNameLabel = new Label("Nom du joueur");
 
         VBox playerNameVBox = new VBox(playerNameLabel, playerNameTextField);
@@ -270,8 +287,10 @@ public class WelcomeView {
         playerAddHBox.getChildren().add(playerNameVBox);
         playerAddHBox.getChildren().add(buttonAjouter);
 
+        choiceHBox.getChildren().addAll(buttonPlay);
+
         this.playerSetVBox.getChildren().add(playerAddHBox);
-        this.playerSetVBox.getChildren().add(buttonPlay);
+        this.playerSetVBox.getChildren().add(choiceHBox);
     }
 
     private boolean isServerUp(){
