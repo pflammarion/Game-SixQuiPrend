@@ -147,6 +147,8 @@ public class SimulationView {
         this.scene = new Scene(anchorPane);
 
         AIListTxt.getChildren().add(AIListTitle);
+        imageView.fitWidthProperty().bind(scene.widthProperty());
+        imageView.fitHeightProperty().bind(scene.heightProperty());
     }
 
     public Scene getScene() {return scene;}

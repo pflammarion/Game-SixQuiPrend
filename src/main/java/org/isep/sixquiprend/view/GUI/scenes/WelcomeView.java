@@ -30,7 +30,7 @@ public class WelcomeView {
     private final Button buttonAjouterAIMedium;
     private final Button buttonAjouterAIHard;
     private final Button buttonPlay;
-    private final Button buttonSimu;
+    private final MenuItem menuItemSimu;
     private final Button buttonOnline;
     private final TextField playerNameTextField;
     private List<String> playerList = new ArrayList<>();
@@ -53,6 +53,7 @@ public class WelcomeView {
         MenuItem menuItemAjouterUnJoueur = new MenuItem("Ajouter un joueur");
         MenuItem menuItemAjouterUneIA = new MenuItem("Ajouter une IA");
         MenuItem menuItemOnline = new MenuItem("Jouer en ligne");
+        this.menuItemSimu = new MenuItem("Simulation");
 
         menuItemAjouterUnJoueur.setOnAction(event -> playerMode());
         menuItemAjouterUneIA.setOnAction(event -> IAMode());
@@ -60,10 +61,10 @@ public class WelcomeView {
 
         menu = new MenuButton("Options");
         if (isServerUp()){
-            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemOnline);
+            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemOnline, menuItemSimu);
         }
         else {
-            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA);
+            menu.getItems().addAll(menuItemAjouterUnJoueur, menuItemAjouterUneIA, menuItemSimu);
         }
 
         gameName.getStyleClass().add("game_name");
@@ -102,10 +103,6 @@ public class WelcomeView {
         this.buttonPlay.setAlignment(Pos.CENTER);
         this.buttonPlay.setPrefSize(400, 100);
         buttonPlay.getStyleClass().add("play_button");
-
-        this.buttonSimu = new Button("Simuler");
-        this.buttonSimu.setAlignment(Pos.CENTER);
-        this.buttonSimu.setPrefSize(400, 50);
 
         this.playerSetVBox = new VBox();
         this.playerSetVBox.setAlignment(Pos.CENTER);
@@ -155,7 +152,9 @@ public class WelcomeView {
         playerListText.getChildren().add(playerListTitle);
     }
 
-    public Button getButtonSimulation() {return buttonSimu;}
+    public MenuItem getButtonSimulation() {
+        return menuItemSimu;
+    }
 
     public Scene getScene() {
         return scene;
@@ -248,7 +247,7 @@ public class WelcomeView {
         playerAddHBox.getChildren().add(buttonAjouterAIMedium);
         playerAddHBox.getChildren().add(buttonAjouterAIHard);
 
-        choiceHBox.getChildren().addAll(buttonPlay, buttonSimu);
+        choiceHBox.getChildren().addAll(buttonPlay);
 
         this.playerSetVBox.getChildren().add(playerAddHBox);
         this.playerSetVBox.getChildren().add(choiceHBox);
@@ -288,7 +287,7 @@ public class WelcomeView {
         playerAddHBox.getChildren().add(playerNameVBox);
         playerAddHBox.getChildren().add(buttonAjouter);
 
-        choiceHBox.getChildren().addAll(buttonPlay, buttonSimu);
+        choiceHBox.getChildren().addAll(buttonPlay);
 
         this.playerSetVBox.getChildren().add(playerAddHBox);
         this.playerSetVBox.getChildren().add(choiceHBox);
