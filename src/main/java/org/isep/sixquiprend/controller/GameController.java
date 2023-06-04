@@ -1,9 +1,7 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
+import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Deck;
 import org.isep.sixquiprend.model.Game;
@@ -906,9 +904,9 @@ public class GameController {
             for (String AIname : AIList){
                 count++;
                 switch(AIname){
-                    case "AI: Facile" : playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
-                    case "AI: Moyen" : playerList.add(new AIPlayer("AI "+ count+": Moyen", "medium"));
-                    case "AI: Dure" : playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
+                    case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
+                    case "AI: Moyen" -> playerList.add(new AIPlayer("AI "+ count+": Moyen", "medium"));
+                    case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
                 }
             }
             game.setPlayers(playerList);
@@ -935,8 +933,24 @@ public class GameController {
                     }
                 }
             }
-            simulationView.getProgressBar().setProgress(i/gamesRep);
         }
-        System.out.println(result);
+        if (easyAI){
+            int easyResult = result.get("Facile");
+            String s = String.valueOf(easyResult);
+            simulationView.getEasyResult().setText(s);
+        }
+
+        if (mediumAI){
+            int mediumResult = result.get("Moyen");
+            String s = String.valueOf(mediumResult);
+            simulationView.getMediumResult().setText(s);
+        }
+
+        if (hardAI){
+            int hardResult = result.get("Dure");
+            String s = String.valueOf(hardResult);
+            simulationView.getHardResult().setText(s);
+        }
+        sceneManager.switchToScene("simulation");
     }
 }

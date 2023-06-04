@@ -22,7 +22,6 @@ public class SimulationView {
     private final Label titleSimu;
     private final VBox generalVBox;
     private final HBox generalHBox;
-    private final ProgressBar progressBar;
     private final HBox choiceHBox;
     private final VBox AIListTxt;
     private final VBox gamesRepPart;
@@ -34,19 +33,30 @@ public class SimulationView {
     private final Button buttonAjouterAIMedium;
     private final Button buttonAjouterAIHard;
     private final HBox summaryResults;
+    private final VBox easyPart;
+    private final VBox mediumPart;
+    private final VBox hardPart;
+    private Text easyResult;
+    private Text mediumResult;
+    private Text hardResult;
     private final Scene scene;
 
     public SimulationView(){
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         Text AIListTitle = new Text("Nom des AI : \n\n");
+        Label easyTitle = new Label("Victoires des AI Facile");
+        Label mediumTitle = new Label("Victoires des AI Moyenne");
+        Label hardTitle = new Label("Victoires des AI Dure");
+        this.easyResult = new Text();
+        this.mediumResult = new Text();
+        this.hardResult = new Text();
         this.titleSimu = new Label("Simulation: AI / Bots");
         this.buttonBack = new Button("Retour");
         this.buttonSimu = new Button("Simuler");
         this.gamesRepTitle = new Text("Nombre de répétitions");
         this.gamesRep = new TextField();
-        this.gamesRep.setMaxWidth(300);
         this.gamesRep.setMinWidth(150);
-        this.gamesRep.setMinHeight(50);
+        this.gamesRep.setMinHeight(25);
         gamesRep.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -56,8 +66,6 @@ public class SimulationView {
                 }
             }
         });
-        this.progressBar = new ProgressBar();
-        this.progressBar.setPrefSize(500, 50);
 
         this.gamesRepPart = new VBox(gamesRepTitle, gamesRep);
         this.buttonAjouterAIEasy = new Button("Ajouter IA facile");
@@ -78,8 +86,8 @@ public class SimulationView {
         });
 
         this.AIListTxt = new VBox();
-        this.AIListTxt.setMinWidth(300);
-        this.AIListTxt.setMinHeight(100);
+        this.AIListTxt.setMaxWidth(300);
+        this.AIListTxt.setMaxHeight(100);
         this.AIListTxt.setAlignment(Pos.CENTER);
 
         this.choiceHBox = new HBox(buttonSimu, buttonBack);
@@ -90,10 +98,22 @@ public class SimulationView {
         generalHBox.setSpacing(10);
         generalHBox.setAlignment(Pos.CENTER);
 
-        this.summaryResults = new HBox();
+        this.easyPart = new VBox(easyTitle, easyResult);
+        easyPart.setAlignment(Pos.CENTER);
+        easyPart.setVisible(false);
+        this.mediumPart = new VBox(mediumTitle, mediumResult);
+        mediumPart.setAlignment(Pos.CENTER);
+        mediumPart.setVisible(false);
+        this.hardPart = new VBox(hardTitle, hardResult);
+        hardPart.setAlignment(Pos.CENTER);
+        hardPart.setVisible(false);
+
+        this.summaryResults = new HBox(easyPart, mediumPart, hardPart);
+        summaryResults.setVisible(false);
+        summaryResults.setSpacing(20);
         summaryResults.setAlignment(Pos.CENTER);
 
-        this.generalVBox = new VBox(titleSimu, generalHBox, progressBar, summaryResults, choiceHBox);
+        this.generalVBox = new VBox(titleSimu, generalHBox, summaryResults, choiceHBox);
         generalVBox.setSpacing(10);
         generalVBox.setAlignment(Pos.CENTER);
 
@@ -115,8 +135,10 @@ public class SimulationView {
     public int getGamesRep(){return Integer.parseInt(gamesRep.getText());}
     public Button getButtonBack(){return buttonBack;}
     public Button getButtonSimu(){return buttonSimu;}
+    public Text getEasyResult(){return easyResult;}
+    public Text getMediumResult(){return mediumResult;}
+    public Text getHardResult(){return hardResult;}
     public List<String> getAIList(){return AIList;}
-    public ProgressBar getProgressBar(){return progressBar;}
     public void addNameToPlayerList(String name) {
         AIList.add(name);
         this.AIListTxt.getChildren().clear();
