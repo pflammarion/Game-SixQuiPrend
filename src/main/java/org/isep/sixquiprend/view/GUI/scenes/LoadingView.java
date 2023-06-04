@@ -20,19 +20,14 @@ public class LoadingView {
     private final Button continueButton;
     private final Label concernedPlayer;
     private final Label roundCounter;
-    private final VBox boardPane;
     private final Scene scene;
     public LoadingView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         this.roundCounter = new Label();
-        this.boardPane = new VBox();
-        this.boardPane.setAlignment(Pos.CENTER);
-        this.boardPane.setMaxWidth(500.0);
-        this.boardPane.setSpacing(10);
         this.continueButton = new Button("Continuer");
         this.concernedPlayer = new Label();
 
-        VBox sBox = new VBox(roundCounter, concernedPlayer, boardPane, continueButton);
+        VBox sBox = new VBox(roundCounter, concernedPlayer, continueButton);
         sBox.setAlignment(Pos.CENTER);
         sBox.setSpacing(20);
 
@@ -63,27 +58,4 @@ public class LoadingView {
     }
 
     public void setRoundCounter(String text) {roundCounter.setText(text);}
-
-    public void updateBoard(List<List<Card>> board) {
-        boardPane.getChildren().clear();
-        for (List<Card> row : board) {
-            HBox rowBox = new HBox();
-            rowBox.setSpacing(10);
-            rowBox.setAlignment(Pos.BOTTOM_LEFT);
-
-            for (Card card : row) {
-                ImageView cardImagePlayed = new ImageView();
-                cardImagePlayed.getStyleClass().add("card");
-                String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
-                Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-                cardImagePlayed.setImage(image);
-                cardImagePlayed.setFitHeight(80);
-                cardImagePlayed.setFitWidth(55);
-
-                rowBox.getChildren().add(cardImagePlayed);
-            }
-
-            boardPane.getChildren().add(rowBox);
-        }
-    }
 }
