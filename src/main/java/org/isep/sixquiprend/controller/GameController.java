@@ -104,7 +104,7 @@ public class GameController {
         this.setup();
 
         cardController.shuffle();
-        game.boardSetUp(cardController);
+        this.boardSetUp(cardController);
         dealCards();
 
         if (null != client){
@@ -120,6 +120,18 @@ public class GameController {
             sceneManager.switchToScene("game");
             nextPlayer();
         }
+    }
+
+    public void boardSetUp(CardController cardController) {
+        for (int i = 0; i < 4; i++) {
+            game.getBoard().add(new ArrayList<>());
+            Card card = cardController.draw();
+            game.getBoard().get(i).add(card);
+        }
+    }
+
+    private void resetCardsPlayed(){
+        game.setCardsPlayed(new ArrayList<>());
     }
 
     private void nextPlayer(){
@@ -389,7 +401,7 @@ public class GameController {
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
-            game.resetCardsPlayed();
+            this.resetCardsPlayed();
 
             if (client != null){
                 //Find link and remove card in player hand
