@@ -97,4 +97,91 @@ public class CardController {
         }
         return deck.getCards().remove(0);
     }
+
+    public int AICardCalculation(List<List<Card>> board, List<Card> hand){
+        int smallestDiff = Integer.MAX_VALUE;
+        int lowestRowValue = Integer.MAX_VALUE;
+        int selectedCardIndex = -1;
+        List<Integer> tempStore = new ArrayList<>();
+
+        for (List<Card> row : board) {
+            int lastCardNumber = row.get(row.size() - 1).getNumber();
+            if (lastCardNumber < lowestRowValue) {
+                lowestRowValue = lastCardNumber;
+            }
+        }
+
+        for (Card card : hand) {
+            int cardNumber = card.getNumber();
+            int diff = cardNumber - lowestRowValue;
+            tempStore.add(diff);
+        }
+
+        for (int i = 0; i < tempStore.size(); i++) {
+            int currentDiff = tempStore.get(i);
+            if (currentDiff < smallestDiff && currentDiff > 0) {
+                smallestDiff = currentDiff;
+                selectedCardIndex = i;
+            }
+        }
+        if (selectedCardIndex == -1) {
+            selectedCardIndex =  extremeCaseNoPlayableRows(hand, selectedCardIndex);
+        }
+        return selectedCardIndex;
+    }
+
+    public int AICardCalculationHard(List<List<Card>> board, List<Card> hand) {
+        int smallestDiff;
+        List<Integer> lowestEachRow = new ArrayList<>();
+        List<List<Integer>> diffLatestRowValue = new ArrayList<>();
+        int selectedCardIndex = -1;
+        List<Integer> latestRowValue = new ArrayList<>();
+        int bestRow = -1;
+
+        for (List<Card> row : board) {
+            int lastCardNumber = row.get(row.size() - 1).getNumber();
+            latestRowValue.add(lastCardNumber);
+        }
+
+        for (Integer integer : latestRowValue) {
+            List<Integer> tempStore = new ArrayList<>();
+            int rowValue = integer;
+            for (Card card : hand) {
+                int cardNumber = card.getNumber();
+                int diff = cardNumber - rowValue;
+                tempStore.add(diff);
+            }
+            diffLatestRowValue.add(tempStore);
+        }
+
+        for (List<Integer> rowDiff : diffLatestRowValue) {
+            smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff for each row
+            for (int currentDiff : rowDiff) {
+                if (currentDiff < smallestDiff && currentDiff > 0) {
+                    smallestDiff = currentDiff;
+                }
+            }
+            lowestEachRow.add(smallestDiff);
+        }
+
+        smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff
+
+        for (int i = 0; i < lowestEachRow.size(); i++) {
+            int currentDiff = lowestEachRow.get(i);
+            if (currentDiff < smallestDiff && currentDiff > 0) {
+                smallestDiff = currentDiff;
+                bestRow = i;
+            }
+        }
+
+        if (bestRow != -1){
+            List<Integer> chosenRowDiff = diffLatestRowValue.get(bestRow);
+            selectedCardIndex = chosenRowDiff.indexOf(smallestDiff);
+        }
+        else {
+            selectedCardIndex =  extremeCaseNoPlayableRows(hand, selectedCardIndex);
+        }
+        return selectedCardIndex;
+    }
+
 }
