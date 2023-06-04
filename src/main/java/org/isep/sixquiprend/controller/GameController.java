@@ -92,10 +92,13 @@ public class GameController {
 
 
     private void startGame() {
-        List<String> realPlayers = welcomeView.getPlayerList();
-        List<Player> provisionalPlayers = game.getPlayers();
 
-        provisionalPlayers.removeIf(player -> !realPlayers.contains(player.getName()));
+        List<Player> provisionalPlayers = game.getPlayers();
+        if (null == client){
+            List<String> realPlayers = welcomeView.getPlayerList();
+            provisionalPlayers.removeIf(player -> !realPlayers.contains(player.getName()));
+        }
+
         game.setPlayers(provisionalPlayers);
         this.setup();
 
