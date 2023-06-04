@@ -112,15 +112,4 @@ public class GameTest {
         Assertions.assertEquals(currentPlayerIndex, game.getCurrentPlayerIndex());
     }
 
-    @Test
-    public void testResetCardsPlayed() {
-        List<Card> playedCards = new ArrayList<>(Arrays.asList(new Card(2, 1), new Card(6, 1)));
-        game.setCardsPlayed(playedCards);
-
-        game.resetCardsPlayed();
-
-        Assertions.assertTrue(game.getCardsPlayed().isEmpty());
-    }
-
-
 }

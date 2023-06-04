@@ -11,7 +11,6 @@ import org.isep.sixquiprend.view.GUI.scenes.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class GameController {
     private final SceneManager sceneManager;
