@@ -1,6 +1,7 @@
 package org.isep.sixquiprend.model;
 
 import org.isep.sixquiprend.model.player.AIPlayer;
+import org.isep.sixquiprend.model.player.Difficulty;
 import org.isep.sixquiprend.model.player.HumanPlayer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class PlayerTest {
         humanPlayer = new HumanPlayer("Paul");
         humanPlayer.setHand(hand);
 
-        aiPlayer = new AIPlayer("AI Player", "Easy");
+        aiPlayer = new AIPlayer("AI Player", Difficulty.EASY);
         aiPlayer.setHand(hand);
     }
 
@@ -122,9 +123,9 @@ class PlayerTest {
 
     @Test
     void setDiff() {
-        aiPlayer.setDiff("Hard");
-        assertEquals("Hard", aiPlayer.getDiff());
-        assertNotEquals("Easy", aiPlayer.getDiff());
+        aiPlayer.setDiff(Difficulty.HARD);
+        assertEquals(Difficulty.HARD, aiPlayer.getDiff());
+        assertNotEquals(Difficulty.EASY, aiPlayer.getDiff());
     }
 
 }

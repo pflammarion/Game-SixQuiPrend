@@ -8,8 +8,8 @@ import java.util.List;
 @Getter
 @Setter
 public class AIPlayer extends Player {
-    private String diff;
-    public AIPlayer(String name, String diff) {
+    private Difficulty diff;
+    public AIPlayer(String name, Difficulty diff) {
         super(name);
         this.diff = diff;
     }
