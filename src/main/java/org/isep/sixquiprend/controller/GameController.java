@@ -5,6 +5,7 @@ import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Game;
 import org.isep.sixquiprend.model.player.AIPlayer;
+import org.isep.sixquiprend.model.player.Difficulty;
 import org.isep.sixquiprend.model.player.HumanPlayer;
 import org.isep.sixquiprend.model.player.Player;
 import org.isep.sixquiprend.view.GUI.SceneManager;
@@ -144,11 +145,11 @@ public class GameController {
         HumanPlayer humanPlayer = getCurrentPlayer() instanceof HumanPlayer ? (HumanPlayer) getCurrentPlayer() : null;
         AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
         if (aiPlayer != null) {
-            String diff = aiPlayer.getDiff();
+            Difficulty diff = aiPlayer.getDiff();
             switch (diff){
-                case "easy" -> aiPlayerPlayCardEasy(aiPlayer);
-                case "medium" -> aiPlayerPlayCardMedium(aiPlayer);
-                case "hard" -> aiPlayerPlayCardHard(aiPlayer);
+                case EASY -> aiPlayerPlayCardEasy(aiPlayer);
+                case MEDIUM -> aiPlayerPlayCardMedium(aiPlayer);
+                case HARD -> aiPlayerPlayCardHard(aiPlayer);
             }
         } else if (humanPlayer != null) {
             int countHuman = 0;
@@ -459,7 +460,7 @@ public class GameController {
     private void addAIPlayerEasy() {
         if (game.getPlayers().size() < 10) {
             this.numberOfAIPlayer++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", "easy");
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", Difficulty.EASY);
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -468,7 +469,7 @@ public class GameController {
     private void addAIPlayerMedium() {
         if (game.getPlayers().size() < 10) {
             this.numberOfAIPlayer++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", "medium");
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", Difficulty.MEDIUM);
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -477,7 +478,7 @@ public class GameController {
     private void addAIPlayerHard() {
         if (game.getPlayers().size() < 10){
             this.numberOfAIPlayer ++;
-            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", "hard");
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", Difficulty.HARD);
             game.getPlayers().add(aiPlayer);
             welcomeView.addNameToPlayerList(aiPlayer.getName());
         }
@@ -683,9 +684,9 @@ public class GameController {
             for (String AIname : AIList){
                 count++;
                 switch(AIname){
-                    case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", "easy"));
-                    case "AI: Moyen" -> playerList.add(new AIPlayer("AI "+ count+": Moyen", "medium"));
-                    case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
+                    case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", Difficulty.EASY));
+                    case "AI: Moyen" -> playerList.add(new AIPlayer("AI "+ count+": Moyen", Difficulty.MEDIUM));
+                    case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", Difficulty.HARD));
                 }
             }
             game.setPlayers(playerList);
@@ -706,9 +707,9 @@ public class GameController {
                 }
                 if (null != winner) {
                     switch (winner.getDiff()) {
-                        case "easy" -> result.replace("Facile", result.get("Facile")+1);
-                        case "medium" -> result.replace("Moyen", result.get("Moyen")+1);
-                        case "hard" -> result.replace("Dure", result.get("Dure")+1);
+                        case EASY -> result.replace("Facile", result.get("Facile")+1);
+                        case MEDIUM -> result.replace("Moyen", result.get("Moyen")+1);
+                        case HARD -> result.replace("Dure", result.get("Dure")+1);
                     }
                 }
             }
