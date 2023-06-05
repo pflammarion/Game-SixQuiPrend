@@ -30,7 +30,7 @@ class PlayerControllerTest {
 
     @Test
     void testCreatePlayerListFromString() {
-        List<String> names = List.of("Paul", "Lilla", "Vincent");
+        List<String> names = new ArrayList<>(List.of("Paul", "Lilla", "Vincent"));
         List<Player> players = playerController.createPlayerListFromString(names);
         assertEquals(names.size(), players.size());
         for (int i = 0; i < names.size(); i++) {
