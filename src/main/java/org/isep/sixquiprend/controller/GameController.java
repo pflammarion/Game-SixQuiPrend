@@ -688,6 +688,7 @@ public class GameController {
                     case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", "hard"));
                 }
             }
+            this.numberOfAIPlayer = count;
             game.setPlayers(playerList);
             this.setup();
             cardController.shuffle();
@@ -712,6 +713,9 @@ public class GameController {
                     }
                 }
             }
+
+            this.numberOfAIPlayer = 0;
+            game.getPlayers().clear();
         }
         if (easyAI){
             int easyResult = result.get("Facile");
