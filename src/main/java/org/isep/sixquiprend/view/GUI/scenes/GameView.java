@@ -18,30 +18,47 @@ import javafx.scene.text.TextAlignment;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.LinkOption;
+import java.util.*;
 
 import javafx.scene.text.Text;
 
 
 public class GameView {
-
     private final Button playButton;
     private final Scene scene;
     private final Text playerNames;
     private final Label roundLabel;
+    private HBox middlePane;
     private final VBox boardPane;
     private Label selectedPlayer;
     private HBox handHBox;
     private Card selectedCard;
-
     private VBox cardPlayed;
+    private VBox playedCards;
+    private List<String> concernedPlayer;
+    private List<Card> previousCards;
+    private HBox UIpreviousCards;
+    private Text namesInOrder;
 
+
+    // Added new view function: previous round cards played.
+    // How I did it: added a HBox for the middle "middlePane" that will hold the
+    // boardPane and a new VBox "playedCards" to hold the later views for previous cards.
+
+    // Check updatePreviousRound for how I modify playedCards. Adding 3 children
+    // Title: playedCardsLabel
+    // Text Players: namesInOrder
+    // The Cards: a new HBox where I add all the ImageView
+
+    // Changes from the old structure:
+    // middlePane = new HBox(boardPane, playedCards)
+    // I also set a minWidth for boardPane to visualize better,
+    // else it's literally next to the board and it's dirty
 
     public GameView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
-        playButton = new Button("Play");
+        playButton = new Button("Jouer cette carte");
         playerNames = new Text();
         roundLabel = new Label();
         boardPane = new VBox();
@@ -53,13 +70,14 @@ public class GameView {
         playerNames.setTextAlignment(TextAlignment.RIGHT);
 
         boardPane.setAlignment(Pos.CENTER_LEFT);
-        boardPane.setMaxWidth(500.0);
+        boardPane.setMinWidth(750.0);
         boardPane.setSpacing(10);
 
-        cardPlayed = new VBox();
-        cardPlayed.setAlignment(Pos.CENTER);
-        cardPlayed.setMinHeight(170);
-        cardPlayed.setMinWidth(200);
+        playedCards = new VBox();
+        playedCards.setAlignment(Pos.CENTER_RIGHT);
+        playedCards.setSpacing(10);
+
+        HBox middlePane = new HBox(boardPane, playedCards);
 
         HBox gameInfosHBox = new HBox(playerNames, selectedPlayer);
         gameInfosHBox.setMaxWidth(1500);
@@ -71,17 +89,20 @@ public class GameView {
         handHBox.setMinWidth(880.0);
         handHBox.setMaxWidth(880.0);
 
+        cardPlayed = new VBox();
+        cardPlayed.setAlignment(Pos.CENTER);
+        cardPlayed.setMinHeight(170);
+        cardPlayed.setMinWidth(200);
+
         HBox playerArea = new HBox(handHBox, cardPlayed);
         playerArea.setSpacing(50);
         playerArea.setAlignment(Pos.BOTTOM_CENTER);
 
-
-        VBox mainvbox = new VBox(roundLabel, gameInfosHBox, boardPane, playerArea, playButton);
+        VBox mainvbox = new VBox(roundLabel, gameInfosHBox, middlePane, playerArea, playButton);
         mainvbox.setMinWidth(1400);
         mainvbox.setMinHeight(800);
         mainvbox.setSpacing(20);
         mainvbox.setAlignment(Pos.CENTER);
-
 
         AnchorPane anchorPane = new AnchorPane(imageView, mainvbox);
         anchorPane.setPrefSize(1400, 800);
@@ -137,7 +158,7 @@ public class GameView {
     }
 
     public void updateRound(int round) {
-        roundLabel.setText("Round: " + round);
+        roundLabel.setText("Tour : " + round);
     }
 
     public void setPlayerTurn(Player currentPlayer) {
@@ -162,7 +183,6 @@ public class GameView {
 
     public void updateCards(List<Card> cardList){
         handHBox.getChildren().clear();
-
         for (Card card : cardList) {
             ImageView cardImage = new ImageView();
             cardImage.getStyleClass().add("card");
@@ -197,5 +217,55 @@ public class GameView {
         cardImage.setFitHeight(120);
         this.cardPlayed.getChildren().add(selectedCardLabel);
         this.cardPlayed.getChildren().add(cardImage);
+    }
+
+    public void updatePreviousRound(List<Player> players) {
+        playedCards.getChildren().clear();
+
+        previousCards = new ArrayList<>();
+        concernedPlayer = new ArrayList<>();
+
+        Label playedCardsLabel = new Label("Cartes jouées : \n");
+        playedCardsLabel.setAlignment(Pos.CENTER);
+
+        for (Player player : players){
+            previousCards.add(player.getLastCardPlayed());
+        }
+
+        previousCards.sort(Comparator.comparingInt(Card::getNumber));
+
+        for (Card card : previousCards){
+            for (Player player : players){
+                if (Objects.equals(card, player.getLastCardPlayed())){
+                    concernedPlayer.add(player.getName());
+                }
+            }
+        }
+
+        StringBuilder playerNames = new StringBuilder();
+        for (String playerName : concernedPlayer) {
+            playerNames.append(playerName);
+        }
+
+        // This part is not properly centered based on the card, to fix
+        namesInOrder = new Text();
+        namesInOrder.setText(playerNames.toString());
+
+        UIpreviousCards = new HBox();
+        UIpreviousCards.setAlignment(Pos.CENTER);
+
+        for (Card card : previousCards){
+            ImageView cardImage = new ImageView();
+            cardImage.getStyleClass().add("card");
+            String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+            cardImage.setImage(image);
+            cardImage.setFitHeight(120);
+            UIpreviousCards.getChildren().add(cardImage);
+        }
+
+        this.playedCards.getChildren().add(playedCardsLabel);
+        this.playedCards.getChildren().add(namesInOrder);
+        this.playedCards.getChildren().add(UIpreviousCards);
     }
 }
