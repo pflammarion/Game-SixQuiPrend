@@ -98,7 +98,7 @@ public class GameController {
     }
 
 
-    private void startGame() {
+    void startGame() {
 
         List<Player> provisionalPlayers = game.getPlayers();
         if (null == client){
@@ -176,7 +176,7 @@ public class GameController {
         }
     }
 
-    private void playCard() {
+    void playCard() {
         if (null != client){
             Card playedCard = gameView.getSelectedCard();
             if (playedCard != null) {
@@ -648,6 +648,8 @@ public class GameController {
             client.closeConnection();
         });
     }
+
+    public Game getGame(){return this.game;}
 
     public void simulateGameIa(List<String> AIList, int gamesRep) {
         simulationView.getEasyResult().setText("");
