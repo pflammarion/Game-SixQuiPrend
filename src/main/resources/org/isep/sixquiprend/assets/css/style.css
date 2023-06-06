@@ -139,7 +139,20 @@ VBox {
 }
 
 .player_list {
-    -fx-background-color: -blue-bg;
-    -fx-padding: 10px;
+    -fx-background-color: -light-blue-bg;
+    -fx-background-radius: 10px;
+    -fx-padding: 10 20 10 20;
     -fx-border-radius: 10px;
+    -fx-border-color: -blue-bg;
+    -fx-font-size: 15px;
+
+}
+
+MenuButton {
+    -fx-border-color: -blue-bg;
+    -fx-border-width: 3px;
+    -fx-border-radius: 10px;
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 1px;
 }

@@ -1,10 +1,11 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
+import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.Card;
-import org.isep.sixquiprend.model.Deck;
 import org.isep.sixquiprend.model.Game;
 import org.isep.sixquiprend.model.player.AIPlayer;
+import org.isep.sixquiprend.model.player.Difficulty;
 import org.isep.sixquiprend.model.player.HumanPlayer;
 import org.isep.sixquiprend.model.player.Player;
 import org.isep.sixquiprend.view.GUI.SceneManager;
@@ -20,14 +21,14 @@ public class GameController {
     private final EndGameView endGameView;
     private final LobbyView lobbyView;
     private final LoadingView loadingView;
+    private final SimulationView simulationView;
     private final Game game;
-    private Deck deck;
-    private final int numCardsPerPlayer = 10;
     private int numberOfAIPlayer = 0;
     private Client client = null;
     private String playerName;
-    private boolean gameHost;
     private List<List<Object>> onlineRoundInfo = new ArrayList<>();
+    private final CardController cardController;
+    private final PlayerController playerController;
 
     public GameController(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -36,12 +37,16 @@ public class GameController {
         this.endGameView = new EndGameView();
         this.lobbyView = new LobbyView();
         this.loadingView = new LoadingView();
+        this.simulationView = new SimulationView();
         this.game = new Game();
+        this.cardController = new CardController();
+        this.playerController = new PlayerController();
         eventListener();
     }
 
     private void eventListener() {
         sceneManager.addScene("welcome", welcomeView.getScene());
+        sceneManager.addScene("simulation", simulationView.getScene());
         sceneManager.addScene("game", gameView.getScene());
         sceneManager.addScene("endGame", endGameView.getScene());
         sceneManager.addScene("lobby", lobbyView.getScene());
@@ -54,12 +59,15 @@ public class GameController {
         });
         welcomeView.getButtonAjouter().setOnAction(event -> addPlayer());
         welcomeView.getButtonOnline().setOnAction(event -> {
-                    sceneManager.switchToScene("lobby");
-                    playOnline();
-                });
+            sceneManager.switchToScene("lobby");
+            playOnline();
+        });
         welcomeView.getButtonAjouterAIEasy().setOnAction(event -> addAIPlayerEasy());
         welcomeView.getButtonAjouterAIMedium().setOnAction(event -> addAIPlayerMedium());
         welcomeView.getButtonAjouterAIHard().setOnAction(event -> addAIPlayerHard());
+        welcomeView.getButtonSimulation().setOnAction(event -> sceneManager.switchToScene("simulation"));
+        simulationView.getButtonBack().setOnAction(event -> sceneManager.switchToScene("welcome"));
+        simulationView.getButtonSimu().setOnAction(event -> simulateGameIa(simulationView.getAIList(), simulationView.getGamesRep()));
         gameView.getPlayButton().setOnAction(event -> playCard());
         endGameView.getRestartButton().setOnAction(event -> {
             this.numberOfAIPlayer = 0;
@@ -90,31 +98,20 @@ public class GameController {
         });
     }
 
-    private List<Card> fillDeck() {
-        List<Card> cards = new ArrayList<>();
-        for (int i = 1; i <= 104; i++) {
-            int bullHeads;
-            if (i % 11 == 0) {
-                bullHeads = 5;
-            } else if (i % 10 == 0) {
-                bullHeads = 3;
-            } else if (i % 5 == 0) {
-                bullHeads = 2;
-            } else {
-                bullHeads = 1;
-            }
-            Card card = new Card(i, bullHeads);
-            cards.add(card);
-        }
-        return cards;
-    }
 
     private void startGame() {
 
+        List<Player> provisionalPlayers = game.getPlayers();
+        if (null == client){
+            List<String> realPlayers = welcomeView.getPlayerList();
+            provisionalPlayers.removeIf(player -> !realPlayers.contains(player.getName()));
+        }
+
+        game.setPlayers(provisionalPlayers);
         this.setup();
 
-        deck.shuffle();
-        game.boardSetUp(deck);
+        cardController.shuffle();
+        this.boardSetUp(cardController);
         dealCards();
 
         if (null != client){
@@ -132,15 +129,27 @@ public class GameController {
         }
     }
 
+    public void boardSetUp(CardController cardController) {
+        for (int i = 0; i < 4; i++) {
+            game.getBoard().add(new ArrayList<>());
+            Card card = cardController.draw();
+            game.getBoard().get(i).add(card);
+        }
+    }
+
+    private void resetCardsPlayed(){
+        game.setCardsPlayed(new ArrayList<>());
+    }
+
     private void nextPlayer(){
         HumanPlayer humanPlayer = getCurrentPlayer() instanceof HumanPlayer ? (HumanPlayer) getCurrentPlayer() : null;
         AIPlayer aiPlayer = getCurrentPlayer() instanceof AIPlayer ? (AIPlayer) getCurrentPlayer() : null;
         if (aiPlayer != null) {
-            String diff = aiPlayer.getDiff();
+            Difficulty diff = aiPlayer.getDiff();
             switch (diff){
-                case "easy" -> aiPlayerPlayCardEasy(aiPlayer);
-                case "medium" -> aiPlayerPlayCardMedium(aiPlayer);
-                case "hard" -> aiPlayerPlayCardHard(aiPlayer);
+                case EASY -> aiPlayerPlayCardEasy(aiPlayer);
+                case MEDIUM -> aiPlayerPlayCardMedium(aiPlayer);
+                case HARD -> aiPlayerPlayCardHard(aiPlayer);
             }
         } else if (humanPlayer != null) {
             int countHuman = 0;
@@ -155,6 +164,7 @@ public class GameController {
                 playCard();
             } else {
                 loadingView.setConcernedPlayer(humanPlayer.getName());
+                loadingView.setRoundCounter("Round "+ game.getRound());
                 sceneManager.switchToScene("loading");
             }
         }
@@ -163,14 +173,7 @@ public class GameController {
     private void dealCards() {
         List<Player> players = game.getPlayers();
         for (Player player : players) {
-            List<Card> cards = new ArrayList<>();
-            for (int j = 0; j < numCardsPerPlayer; j++) {
-                Card card = deck.draw();
-                cards.add(card);
-            }
-
-            cards.sort(Comparator.comparingInt(Card::getNumber));
-            player.setHand(cards);
+            player.setHand(cardController.drawHand());
         }
     }
 
@@ -194,41 +197,10 @@ public class GameController {
         }
     }
 
-
     private void aiPlayerPlayCardEasy(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
-            List<Integer> tempStore = new ArrayList<>();
-            List<List<Card>> board = game.getBoard();
-            int smallestDiff = Integer.MAX_VALUE;
-            int selectedCardIndex = -1;
-            int lowestRowValue = Integer.MAX_VALUE;
-
-            for (List<Card> row : board) {
-                int lastCardNumber = row.get(row.size() - 1).getNumber();
-                if (lastCardNumber < lowestRowValue) {
-                    lowestRowValue = lastCardNumber;
-                }
-            }
-
-            for (Card card : aiPlayerHand) {
-                int cardNumber = card.getNumber();
-                int diff = cardNumber - lowestRowValue;
-                tempStore.add(diff);
-            }
-
-            for (int i = 0; i < tempStore.size(); i++) {
-                int currentDiff = tempStore.get(i);
-                if (currentDiff < smallestDiff && currentDiff > 0) {
-                    smallestDiff = currentDiff;
-                    selectedCardIndex = i;
-                }
-            }
-
-            // Take the lowest card of the player hand
-            selectedCardIndex = conditionSelectedCardIndex(aiPlayerHand, selectedCardIndex);
-
-            fetchSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCardIndex);
+            fetchSelectedCardProcess(aiPlayer, aiPlayerHand, cardController.AICardCalculation(game.getBoard(), aiPlayerHand));
         }
     }
 
@@ -258,158 +230,69 @@ public class GameController {
         }
     }
 
-    private int conditionSelectedCardIndex(List<Card> aiPlayerHand, int selectedCardIndex) {
-        if (selectedCardIndex == -1) {
-            selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
-        }
-        return selectedCardIndex;
-    }
 
     private void aiPlayerPlayCardMedium(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
             Card selectedCard;
-            List<Integer> tempStore = new ArrayList<>();
             List<List<Card>> board = game.getBoard();
-            int smallestDiff = Integer.MAX_VALUE;
             int selectedCardIndex = -1;
-            int lowestRowValue = Integer.MAX_VALUE;
-            int i;
 
 
             // Does lowest value card to rows that are "playable" and without any penalties based on rows
-            List<Integer> eligibleRows = new ArrayList<>();
-            for (i = 0; i < board.size(); i++) {
-                List<Card> row = board.get(i);
-                if (row.size() < 5){
-                    eligibleRows.add(i);
-                }
-            }
+            List<Integer> eligibleRows = getEligibleRow(board);
 
             if (!eligibleRows.isEmpty()){
-                for (i = 0; i < eligibleRows.size(); i++){
-                    List<Card> row = board.get(eligibleRows.get(i));
-                    int lastCardNumber = row.get(row.size() - 1).getNumber();
-                    if (lastCardNumber < lowestRowValue) {
-                        lowestRowValue = lastCardNumber;
-                    }
+
+                List<List<Card>> temp_board = new ArrayList<>();
+                for (Integer eligibleRow : eligibleRows) {
+                    List<Card> row = board.get(eligibleRow);
+                    temp_board.add(row);
                 }
 
-                for (Card card : aiPlayerHand) {
-                    int cardNumber = card.getNumber();
-                    int diff = cardNumber - lowestRowValue;
-                    tempStore.add(diff);
-                }
+                selectedCardIndex = cardController.AICardCalculation(temp_board, aiPlayerHand);
 
-                for (i = 0; i < tempStore.size(); i++) {
-                    int currentDiff = tempStore.get(i);
-                    if (currentDiff < smallestDiff && currentDiff > 0) {
-                        smallestDiff = currentDiff;
-                        selectedCardIndex = i;
-                    }
-                }
-                // Take the lowest card of the player hand
-                selectedCardIndex = conditionSelectedCardIndex(aiPlayerHand, selectedCardIndex);
-                // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
-            // penalty
             } else {
-                selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+                selectedCardIndex = cardController.extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
             }
 
             selectedCard = aiPlayerHand.get(selectedCardIndex);
-
             endSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCard);
         }
     }
 
-    private int extremeCaseNoPlayableRows(List<Card> aiPlayerHand, int selectedCardIndex) {
-        int minValue = Integer.MAX_VALUE;
-        int currentIndex = 0;
-        for (Card card : aiPlayerHand) {
-            if (card.getNumber() < minValue) {
-                minValue = card.getNumber();
-                selectedCardIndex = currentIndex;
+    private List<Integer> getEligibleRow(List<List<Card>> board) {
+        List<Integer> eligibleRows = new ArrayList<>();
+        for (int i = 0; i < board.size(); i++) {
+            List<Card> row = board.get(i);
+            if (row.size() < 5){
+                eligibleRows.add(i);
             }
-            currentIndex++;
         }
-        return selectedCardIndex;
+        return eligibleRows;
     }
 
     private void aiPlayerPlayCardHard(AIPlayer aiPlayer) {
         List<Card> aiPlayerHand = aiPlayer.getHand();
         if (aiPlayerHand.size() > 0) {
             List<List<Card>> board = game.getBoard();
-            int smallestDiff;
             int selectedCardIndex = -1;
-            int bestRow = -1;
-            List<Integer> latestRowValue = new ArrayList<>();
-            List<List<Integer>> diffLatestRowValue = new ArrayList<>();
-            List<Integer> lowestEachRow = new ArrayList<>();
-            int i;
 
-            // Does lowest Diff to rows that are "playable" and without any penalties based on rows
-            List<Integer> eligibleRows = new ArrayList<>();
-            for (i = 0; i < board.size(); i++) {
-                List<Card> row = board.get(i);
-                if (row.size() < 5){
-                    eligibleRows.add(i);
-                }
-            }
+            List<Integer> eligibleRows = getEligibleRow(board);
 
             if (!eligibleRows.isEmpty()){
-                for (i = 0; i < eligibleRows.size(); i++){
-                    List<Card> row = board.get(eligibleRows.get(i));
-                    int lastCardNumber = row.get(row.size() - 1).getNumber();
-                    latestRowValue.add(lastCardNumber);
+
+                List<List<Card>> temp_board = new ArrayList<>();
+                for (Integer eligibleRow : eligibleRows) {
+                    List<Card> row = board.get(eligibleRow);
+                    temp_board.add(row);
                 }
 
-                for (i = 0; i < latestRowValue.size(); i++){
-                    List<Integer> tempStore = new ArrayList<>();
-                    int rowValue = latestRowValue.get(i);
-                    for (Card card : aiPlayerHand) {
-                        int cardNumber = card.getNumber();
-                        int diff = cardNumber - rowValue;
-                        tempStore.add(diff);
-                    }
-                    diffLatestRowValue.add(tempStore);
-                }
-
-                for (i = 0; i < diffLatestRowValue.size(); i++) {
-                    List<Integer> rowDiff = diffLatestRowValue.get(i);
-                    smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff for each row
-                    for (int j = 0; j < rowDiff.size(); j++) {
-                        int currentDiff = rowDiff.get(j);
-                        if (currentDiff < smallestDiff && currentDiff > 0) {
-                            smallestDiff = currentDiff;
-                        }
-                    }
-                    lowestEachRow.add(smallestDiff);
-                }
-
-                smallestDiff = Integer.MAX_VALUE;  // Reset smallestDiff
-
-                for (i = 0; i < lowestEachRow.size(); i++) {
-                    int currentDiff = lowestEachRow.get(i);
-                    if (currentDiff < smallestDiff && currentDiff > 0) {
-                        smallestDiff = currentDiff;
-                        bestRow = i;
-                    }
-                }
-
-                if (bestRow != -1){
-                    List<Integer> chosenRowDiff = diffLatestRowValue.get(bestRow);
-                    selectedCardIndex = chosenRowDiff.indexOf(smallestDiff);
-                }
-                else {
-                    // Take the lowest card of the player hand
-                    selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
-                }
-
+                selectedCardIndex = cardController.AICardCalculationHard(temp_board, aiPlayerHand);
 
                 // in the EXTREME case where all 4 rows have all 5 cards and there's sadly no eligible rows without
-                // penalty
             } else {
-                selectedCardIndex = extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
+                selectedCardIndex =  cardController.extremeCaseNoPlayableRows(aiPlayerHand, selectedCardIndex);
             }
 
             fetchSelectedCardProcess(aiPlayer, aiPlayerHand, selectedCardIndex);
@@ -420,6 +303,7 @@ public class GameController {
         endGameView.setScores(game.getPlayers());
         endGameView.setWinner(findWinner());
         sceneManager.switchToScene("endGame");
+        game.setGameEnded(true);
     }
 
     private Player findWinner() {
@@ -452,7 +336,7 @@ public class GameController {
         game.setRound(game.getRound() + 1);
     }
     public void setup() {
-        this.deck = new Deck(fillDeck());
+        cardController.newDeck();
         game.getCardsPlayed().clear();
         game.setBoard(new ArrayList<>());
         game.setRound(1);
@@ -461,122 +345,72 @@ public class GameController {
     }
 
     public void updateBoard(List<Card> cardList) {
-        cardList.sort(Comparator.comparingInt(Card::getNumber));
+        cardList = cardController.sortCardList(cardList);
 
-        for (Card card: cardList) {
+        for (Card card : cardList) {
             int score = 0;
-            int lastCardDiff = Integer.MAX_VALUE;
-            int selectedRowIndex = -1;
-            ArrayList<List<Card>> board = game.getBoard();
-            List<Card> selectedRow;
+            int selectedRowIndex = cardController.findSelectedRowIndex(card, game.getBoard());
 
-            for(int i = 0; i < board.size(); i ++){
-                List<Card> row = board.get(i);
-                int lastCardNumber = row.get(row.size() - 1).getNumber();
-                int cardDiff = card.getNumber() - lastCardNumber;
-                if (cardDiff > 0 && lastCardDiff > cardDiff){
-                    selectedRowIndex = i;
-                    lastCardDiff = cardDiff;
-                }
-            }
+            if (selectedRowIndex != -1) {
+                List<Card> selectedRow = game.getBoard().get(selectedRowIndex);
 
-            if (selectedRowIndex != -1){
-                selectedRow = board.get(selectedRowIndex);
                 if (selectedRow.size() >= 5) {
-                    for (Card cardInRow : selectedRow) {
-                        score += cardInRow.getBullHeads();
-                    }
+                    score = cardController.calculateScore(selectedRow);
                     selectedRow.clear();
                 }
-
             } else {
-                // Algo in case card played is not playable then choose the min point line
-                List<Integer> tempNumHeads= new ArrayList<>();
-                for (List<Card> row : board) {
-                    int numberOfHead = 0;
-                    for (Card cardInRow : row) {
-                        numberOfHead += cardInRow.getBullHeads();
-                    }
-                    tempNumHeads.add(numberOfHead);
+                selectedRowIndex = cardController.findSelectedRowIndexForNonPlayableCard(game.getBoard());
+
+                if (selectedRowIndex != -1) {
+                    List<Card> selectedRow = game.getBoard().get(selectedRowIndex);
+                    score = cardController.calculateScore(selectedRow);
+                    selectedRow.clear();
                 }
-                int minNumberOfHead = Collections.min(tempNumHeads);
-
-                List<Integer> indexesMin = new ArrayList<>();
-
-                for (int i = 0; i<tempNumHeads.size();i++){
-                    if (minNumberOfHead == tempNumHeads.get(i)){
-                        indexesMin.add(i);
-                    }
-                }
-
-                if (indexesMin.size() == 1){
-                    selectedRowIndex = indexesMin.get(0);
-                } else {
-
-                    List<Integer> latestCardRow = new ArrayList<>();
-                    for (int i = 0; i < indexesMin.size(); i++){
-                        List<Card> row = board.get(indexesMin.get(i));
-                        latestCardRow.add(row.get(row.size() - 1).getNumber());
-                    }
-
-                    int highestNumber = Integer.MIN_VALUE;
-                    int highestIndex = -1;
-
-                    for (int i = 0; i < latestCardRow.size(); i++) {
-                        int currentNumber = latestCardRow.get(i);
-                        if (currentNumber > highestNumber) {
-                            highestNumber = currentNumber;
-                            highestIndex = i;
-                        }
-                    }
-
-                    selectedRowIndex = indexesMin.get(highestIndex);
-
-                }
-
-                selectedRow = board.get(selectedRowIndex);
-
-                for (Card cardInRow : selectedRow) {
-                    score += cardInRow.getBullHeads();
-                }
-
-                selectedRow.clear();
             }
 
-            selectedRow.add(card);
-            board.set(selectedRowIndex, selectedRow);
-
+            addToSelectedRow(card, selectedRowIndex);
 
             if (score > 0) {
-                if (null != client) {
-                    for (List<Object> info : this.onlineRoundInfo) {
-                        if (info.get(1).equals(card)) {
-                            Player player = (Player) info.get(0);
-                            if (player != null) {
-                                player.setScore(player.getScore() + score);
-                            } else {
-                                System.out.println("Player not found");
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Player player : game.getPlayers()){
-                        if (player.getLastCardPlayed().getNumber() == card.getNumber()){
-                            player.setScore(player.getScore() + score);
-                        }
+                updatePlayerScores(card, score);
+            }
+        }
+    }
+
+
+    private void addToSelectedRow(Card card, int selectedRowIndex) {
+        List<Card> selectedRow = game.getBoard().get(selectedRowIndex);
+        selectedRow.add(card);
+        game.getBoard().set(selectedRowIndex, selectedRow);
+    }
+
+    private void updatePlayerScores(Card card, int score) {
+        if (null != client) {
+            for (List<Object> info : this.onlineRoundInfo) {
+                if (info.get(1).equals(card)) {
+                    Player player = (Player) info.get(0);
+                    if (player != null) {
+                        player.setScore(player.getScore() + score);
+                    } else {
+                        System.out.println("Player not found");
                     }
                 }
             }
-
+        }
+        else {
+            for (Player player : game.getPlayers()){
+                if (player.getLastCardPlayed().getNumber() == card.getNumber()){
+                    player.setScore(player.getScore() + score);
+                }
+            }
         }
     }
+
 
     private boolean checkEndTurn(){
         if (game.getCardsPlayed().size() == game.getPlayers().size()) {
             incrementRound();
             this.updateBoard(game.getCardsPlayed());
-            game.resetCardsPlayed();
+            this.resetCardsPlayed();
 
             if (client != null){
                 //Find link and remove card in player hand
@@ -593,7 +427,7 @@ public class GameController {
                 onlineRoundInfo.clear();
                 this.sendGameInfo(false);
 
-                if (game.getRound() == numCardsPerPlayer + 1) {
+                if (game.getRound() == cardController.getNumCardsPerPlayer() + 1) {
                     this.sendGameInfo(true);
                 }
             }
@@ -602,53 +436,56 @@ public class GameController {
                 gameView.updateBoard(game.getBoard());
                 gameView.updatePlayers(game.getPlayers());
 
-                if (game.getRound() == numCardsPerPlayer + 1) {
+                if (game.getRound() == cardController.getNumCardsPerPlayer() + 1) {
                     endGame();
                     return true;
                 }
             }
         }
-
         return false;
     }
+
     private void addPlayer(){
-        String playerName = welcomeView.getPlayerName();
-        if (!playerName.equalsIgnoreCase("") && !checkAlreadyUsedName(playerName)){
-            HumanPlayer humanPlayer = new HumanPlayer(playerName);
-            game.getPlayers().add(humanPlayer);
-            welcomeView.addNameToPlayerList(playerName);
-            welcomeView.setPlayerNameTextField("");
+        if (game.getPlayers().size() < 10) {
+            String playerName = welcomeView.getPlayerName();
+            if (!playerName.equalsIgnoreCase("") && !checkAlreadyUsedName(playerName)) {
+                HumanPlayer humanPlayer = new HumanPlayer(playerName);
+                game.getPlayers().add(humanPlayer);
+                welcomeView.addNameToPlayerList(playerName);
+                welcomeView.setPlayerNameTextField("");
+            }
         }
     }
 
     private void addAIPlayerEasy() {
-        this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", "easy");
-        game.getPlayers().add(aiPlayer);
-        welcomeView.addNameToPlayerList(aiPlayer.getName());
+        if (game.getPlayers().size() < 10) {
+            this.numberOfAIPlayer++;
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Facile", Difficulty.EASY);
+            game.getPlayers().add(aiPlayer);
+            welcomeView.addNameToPlayerList(aiPlayer.getName());
+        }
     }
 
     private void addAIPlayerMedium() {
-        this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", "medium");
-        game.getPlayers().add(aiPlayer);
-        welcomeView.addNameToPlayerList(aiPlayer.getName());
+        if (game.getPlayers().size() < 10) {
+            this.numberOfAIPlayer++;
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Moyen", Difficulty.MEDIUM);
+            game.getPlayers().add(aiPlayer);
+            welcomeView.addNameToPlayerList(aiPlayer.getName());
+        }
     }
 
     private void addAIPlayerHard() {
-        this.numberOfAIPlayer ++;
-        AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", "hard");
-        game.getPlayers().add(aiPlayer);
-        welcomeView.addNameToPlayerList(aiPlayer.getName());
+        if (game.getPlayers().size() < 10){
+            this.numberOfAIPlayer ++;
+            AIPlayer aiPlayer = new AIPlayer("AI " + numberOfAIPlayer + ": Dure", Difficulty.HARD);
+            game.getPlayers().add(aiPlayer);
+            welcomeView.addNameToPlayerList(aiPlayer.getName());
+        }
     }
 
     private boolean checkAlreadyUsedName(String name){
-        for (Player player : game.getPlayers()){
-            if (Objects.equals(player.getName(), name)){
-                return true;
-            }
-        }
-        return false;
+        return playerController.isNameUsed(name,  game.getPlayers());
     }
 
     private void playOnline() {
@@ -659,10 +496,7 @@ public class GameController {
     }
 
     public void updateOnlinePlayerList(List<String> list) {
-        List<Player> players = new ArrayList<>();
-        for (String s : list) {
-            players.add(new HumanPlayer(s));
-        }
+        List<Player> players = playerController.createPlayerListFromString(list);
         game.setPlayers(players);
         lobbyView.setPlayers(players);
     }
@@ -673,56 +507,25 @@ public class GameController {
     }
 
     public void setGameHost(String host){
-        this.gameHost = Objects.equals(this.playerName, host);
-        lobbyView.setHost(this.gameHost);
+        boolean gameHost = Objects.equals(this.playerName, host);
+        lobbyView.setHost(gameHost);
     }
 
     public void onlineChangeView(String viewName) {
         sceneManager.switchToScene(viewName);
     }
 
-    private List<Card> findCardByNumberInList(List<Integer> cardListToFind) {
-        List<Card> cardList = new ArrayList<>();
-        List<Card> deckCards = fillDeck();
-        for (int cardNumber : cardListToFind) {
-            for (Card card : deckCards){
-                if (card.getNumber() == cardNumber) {
-                    cardList.add(card);
-                    break;
-                }
-            }
-        }
-        return cardList;
-    }
 
-    private Card findCardByNumber(int number){
-        List<Card> deckCards = fillDeck();
-        for (Card card : deckCards){
-            if (card.getNumber() == number) {
-                return card;
-            }
-        }
-        return null;
-    }
-
-    private Player findPlayerByName(String name){
-        for (Player player : game.getPlayers()){
-            if (player.getName().equals(name)){
-                return player;
-            }
-        }
-        return null;
-    }
 
     public void onlineUpdatePlayerCard(List<Integer> playerCard) {
         Platform.runLater(() -> {
-            gameView.updateCards(findCardByNumberInList(playerCard));
+            gameView.updateCards(cardController.findCardByNumberInList(playerCard));
         });
     }
 
     public void onlineUpdateBoard(List<List<Integer>> boardInfo) {
         List<List<Card>> cardList = new ArrayList<>();
-        List<Card> deckCards = fillDeck();
+        List<Card> deckCards = cardController.fillDeck();
         for (List<Integer> row : boardInfo) {
             List<Card> cardsRow = new ArrayList<>();
             for (Integer cardNumber : row) {
@@ -760,7 +563,7 @@ public class GameController {
         for (int i = 0; i < roundInfo.size(); i++) {
             List<Object> tempInfo = new ArrayList<>();
             String playerName = (String) roundInfo.get(i).get(0);
-            Player player = findPlayerByName(playerName);
+            Player player = playerController.findPlayerByName(playerName, game.getPlayers());
             if (player != null) {
                 tempInfo.add(player);
             } else {
@@ -768,7 +571,7 @@ public class GameController {
                 // Handle the case where the player is not found
                 // You can throw an exception or handle it as per your requirements
             }
-            Card card = findCardByNumber((int) roundInfo.get(i).get(1));
+            Card card = cardController.findCardByNumber((int) roundInfo.get(i).get(1));
             for (Card cardPlayed : game.getCardsPlayed()) {
                 assert card != null;
                 if (cardPlayed.getNumber() == card.getNumber()){
@@ -845,5 +648,93 @@ public class GameController {
             sceneManager.switchToScene("endGame");
             client.closeConnection();
         });
+    }
+
+    public void simulateGameIa(List<String> AIList, int gamesRep) {
+        simulationView.getEasyResult().setText("");
+        simulationView.getMediumResult().setText("");
+        simulationView.getHardResult().setText("");
+        HashMap<String, Integer> result = new HashMap<>();
+        boolean easyAI = false;
+        boolean mediumAI = false;
+        boolean hardAI = false;
+        for (String AI : AIList){
+            if (Objects.equals(AI, "AI: Facile")){
+                easyAI = true;
+            } else if (Objects.equals(AI, "AI: Moyen")){
+                mediumAI = true;
+            } else if (Objects.equals(AI, "AI: Dure")){
+                hardAI = true;
+            }
+        }
+
+        if (easyAI){
+            result.put("Facile", 0);
+        }
+        if (mediumAI){
+            result.put("Moyen", 0);
+        }
+        if (hardAI){
+            result.put("Dure", 0);
+        }
+
+        for(int i = 1; i <= gamesRep; i++) {
+            int count = 0;
+            List<Player> playerList = new ArrayList<>();
+            for (String AIname : AIList){
+                count++;
+                switch(AIname){
+                    case "AI: Facile" -> playerList.add(new AIPlayer("AI "+ count+": Facile", Difficulty.EASY));
+                    case "AI: Moyen" -> playerList.add(new AIPlayer("AI "+ count+": Moyen", Difficulty.MEDIUM));
+                    case "AI: Dure" -> playerList.add(new AIPlayer("AI "+ count+": Dure", Difficulty.HARD));
+                }
+            }
+            this.numberOfAIPlayer = count;
+            game.setPlayers(playerList);
+            this.setup();
+            cardController.shuffle();
+            this.boardSetUp(cardController);
+            dealCards();
+
+            nextPlayer();
+            if (game.isGameEnded()) {
+                AIPlayer winner = null;
+                int minScore = Integer.MAX_VALUE;
+                for (Player player : game.getPlayers()) {
+                    if (player.getScore() < minScore) {
+                        minScore = player.getScore();
+                        winner = (AIPlayer) player;
+                    }
+                }
+                if (null != winner) {
+                    switch (winner.getDiff()) {
+                        case EASY -> result.replace("Facile", result.get("Facile")+1);
+                        case MEDIUM -> result.replace("Moyen", result.get("Moyen")+1);
+                        case HARD -> result.replace("Dure", result.get("Dure")+1);
+                    }
+                }
+            }
+
+            this.numberOfAIPlayer = 0;
+            game.getPlayers().clear();
+        }
+        if (easyAI){
+            int easyResult = result.get("Facile");
+            String s = String.valueOf(easyResult);
+            simulationView.getEasyResult().setText(s);
+        }
+
+        if (mediumAI){
+            int mediumResult = result.get("Moyen");
+            String s = String.valueOf(mediumResult);
+            simulationView.getMediumResult().setText(s);
+        }
+
+        if (hardAI){
+            int hardResult = result.get("Dure");
+            String s = String.valueOf(hardResult);
+            simulationView.getHardResult().setText(s);
+        }
+        sceneManager.switchToScene("simulation");
     }
 }

@@ -12,15 +12,4 @@ import java.util.List;
 @AllArgsConstructor
 public class Deck {
     private List<Card> cards;
-
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
-
-    public Card draw() {
-        if (cards.isEmpty()) {
-            return null;
-        }
-        return cards.remove(0);
-    }
 }

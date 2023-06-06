@@ -65,7 +65,6 @@ public class GameView {
         gameInfosHBox.setMaxWidth(1500);
         gameInfosHBox.setSpacing(1000);
 
-
         this.handHBox = new HBox();
         handHBox.setAlignment(Pos.BOTTOM_CENTER);
         handHBox.setSpacing(10);

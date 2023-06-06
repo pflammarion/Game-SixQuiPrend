@@ -26,13 +26,16 @@ ajouter des adversaires. Comme le nombre de joueurs ne peut dépasser dix, les I
 participants pour arriver à dix.
 Il y a trois différentes difficultés pour les IA: facile, moyen et fort.
 
-**IA Facile** : l'IA facile va jouer la carte la plus proche de la dernière carte d'une rangée sans tenir compte d'aucun
-autre facteur. 
+**IA Facile** : l'IA facile va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées
+sans tenir compte d'aucun autre facteur. 
 
-**IA Moyen** : l'IA moyen va jouer la carte la plus proche de la dernière carte d'une rangée si cette carte n'est pas 
-placée en 5ème ou 6ème position d'une rangée. 
+**IA Moyen** : l'IA moyen va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées 
+éligible à jouer, c'est-à-dire les rangées qui n'ont pas déjà 5 cartes de joués, et qui peuvent être choisi sans pénalités.
+S'il n'y a pas de rangées possibles, l'IA moyen va jouer sa plus petite carte.
 
-**IA Fort** : 
+**IA Fort** : l'IA Fort va jouer la carte auquel il obtient sa plus petite difference parmis toutes les rangées éligible.
+Il effectue les differences entre ses cartes et la derniere carte de chaque rangée éligible, puis va prendre la carte 
+auquel il obtient la plus petite difference possible
 
 ### Mode en ligne
 
@@ -75,6 +78,7 @@ Nous avons souhaité avoir le plus grand score de _Code Coverage_ possible et ce
 unitaires. Ils fonctionnent tous correctement. 
 
 ### Simulation
+
 
 En voulant tester la fiabilité de nos IA, nous avons souhaité mettre en place un système de simulation de parties. 
 Le menu simulation de partie est accessible depuis le menu **"Options"** sur la page d'accueil. 
