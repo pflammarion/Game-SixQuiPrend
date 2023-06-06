@@ -95,4 +95,7 @@ simulation, le nombre de victoires par difficulté est inscrit sur l'écran. Cel
 de nos IA et leur niveau. 
 
 Voici les résultats obtenus pour une répétition de 100 jeux:
-![simu100.png](./documentation/simu100.png)
+![comparaisonAI.png](./documentation/comparaisonAI.png)
+![compFacileVSFort.png](./documentation/compFacileVSFort.png)
+![compFacileVSMoyen.png](./documentation/compFacileVSMoyen.png)
+![compMoyenVSFort.png](./documentation/compMoyenVSFort.png)
