@@ -73,7 +73,7 @@ Il est possible de quitter le jeu ou de rejouer une partie ce qui renvoie à la 
 ## Tests et simulation 
 
 ### Tests
-![test.jpg](./documentation/tests.jpg)
+![test.png](./documentation/test.png)
 Nous avons souhaité avoir le plus grand score de _Code Coverage_ possible et ce grâce à un nombre important de tests 
 unitaires. Ils fonctionnent tous correctement. 
 
