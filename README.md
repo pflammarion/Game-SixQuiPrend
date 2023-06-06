@@ -26,10 +26,10 @@ ajouter des adversaires. Comme le nombre de joueurs ne peut dépasser dix, les I
 participants pour arriver à dix.
 Il y a trois différentes difficultés pour les IA: facile, moyen et fort.
 
-**IA Facile** : l'IA facile va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées
+**IA Facile** : l'IA facile va jouer la carte la plus proche de la carte la plus petite parmis toutes les rangées
 sans tenir compte d'aucun autre facteur. 
 
-**IA Moyen** : l'IA moyen va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées 
+**IA Moyen** : l'IA moyen va jouer la carte la plus proche de la carte la plus petite parmis toutes les rangées 
 éligible à jouer, c'est-à-dire les rangées qui n'ont pas déjà 5 cartes de joués, et qui peuvent être choisi sans pénalités.
 S'il n'y a pas de rangées possibles, l'IA moyen va jouer sa plus petite carte.
 
