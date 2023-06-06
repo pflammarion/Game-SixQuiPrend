@@ -8,7 +8,8 @@ du Six qui prend.
 ## Page d'accueil 
 La page d'accueil contient toutes les différentes façons de jouer au *Six qui prend*, soit en local, soit en ligne, avec 
 ou sans IA. Pour accéder aux différentes manières de composer une partie, le menu déroulant **"Options"** permet de 
-sélectionner parmi l'ajout d'un joueur local, l'ajout d'IA et la connexion à une partie en ligne. 
+sélectionner parmi l'ajout d'un joueur local, l'ajout d'IA et la connexion à une partie en ligne.
+![onlinebutton.png](./documentation/onlinebutton.png)
 
 ### Mode Local 
 
@@ -16,7 +17,8 @@ sélectionner parmi l'ajout d'un joueur local, l'ajout d'IA et la connexion à u
 En local, il est possible d'ajouter jusqu'à **dix joueurs** qui joueront sur le même appareil. 
 Le joueur rentre son nom et clique sur **"Ajouter"** puis c'est à la personne suivante de rentrer son nom. 
 Entre les joueurs sur le même appareil, pour éviter de voir les cartes des autres joueurs, il y a un écran de transition,
-pour continuer le tour, le joueur doit appuyer sur **"Continuer"**. 
+pour continuer le tour, le joueur doit appuyer sur **"Continuer"**.
+![loadingview.png](./documentation/loadingview.png)
 
 ### Jouer avec une IA
 
@@ -29,31 +31,38 @@ Il y a trois différentes difficultés pour les IA: facile, moyen et fort.
 **IA Facile** : l'IA facile va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées
 sans tenir compte d'aucun autre facteur. 
 
-**IA Moyen** : l'IA moyen va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées 
+**IA Moyenne** : l'IA moyenne va jouer la carte la plus proche de la dernière carte la plus petite parmis toutes les rangées 
 éligible à jouer, c'est-à-dire les rangées qui n'ont pas déjà 5 cartes de joués, et qui peuvent être choisi sans pénalités.
-S'il n'y a pas de rangées possibles, l'IA moyen va jouer sa plus petite carte.
+S'il n'y a pas de rangées possibles, l'IA moyenne va jouer sa plus petite carte.
 
-**IA Fort** : l'IA Fort va jouer la carte auquel il obtient sa plus petite difference parmis toutes les rangées éligible.
-Il effectue les differences entre ses cartes et la derniere carte de chaque rangée éligible, puis va prendre la carte 
-auquel il obtient la plus petite difference possible
+**IA Fort** : l'IA Forte va jouer la carte la plus proche de chaque dernière carte de toutes les rangées éligibles.
+Il effectue les differences entre ses cartes et la dernière carte de chaque rangée éligible, puis va prendre la carte 
+auquel il obtient la plus petite différence possible.
 
 ### Mode en ligne
-
+![onlinemenu.png](./documentation/onlinemenu.png)
 Le mode en ligne permet de jouer sur un serveur avec différentes autres personnes, chacune sur un appareil différent. 
 Pour entrer son nom dans le mode en ligne, il faut rentrer son nom et cliquer sur **"Jouer en ligne"**, cela amène le 
-joueur dans un lobby ou les autres joueurs attendent pour commencer la partie. Si le joueur ne rentre pas de nom, il aura 
+joueur dans un lobby ou les autres joueurs attendent pour commencer la partie. 
+![onlinelobbyempty.png](./documentation/onlinelobbyempty.png)
+Si le joueur ne rentre pas de nom, il aura 
 automatiquement un nom de la forme *"joueur X"* avec son numéro dans la liste des joueurs en attente. 
 
 L'**hôte** est le leader de la partie en ligne, il est le premier à être entré dans le lobby et il a le pouvoir de lancer 
 la partie. Il est le seul à avoir accès au bouton **"Lancer la partie"**, les autres joueurs ont simplement une instruction
-demandant d'attendre que l'hôte lance la partie. 
+demandant d'attendre que l'hôte lance la partie.
+![onlinelobbyfull.png](./documentation/onlinelobbyfull.png)
+![onlinelobbyfull2.png](./documentation/onlinelobbyfull2.png)
+
 
 ## Déroulement d'une partie 
 
 ### Table de jeu
 
 La table de jeu est séparée en plusieurs parties : le numéro de round, le nom du joueur en train de jouer, les scores du round,
-les quatre rangées de cartes déjà posées et la main du joueur en train de jouer. 
+les quatre rangées de cartes déjà posées, les cartes qui ont été jouées au tour précedent et la main du joueur en train 
+de jouer. 
+![game.png](./documentation/game.png)
 
 ###  Le jeu
 
@@ -65,7 +74,7 @@ en tant que première de cette rangée maintenant vierge. La rangée qui est ram
 celle qui lui rapportera le minimum de points, il n'a pas la possibilité de choisir.
 
 ### Fin de la partie
-
+![endgame.png](./documentation/endgame.png)
 La partie se termine lorsque toutes les cartes ont été posées par tous les joueurs, le gagnant est celui avec le moins de 
 points. L'écran de fin indique le gagnant et rappelle les scores de chacun des participants classés en fonction de leur score.
 Il est possible de quitter le jeu ou de rejouer une partie ce qui renvoie à la page d'accueil du jeu. 
@@ -86,3 +95,4 @@ simulation, le nombre de victoires par difficulté est inscrit sur l'écran. Cel
 de nos IA et leur niveau. 
 
 Voici les résultats obtenus pour une répétition de 100 jeux:
+![simu100.png](./documentation/simu100.png)
