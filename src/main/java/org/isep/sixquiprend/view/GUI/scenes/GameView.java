@@ -29,32 +29,14 @@ public class GameView {
     private final Scene scene;
     private final Text playerNames;
     private final Label roundLabel;
-    private HBox middlePane;
     private final VBox boardPane;
     private Label selectedPlayer;
     private HBox handHBox;
     private Card selectedCard;
     private VBox cardPlayed;
     private VBox playedCards;
-    private List<String> concernedPlayer;
     private List<Card> previousCards;
-    private HBox UIpreviousCards;
-    private Text namesInOrder;
 
-
-    // Added new view function: previous round cards played.
-    // How I did it: added a HBox for the middle "middlePane" that will hold the
-    // boardPane and a new VBox "playedCards" to hold the later views for previous cards.
-
-    // Check updatePreviousRound for how I modify playedCards. Adding 3 children
-    // Title: playedCardsLabel
-    // Text Players: namesInOrder
-    // The Cards: a new HBox where I add all the ImageView
-
-    // Changes from the old structure:
-    // middlePane = new HBox(boardPane, playedCards)
-    // I also set a minWidth for boardPane to visualize better,
-    // else it's literally next to the board and it's dirty
 
     public GameView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
@@ -74,10 +56,11 @@ public class GameView {
         boardPane.setSpacing(10);
 
         playedCards = new VBox();
-        playedCards.setAlignment(Pos.CENTER_RIGHT);
+        playedCards.setAlignment(Pos.CENTER_LEFT);
         playedCards.setSpacing(10);
 
         HBox middlePane = new HBox(boardPane, playedCards);
+        middlePane.setSpacing(100);
 
         HBox gameInfosHBox = new HBox(playerNames, selectedPlayer);
         gameInfosHBox.setMaxWidth(1500);
@@ -221,51 +204,39 @@ public class GameView {
 
     public void updatePreviousRound(List<Player> players) {
         playedCards.getChildren().clear();
+        HBox playerContainer  = new HBox();
 
-        previousCards = new ArrayList<>();
-        concernedPlayer = new ArrayList<>();
 
         Label playedCardsLabel = new Label("Cartes jouées : \n");
-        playedCardsLabel.setAlignment(Pos.CENTER);
 
-        for (Player player : players){
-            previousCards.add(player.getLastCardPlayed());
-        }
-
-        previousCards.sort(Comparator.comparingInt(Card::getNumber));
-
-        for (Card card : previousCards){
-            for (Player player : players){
-                if (Objects.equals(card, player.getLastCardPlayed())){
-                    concernedPlayer.add(player.getName());
-                }
-            }
-        }
-
-        StringBuilder playerNames = new StringBuilder();
-        for (String playerName : concernedPlayer) {
-            playerNames.append(playerName);
-        }
-
-        // This part is not properly centered based on the card, to fix
-        namesInOrder = new Text();
-        namesInOrder.setText(playerNames.toString());
-
-        UIpreviousCards = new HBox();
-        UIpreviousCards.setAlignment(Pos.CENTER);
-
-        for (Card card : previousCards){
-            ImageView cardImage = new ImageView();
-            cardImage.getStyleClass().add("card");
-            String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ card.getNumber() +".png");
-            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-            cardImage.setImage(image);
-            cardImage.setFitHeight(120);
-            UIpreviousCards.getChildren().add(cardImage);
-        }
+        players.sort(Comparator.comparingInt(player -> player.getLastCardPlayed().getNumber()));
 
         this.playedCards.getChildren().add(playedCardsLabel);
-        this.playedCards.getChildren().add(namesInOrder);
-        this.playedCards.getChildren().add(UIpreviousCards);
+        int count = 1;
+
+        for (Player player : players){
+
+            ImageView cardImage = new ImageView();
+            cardImage.getStyleClass().add("card");
+            String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ player.getLastCardPlayed().getNumber() +".png");
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+            cardImage.setImage(image);
+            cardImage.setFitWidth(40);
+            cardImage.setFitHeight(60);
+            Text playerName = new Text(player.getName());
+            VBox cardPlayer = new VBox(playerName, cardImage);
+            cardPlayer.setAlignment(Pos.CENTER);
+            cardPlayer.setSpacing(5);
+            cardPlayer.setMinWidth(100);
+            playerContainer.getChildren().add(cardPlayer);
+            count++;
+            if (count > 4){
+                this.playedCards.getChildren().add(playerContainer);
+                playerContainer  = new HBox();
+                count = 0;
+            }
+        }
+        this.playedCards.getChildren().add(playerContainer);
+
     }
 }

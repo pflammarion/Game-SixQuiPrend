@@ -1,7 +1,6 @@
 package org.isep.sixquiprend.controller;
 
 import javafx.application.Platform;
-import javafx.scene.text.Text;
 import org.isep.sixquiprend.model.Card;
 import org.isep.sixquiprend.model.Game;
 import org.isep.sixquiprend.model.player.AIPlayer;
