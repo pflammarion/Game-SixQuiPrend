@@ -97,9 +97,7 @@ public class GameController {
         });
     }
 
-
     void startGame() {
-
         List<Player> provisionalPlayers = game.getPlayers();
         if (null == client){
             List<String> realPlayers = welcomeView.getPlayerList();
