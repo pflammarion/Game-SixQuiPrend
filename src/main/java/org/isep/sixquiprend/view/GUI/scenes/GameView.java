@@ -27,7 +27,7 @@ import javafx.scene.text.Text;
 public class GameView {
     private final Button playButton;
     private final Scene scene;
-    private final Text playerNames;
+    private final HBox playerNamesContainer;
     private final Label roundLabel;
     private final VBox boardPane;
     private Label selectedPlayer;
@@ -41,15 +41,16 @@ public class GameView {
     public GameView() {
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
         playButton = new Button("Jouer cette carte");
-        playerNames = new Text();
         roundLabel = new Label();
         boardPane = new VBox();
         selectedPlayer = new Label();
 
         selectedPlayer.getStyleClass().add("selected_player");
 
-        playerNames.getStyleClass().add("player_name");
-        playerNames.setTextAlignment(TextAlignment.RIGHT);
+        playerNamesContainer = new HBox();
+        playerNamesContainer.setSpacing(10);
+
+
 
         boardPane.setAlignment(Pos.CENTER_LEFT);
         boardPane.setMinWidth(750.0);
@@ -62,7 +63,7 @@ public class GameView {
         HBox middlePane = new HBox(boardPane, playedCards);
         middlePane.setSpacing(100);
 
-        HBox gameInfosHBox = new HBox(playerNames, selectedPlayer);
+        HBox gameInfosHBox = new HBox(playerNamesContainer, selectedPlayer);
         gameInfosHBox.setMaxWidth(1500);
         gameInfosHBox.setSpacing(1000);
 
@@ -106,15 +107,26 @@ public class GameView {
     }
 
     public void updatePlayers(List<Player> players) {
+        playerNamesContainer.getChildren().clear();
         StringBuilder playerNamesText = new StringBuilder();
+        int playerCount= 0;
+
         for (Player player : players) {
             playerNamesText.append(player.getName()).append(" | score : ").append(player.getScore()).append("\n");
+
+            playerCount++;
+            if (playerCount % 4 == 0) {
+                Text playerName = new Text(playerNamesText.toString());
+                this.playerNamesContainer.getChildren().add(playerName);
+                playerNamesText = new StringBuilder();
+            }
         }
-        this.playerNames.setText(playerNamesText.toString());
+        Text playerName = new Text(playerNamesText.toString());
+        this.playerNamesContainer.getChildren().add(playerName);
     }
 
     public void setPlayerText(String text) {
-        this.playerNames.setText(text);
+        this.playerNamesContainer.getChildren().add(new Text(text));
     }
 
     public void updateBoard(List<List<Card>> board) {
@@ -150,12 +162,10 @@ public class GameView {
         List<Card> playerHand = currentPlayer.getHand();
         updateCards(playerHand);
 
-        this.playerNames.setStyle("-fx-font-weight: bold;");
+        this.playerNamesContainer.setStyle("-fx-font-weight: bold;");
         this.selectedPlayer.setText(playerName);
 
     }
-
-    // TODO faire l'espace pour la selected card en fonction de this.selectedCard
 
     public Card getSelectedCard() {
         Card card = this.selectedCard;
@@ -221,7 +231,7 @@ public class GameView {
             String imagePath = ("/org/isep/sixquiprend/assets/img/cards/"+ player.getLastCardPlayed().getNumber() +".png");
             Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             cardImage.setImage(image);
-            cardImage.setFitWidth(40);
+            cardImage.setFitWidth(50);
             cardImage.setFitHeight(60);
             Text playerName = new Text(player.getName());
             VBox cardPlayer = new VBox(playerName, cardImage);
