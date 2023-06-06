@@ -73,15 +73,16 @@ Il est possible de quitter le jeu ou de rejouer une partie ce qui renvoie à la 
 ## Tests et simulation 
 
 ### Tests
-![test.jpg](./documentation/tests.jpg)
+![test.png](./documentation/test.png)
 Nous avons souhaité avoir le plus grand score de _Code Coverage_ possible et ce grâce à un nombre important de tests 
 unitaires. Ils fonctionnent tous correctement. 
 
 ### Simulation
-
-
+![pageSimu.png](./documentation/pageSimu.png)
 En voulant tester la fiabilité de nos IA, nous avons souhaité mettre en place un système de simulation de parties. 
 Le menu simulation de partie est accessible depuis le menu **"Options"** sur la page d'accueil. 
 Il permet de pouvoir choisir un nombre d'IA et leur difficulté, ainsi que le nombre de répétitions. À la fin de la 
 simulation, le nombre de victoires par difficulté est inscrit sur l'écran. Cela nous a permis de vérifier la fiabilité 
 de nos IA et leur niveau. 
+
+Voici les résultats obtenus pour une répétition de 100 jeux:
