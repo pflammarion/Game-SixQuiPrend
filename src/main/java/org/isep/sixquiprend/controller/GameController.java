@@ -687,7 +687,7 @@ public class GameController {
                 switch(AIname){
                     case "IA: Facile" -> playerList.add(new AIPlayer("IA "+ count+": Facile", Difficulty.EASY));
                     case "IA: Moyenne" -> playerList.add(new AIPlayer("IA "+ count+": Moyenne", Difficulty.MEDIUM));
-                    case "IA: Forte" -> playerList.add(new AIPlayer("IA "+ count+": Dure", Difficulty.HARD));
+                    case "IA: Forte" -> playerList.add(new AIPlayer("IA "+ count+": Forte", Difficulty.HARD));
                 }
             }
             this.numberOfAIPlayer = count;
