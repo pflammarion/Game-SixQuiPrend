@@ -555,7 +555,9 @@ public class GameController {
         for (List<?> player : playerInfo) {
             playerNames.append(player.get(0)).append(" | score : ").append(player.get(1)).append("\n");
         }
-        gameView.setPlayerText(playerNames.toString());
+        Platform.runLater(() -> {
+            gameView.setPlayerText(playerNames.toString());
+        });
     }
 
     public void setGameCartPlayed(List<List<Object>> roundInfo) {
