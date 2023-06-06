@@ -48,11 +48,11 @@ Button:hover {
 
 HBox {
     -fx-border-width: 3;
-    -fx-border-color: #7bda57;
+    /*-fx-border-color: #7bda57;*/
 }
 VBox {
     -fx-border-width: 3;
-    -fx-border-color: red;
+    /*-fx-border-color: red;*/
 }
 .play_button {
     -fx-text-fill: -red;
