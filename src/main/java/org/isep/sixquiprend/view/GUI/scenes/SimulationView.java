@@ -43,14 +43,14 @@ public class SimulationView {
 
     public SimulationView(){
         ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/org/isep/sixquiprend/assets/img/background_accueil.jpg"))));
-        Text AIListTitle = new Text("Nom des AI : \n\n");
-        Label easyTitle = new Label("Victoires des AI Facile");
-        Label mediumTitle = new Label("Victoires des AI Moyenne");
-        Label hardTitle = new Label("Victoires des AI Dure");
+        Text AIListTitle = new Text("Nom des IA : \n\n");
+        Label easyTitle = new Label("Victoires des IA Facile");
+        Label mediumTitle = new Label("Victoires des IA Moyenne");
+        Label hardTitle = new Label("Victoires des IA Forte");
         this.easyResult = new Label();
         this.mediumResult = new Label();
         this.hardResult = new Label();
-        this.titleSimu = new Label("Simulation: AI / Bots");
+        this.titleSimu = new Label("Simulation: IA / Bots");
         this.buttonBack = new Button("Retour");
         this.buttonSimu = new Button("Simuler");
         this.gamesRepTitle = new Text("Nombre de répétitions");
@@ -69,20 +69,20 @@ public class SimulationView {
 
         this.gamesRepPart = new VBox(gamesRepTitle, gamesRep);
         this.buttonAjouterAIEasy = new Button("Ajouter IA facile");
-        this.buttonAjouterAIMedium = new Button("Ajouter IA moyen");
-        this.buttonAjouterAIHard = new Button("Ajouter IA fort");
+        this.buttonAjouterAIMedium = new Button("Ajouter IA moyenne");
+        this.buttonAjouterAIHard = new Button("Ajouter IA forte");
         gamesRepPart.setAlignment(Pos.CENTER);
 
         buttonAjouterAIEasy.setOnAction(event -> {
-            addNameToPlayerList("AI: Facile");
+            addNameToPlayerList("IA: Facile");
         });
 
         buttonAjouterAIMedium.setOnAction(event -> {
-            addNameToPlayerList("AI: Moyen");
+            addNameToPlayerList("IA: Moyenne");
         });
 
         buttonAjouterAIHard.setOnAction(event -> {
-            addNameToPlayerList("AI: Dure");
+            addNameToPlayerList("IA: Forte");
         });
 
         this.AIListTxt = new VBox();
@@ -162,7 +162,7 @@ public class SimulationView {
     public void addNameToPlayerList(String name) {
         AIList.add(name);
         this.AIListTxt.getChildren().clear();
-        Text AIListTitle = new Text("Nom des AI : \n\n");
+        Text AIListTitle = new Text("Nom des IA : \n\n");
         this.AIListTxt.getChildren().add(AIListTitle);
         for (String playerName : this.AIList) {
             HBox playerHBox = new HBox();

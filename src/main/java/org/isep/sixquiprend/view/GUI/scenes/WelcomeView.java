@@ -81,8 +81,8 @@ public class WelcomeView {
         this.buttonAjouter.setMinWidth(100);
 
         this.buttonAjouterAIEasy = new Button("Ajouter IA facile");
-        this.buttonAjouterAIMedium = new Button("Ajouter IA moyen");
-        this.buttonAjouterAIHard = new Button("Ajouter IA fort");
+        this.buttonAjouterAIMedium = new Button("Ajouter IA moyenne");
+        this.buttonAjouterAIHard = new Button("Ajouter IA forte");
         this.buttonOnline = new Button("Jouer en ligne !");
         this.buttonOnline.getStyleClass().add("play_button");
 
